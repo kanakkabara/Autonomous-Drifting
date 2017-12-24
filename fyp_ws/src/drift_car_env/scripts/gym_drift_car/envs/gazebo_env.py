@@ -4,6 +4,7 @@ from gym.utils import seeding
 
 import rospy
 from std_msgs.msg import Float64
+from std_srvs.srv import Empty
 from sensor_msgs.msg import Imu
 from gazebo_msgs.msg import ModelStates
 
@@ -12,18 +13,21 @@ import numpy as np
 import os
 import signal
 import subprocess
+import time
 from os import path
 
 class GazeboEnv(gym.Env):
         metadata = {'render.modes': ['human']}
         def __init__(self):
                 subprocess.Popen("roscore")
+                time.sleep(1)
                 print ("Roscore launched!")
                 
                 rospy.init_node('gym', anonymous=True)
                 
                 subprocess.Popen(["roslaunch", "drift_car_gazebo", "drift_car.launch"])
-                subprocess.Popen(["roslaunch", "drift_car_gazebo_control", "drift_car_control.launch "])
+                time.sleep(10)
+                subprocess.Popen(["roslaunch", "drift_car_gazebo_control", "drift_car_control.launch"])
                 
                 print ("Gazebo launched!")      
                 
@@ -37,22 +41,33 @@ class GazeboEnv(gym.Env):
                 self.pause = rospy.ServiceProxy('/gazebo/pause_physics', Empty)
                 self.reset_proxy = rospy.ServiceProxy('/gazebo/reset_simulation', Empty)
                 
-                #TODO check how many actions
-                self.action_space = spaces.Discrete(7)                             
                 self.reward_range = (-np.inf, np.inf)
+                self.action_space = spaces.Discrete(7)
+                
+                high = np.array([np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max])
+                self.observation_space = spaces.Box(-high, high)   
+                
                 self._seed()
                 
                 self.previous_action = -1
-                self.radius = 1
+                self.previous_imu = {}
+                self.previous_pos = None
                 
-                # Window for potential based reward.
-                self.angle_reward_window = 0.1
+                while self.previous_pos is None:
+                        try:
+                                self.previous_pos = rospy.wait_for_message('/gazebo/model_states', ModelStates, timeout=5)
+                                self.previous_pos.pose[1].orientation.w = abs(posData.pose[1].orientation.w)
+                        except:
+                                pass
+                 
+                self.radius = 1
                 
         def _seed(self, seed=None):
                 self.np_random, seed = seeding.np_random(seed)
                 return [seed] 
                 
         def _step(self, action):
+                print("Action taken", action)
                 rospy.wait_for_service('/gazebo/unpause_physics')
                 try:
                         self.unpause()
@@ -61,8 +76,8 @@ class GazeboEnv(gym.Env):
 
 
                 #TODO can look into mirroring joints to make sure the wheels spin and turn tgt                
-                #self.throtle1.publish(action.throttle)
-		#self.throtle2.publish(action.throttle)
+                self.throtle1.publish(350)
+		self.throtle2.publish(350)
         
                 degreeMappings = [65, 75, 85, 90, 95, 105, 115]
                 radianMappings = [-0.436, -0.261799, -0.0872665, 0, 0.0872665, 0.261799, 0.436]              
@@ -83,7 +98,6 @@ class GazeboEnv(gym.Env):
                 while posData is None:
                         try:
                                 posData = rospy.wait_for_message('/gazebo/model_states', ModelStates, timeout=5)
-                                posData = posData.pose[1].position
                                 posData.pose[1].orientation.w = abs(posData.pose[1].orientation.w)
                         except:
                                 pass
@@ -94,9 +108,9 @@ class GazeboEnv(gym.Env):
                 except (rospy.ServiceException) as e:
                         print ("/gazebo/pause_physics service call failed")
                 
-                state = {"IMU": imuData, "pose": posData}
-                reward = getReward(action, posData)
-                done = false
+                state = {"x": posData.pose[1].position.x, "y": posData.pose[1].position.y, "theta": posData.pose[1].orientation.w, "xDot": imuData.linear_acceleration.x, "yDot": imuData.linear_acceleration.y, "thetaDot": imuData.angular_velocity.x}
+                reward = self.getReward(action, posData)
+                done = self.isDone(posData)
               
                 self.previous_imu = imuData
                 self.previous_pos = posData     
@@ -110,22 +124,32 @@ class GazeboEnv(gym.Env):
                 actionDelta = self.previous_action - action
                 actionDeltaPenalty = (actionDelta ** 2) * largeActionDeltaPenalty
                 
+                # Window for potential based reward.
+                angleRewardWindow = 0.1
+                
                 # Calculate the potential reward based on polar angle difference.
-                prev_angle = self.previous_pos.pose[1].orientation.w
-                curr_angle = posData.pose[1].orientation.w
-                if curr_angle > prev_angle or abs(prev_angle - curr_angle) <= self.angle_reward_window:
-                        angle_potential_reward = 1
+                prevAngle = self.previous_pos.pose[1].orientation.w
+                currAngle = posData.pose[1].orientation.w
+                if currAngle > prevAngle or abs(prevAngle - currAngle) <= angleRewardWindow:
+                        anglePotentialReward = 1
                 else: 
-                        angle_potential_reward = -1
+                        anglePotentialReward = -1
                         
                 # Calculate the potential reward based on circular path.
                 x = posData.pose[1].position.x
                 y = posData.pose[1].position.y
                 deviationPenalty = -(abs((self.radius ** 2) - (x ** 2 + y ** 2)))
                 
-                
-                reward = actionDeltaPenalty + angle_potential_reward + deviationPenalty
+                reward = actionDeltaPenalty + anglePotentialReward + deviationPenalty
                 return reward
+             
+        def isDone(self, posData):
+                maxDeviationFromCenter = 2
+        
+                #Done is true if the car ventures too far from the center of the circular drift
+                x = posData.pose[1].position.x
+                y = posData.pose[1].position.y
+                return (maxDeviationFromCenter <= ((x ** 2 + y ** 2) ** 0.5))
                 
         def _reset(self):
                 rospy.wait_for_service('/gazebo/reset_simulation')
@@ -151,7 +175,7 @@ class GazeboEnv(gym.Env):
                 while posData is None:
                         try:
                                 posData = rospy.wait_for_message('/gazebo/model_states', ModelStates, timeout=5)
-                                posData = posData.pose[1].position
+                                posData.pose[1].orientation.w = abs(posData.pose[1].orientation.w)
                         except:
                                 pass
 
@@ -161,8 +185,7 @@ class GazeboEnv(gym.Env):
                 except (rospy.ServiceException) as e:
                     print ("/gazebo/pause_physics service call failed")
 
-                #TODO Figure out what state to send
-                state = self.discretize_observation(data,5)
+                state = {"x": posData.pose[1].position.x, "y": posData.pose[1].position.y, "theta": posData.pose[1].orientation.w, "xDot": imuData.linear_acceleration.x, "yDot": imuData.linear_acceleration.y, "thetaDot": imuData.angular_velocity.x}
                 return state
         
         def _render(self, mode='human', close=False):
