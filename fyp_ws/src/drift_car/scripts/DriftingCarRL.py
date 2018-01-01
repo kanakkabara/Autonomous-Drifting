@@ -5,17 +5,49 @@ import gym_drift_car
 import random
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import style
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
-#get_ipython().magic(u'matplotlib inline')
+import time
+style.use('fivethirtyeight')
 
-# Create the gym environment.
 env = gym.make('DriftCarGazeboEnv-v0')
+
+
+# In[19]:
+
+
+#get_ipython().magic(u'matplotlib notebook')
+m = 100
+n = 100
+matrix = np.random.normal(0,1,m*n).reshape(m,n)
+
+fig = plt.figure(figsize=(10, 10))
+ax1 = fig.add_subplot(211)
+ax1.set_xlabel('Episode count')
+ax1.set_ylabel('Reward')
+ax2 = fig.add_subplot(212)
+ax2.set_xlabel('Episode count')
+ax2.set_ylabel('Loss')
+plt.ion()
+
+fig.show()
+fig.canvas.draw()
+def refresh_chart(rewards, mean_loss):
+    ax1.clear()
+    ax2.clear()
+    ax1.plot(rewards)
+    ax2.plot(mean_loss)
+    fig.canvas.draw()
 
 
 # ### Helper functions
 
 # Helper functions to update the target Q-Network toward the primary Q-network at a rate $\tau$.
+
+# In[20]:
+
+
 # Get the update operations to perform.
 def target_network_update_ops(tvars, tau):
     op_holder = []
@@ -32,6 +64,10 @@ def target_network_update_apply(sess, ops):
     for op in ops:
         sess.run(op)
 
+
+# In[21]:
+
+
 # Helper function to compute the Huber loss with delta = 1.
 def huber_loss(diff):
     diff = tf.abs(diff)
@@ -39,6 +75,9 @@ def huber_loss(diff):
 
 
 # ### Experience replay
+
+# In[22]:
+
 
 class Cache():
     def __init__(self, max_size=50000):
@@ -62,6 +101,9 @@ class ExperienceReplayBuffer(Cache):
 
 # ### Q-network
 
+# In[23]:
+
+
 class QNetwork():
     def __init__(self, lr, s_size, a_size, h_size, o_size):
         if o_size % 2 != 0:
@@ -76,12 +118,12 @@ class QNetwork():
         layer1 = slim.fully_connected(self.state_input, h_size,
                                      weights_initializer=xavier_init,
                                      biases_initializer=None,
-                                     activation_fn=tf.nn.relu)
+                                     activation_fn=tf.nn.tanh)
         # output: batch_size x o_size
         self.fully_connected_output = slim.fully_connected(layer1, o_size,
                                                          weights_initializer=xavier_init,
                                                          biases_initializer=None,
-                                                         activation_fn=tf.nn.relu)
+                                                         activation_fn=tf.nn.tanh)
         
         # Average Dueling
         # output(each): batch_size x o_size/2
@@ -116,55 +158,61 @@ class QNetwork():
 
 
 # ### Training
-if __name__ == '__main__':
-        print("Starting Training")
-        batch_size = 100
-        update_frequency = 5 # Update every 5 steps.
-        gamma = 0.9 # Discount factor.
-        epsilon_decay_rate = 0.9
-        epsilon_min = 0.01
-        annealing_steps = 10000
-        total_episodes = 10000
-        max_ep_length = 300
-        pretrain_steps = 10000
-        load_model = False
-        render_env = False
-        path = './model'
-        h_size = 512
-        o_size = 512
-        a_size = env.action_space.n # Adjust this.
-        s_size = env.observation_space.shape[0] # Adjust this.
-        tau = 0.01
-        learning_rate = 0.0001
+
+# In[ ]:
 
 
-        # In[ ]:
+batch_size = 100
+update_frequency = 5 # Update every 5 steps.
+gamma = 0.9 # Discount factor.
+epsilon_decay_rate = 0.9
+epsilon_min = 0.01
+annealing_steps = 10000
+total_episodes = 10000
+max_ep_length = 300
+pretrain_steps = 10000
+load_model = False
+render_env = False
+path = './model'
+h_size = 200
+o_size = 200
+a_size = env.action_space.n # Adjust this.
+s_size = env.observation_space.shape[0] # Adjust this.
+tau = 0.01
+learning_rate = 0.0001
+
+# In[ ]:
 
 
-        tf.reset_default_graph()
-        primary_Q_network = QNetwork(learning_rate, s_size, a_size, h_size, o_size)
-        target_Q_network = QNetwork(learning_rate, s_size, a_size, h_size, o_size)
+tf.reset_default_graph()
+primary_Q_network = QNetwork(learning_rate, s_size, a_size, h_size, o_size)
+target_Q_network = QNetwork(learning_rate, s_size, a_size, h_size, o_size)
 
-        init = tf.global_variables_initializer()
-        saver = tf.train.Saver(save_relative_paths=True)
-        tvars = tf.trainable_variables()
-        target_network_update_operations = target_network_update_ops(tvars, tau)
+init = tf.global_variables_initializer()
+saver = tf.train.Saver(save_relative_paths=True)
+tvars = tf.trainable_variables()
+target_network_update_operations = target_network_update_ops(tvars, tau)
 
-        experience_buffer = ExperienceReplayBuffer()
-        all_rewards = []
-        steps_taken = []
-        all_losses = []
+experience_buffer = ExperienceReplayBuffer()
+all_rewards = []
+steps_taken = []
+all_losses = []
 
-        epsilon = 1.0
+epsilon = 1.0
+fig.show()
+fig.canvas.draw()
 
-        # Create folder to store model in, if doesn't exist.
-        if not os.path.exists(path):
-            os.makedirs(path)
+# Create folder to store model in, if doesn't exist.
+if not os.path.exists(path):
+    os.makedirs(path)
 
-        total_step_count = 0
+total_step_count = 0
+
+with tf.device('/gpu:0'):
+        print("GPU", tf.test.gpu_device_name())
+        #with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
         with tf.Session() as sess:
-            sess.run(init)
-            
+            sess.run(init)    
             if load_model:
                 print('Loading latest saved model...')
                 ckpt = tf.train.get_checkpoint_state(path)
@@ -185,10 +233,12 @@ if __name__ == '__main__':
                     if np.random.randn(1) < epsilon or total_step_count < pretrain_steps:
                         action = np.random.randint(0, a_size)
                     else:
+                        print("S", s)
                         action = sess.run(primary_Q_network.action_predicted, 
                                          feed_dict={primary_Q_network.state_input:[s]})[0]
                     
                     next_state, reward, done, _ = env.step(action)
+                    #print("Action taken", action, " on step count", step_count, "total_step_count", total_step_count, "next_state", next_state, "reward", reward, "done", done)
                     d_int = 1 if done else 0
                     running_reward += reward
                     episode_buffer.append([s, action, reward, next_state, d_int])
@@ -225,9 +275,8 @@ if __name__ == '__main__':
                 if total_step_count > pretrain_steps and episode_count % 20 == 0:
                     if epsilon > epsilon_min:
                         epsilon *= epsilon_decay_rate
-                if total_step_count > pretrain_steps and episode_count % 1000 == 0:
+                if total_step_count > pretrain_steps and episode_count % 1 == 0:
                     print('Saving model...')
                     saver.save(sess, path+'/model-'+str(episode_count)+'.ckpt', global_step=total_step_count)
-                    print('Mean reward ' + str(np.mean(all_rewards[-10:])) + ' epsilon : ' + str(epsilon))
-                    print('Mean loss ' + str(np.mean(all_losses[-10:])))
+                    refresh_chart(all_rewards, all_losses)
 

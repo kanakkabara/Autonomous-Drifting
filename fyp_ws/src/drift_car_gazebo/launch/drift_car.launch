@@ -1,9 +1,7 @@
 <launch>
-  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
-  <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find drift_car_gazebo)/worlds/drift_car.world"/>
-    <!-- more default parameters can be changed here -->
-  </include>
-  <param name="robot_description" command="$(find xacro)/xacro.py $(find drift_car_description)/urdf/drift_car.urdf.xacro" />
-  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -x 0 -y 0 -z 1 -model drift_car" />
+        <include file="$(find gazebo_ros)/launch/empty_world.launch">
+                <arg name="world_name" value="$(find drift_car_gazebo)/worlds/drift_car.world"/>
+        </include>
+        <param name="robot_description" command="$(find xacro)/xacro.py $(find drift_car_description)/urdf/drift_car.urdf.xacro" />
+        <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -x 0 -y 0 -z 1 -model drift_car" />
 </launch>
