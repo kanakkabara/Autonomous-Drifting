@@ -107,15 +107,17 @@ class GazeboEnv(gym.Env):
                         self.pause()
                 except (rospy.ServiceException) as e:
                         print ("/gazebo/pause_physics service call failed")
-                
-                state = {"x": posData.pose[1].position.x, "y": posData.pose[1].position.y, "theta": posData.pose[1].orientation.w, "xDot": imuData.linear_acceleration.x, "yDot": imuData.linear_acceleration.y, "thetaDot": imuData.angular_velocity.x}
+
+                # state: (x, y, theta, xDot, yDot, thetaDot)
+                state = (posData.pose[1].position.x, posData.pose[1].position.y, posData.pose[1].orientation.w,  
+                    imuData.linear_acceleration.x,  imuData.linear_acceleration.y,  imuData.angular_velocity.x)
                 reward = self.getReward(action, posData)
                 done = self.isDone(posData)
               
                 self.previous_imu = imuData
                 self.previous_pos = posData     
                 self.previous_action = action
-                return state, reward, done, {}
+                return np.array(state), reward, done, {}
                 
         def getReward(self, action, posData):
                 reward = 0.0
