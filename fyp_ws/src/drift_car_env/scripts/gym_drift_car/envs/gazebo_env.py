@@ -190,7 +190,7 @@ class GazeboEnv(gym.Env):
                 # state: (x, y, theta, xDot, yDot, thetaDot)
                 state = (posData.pose[1].position.x, posData.pose[1].position.y, posData.pose[1].orientation.w, 
                     imuData.linear_acceleration.x, imuData.linear_acceleration.y, imuData.angular_velocity.x)
-                return np.array()
+                return np.array(state)
         
         def _render(self, mode='human', close=False):
                 if close:
