@@ -1,5 +1,0 @@
-gym_drift_car.egg-info/PKG-INFO
-gym_drift_car.egg-info/SOURCES.txt
-gym_drift_car.egg-info/dependency_links.txt
-gym_drift_car.egg-info/requires.txt
-gym_drift_car.egg-info/top_level.txt
