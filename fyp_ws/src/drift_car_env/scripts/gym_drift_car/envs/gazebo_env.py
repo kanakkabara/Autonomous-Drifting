@@ -56,7 +56,7 @@ class GazeboEnv(gym.Env):
                   
                 # Learning Parameters
                 self.radius = 3
-                self.throttle = 400
+                self.throttle = 350
                 self.degreeMappings = [65, 75, 85, 90, 95, 105, 115]
                 self.radianMappings = [-0.436, -0.261799, -0.0872665, 0, 0.0872665, 0.261799, 0.436]       
                 self.maxDeviationFromCenter = 6
@@ -66,20 +66,18 @@ class GazeboEnv(gym.Env):
                 return [seed] 
                 
         def _step(self, action):
+                #TODO can look into mirroring joints to make sure the wheels spin and turn tgt                
+                
                 self.unpausePhysics()
 
-                #TODO can look into mirroring joints to make sure the wheels spin and turn tgt                
                 self.throtle1.publish(self.throttle)
 		self.throtle2.publish(self.throttle)
-        
-                if(action < 7):
-                        self.steer1.publish(self.radianMappings[action])
-		        self.steer2.publish(self.radianMappings[action])                
-                else:
-                        return
-                
+                self.steer1.publish(self.radianMappings[action])
+	        self.steer2.publish(self.radianMappings[action])                
+
                 posData = self.getPosData()
                 imuData = self.getIMUData()                
+
                 self.pausePhysics()
                 
                 # state: (x, y, theta, xDot, yDot, thetaDot)

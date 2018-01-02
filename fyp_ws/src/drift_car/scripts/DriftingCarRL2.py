@@ -166,7 +166,7 @@ epsilon_min = 0.01
 total_episodes = 10000
 max_ep_length = 300
 pretrain_steps = 10000
-load_model = True
+load_model = False
 render_env = False
 path = './model'
 
