@@ -132,7 +132,7 @@ class QNetwork():
         self.A_weights = tf.Variable(xavier_init([o_size//2, a_size]))
         
         # Regularization.
-        reg = tf.reduce_sum(tf.square(self.V_weights)) + tf.reduce_sum(tf.square(self.A_weights))
+        #reg = tf.reduce_sum(tf.square(self.V_weights)) + tf.reduce_sum(tf.square(self.A_weights))
         
         # output: batch_size x 1
         self.state_value = tf.matmul(self.V_stream, self.V_weights)
@@ -150,7 +150,8 @@ class QNetwork():
         self.action_taken_one_hot = tf.one_hot(self.actions_taken, a_size, dtype=tf.float32)
         self.predicted_Q = tf.reduce_sum(tf.multiply(self.Qout, self.action_taken_one_hot), axis=1)
         
-        self.prediction_loss = tf.reduce_mean(huber_loss(self.predicted_Q - self.target_Q)) + reg
+        self.prediction_loss = tf.reduce_mean(huber_loss(self.predicted_Q - self.target_Q))
+        # + reg
         
         # Optimizer
         self.optimizer = tf.train.AdamOptimizer(learning_rate=lr)
@@ -162,7 +163,7 @@ class QNetwork():
 # In[ ]:
 
 
-batch_size = 100
+batch_size = 2
 update_frequency = 5 # Update every 5 steps.
 gamma = 0.9 # Discount factor.
 epsilon_decay_rate = 0.9
@@ -170,7 +171,7 @@ epsilon_min = 0.01
 annealing_steps = 10000
 total_episodes = 10000
 max_ep_length = 300
-pretrain_steps = 10000
+pretrain_steps = 1000
 load_model = False
 render_env = False
 path = './model'
@@ -219,26 +220,33 @@ with tf.device('/gpu:0'):
                 saver.restore(sess, ckpt.model_checkpoint_path)
             
             for episode_count in range(1, total_episodes + 1):
+                #print("Starting new episode")
                 step_count = 0
                 episode_buffer = []
                 running_reward = 0
                 episode_loss = []
                 done = False
                 
+                #print("Pre reset")
                 s = env.reset()
+                #print("Post reset")
                 while step_count < max_ep_length and not done:
+                    #print("Pre render")
                     env.render()
+                    #print("Post render")     
                     step_count += 1
                     total_step_count += 1
                     if np.random.randn(1) < epsilon or total_step_count < pretrain_steps:
                         action = np.random.randint(0, a_size)
                     else:
-                        print("S", s)
                         action = sess.run(primary_Q_network.action_predicted, 
                                          feed_dict={primary_Q_network.state_input:[s]})[0]
+                        if total_step_count % 10 == 0:
+                                print("action", action)
                     
+                    #print("Pre action")
                     next_state, reward, done, _ = env.step(action)
-                    #print("Action taken", action, " on step count", step_count, "total_step_count", total_step_count, "next_state", next_state, "reward", reward, "done", done)
+                    #print("Post Action", action, " on step count", step_count, "total_step_count", total_step_count, "next_state", next_state, "reward", reward, "done", done)
                     d_int = 1 if done else 0
                     running_reward += reward
                     episode_buffer.append([s, action, reward, next_state, d_int])
@@ -276,7 +284,7 @@ with tf.device('/gpu:0'):
                     if epsilon > epsilon_min:
                         epsilon *= epsilon_decay_rate
                 if total_step_count > pretrain_steps and episode_count % 1 == 0:
-                    print('Saving model...')
-                    saver.save(sess, path+'/model-'+str(episode_count)+'.ckpt', global_step=total_step_count)
+                    #print('Saving model...')
+                    #saver.save(sess, path+'/model-'+str(episode_count)+'.ckpt', global_step=total_step_count)
                     refresh_chart(all_rewards, all_losses)
 

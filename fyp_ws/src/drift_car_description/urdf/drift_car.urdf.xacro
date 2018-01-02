@@ -458,7 +458,7 @@ limitations under the License.
         <topicName>/drift_car/imu_data</topicName>
         <serviceName>/drift_car/imu_service</serviceName>
         <gaussianNoise>0.0</gaussianNoise>
-        <updateRate>30.0</updateRate> 
+        <updateRate>60.0</updateRate> 
     </plugin>
   </gazebo>
 </robot>

@@ -1,3 +1,4 @@
+devel/
 build/
 bin/
 lib/
@@ -45,3 +46,9 @@ qtcreator-*
 
 # Catkin custom files
 CATKIN_IGNORE
+
+# Pip package files
+gym_drift_car.egg-info/
+
+# Model safe points
+model/

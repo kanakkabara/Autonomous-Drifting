@@ -6,7 +6,8 @@ import rospy
 from std_msgs.msg import Float64
 from std_srvs.srv import Empty
 from sensor_msgs.msg import Imu
-from gazebo_msgs.msg import ModelStates
+from gazebo_msgs.msg import ModelStates, ModelState
+from gazebo_msgs.srv import SetModelState
 
 import numpy as np
 
@@ -51,63 +52,36 @@ class GazeboEnv(gym.Env):
                 
                 self.previous_action = -1
                 self.previous_imu = {}
-                self.previous_pos = None
-                
-                while self.previous_pos is None:
-                        try:
-                                self.previous_pos = rospy.wait_for_message('/gazebo/model_states', ModelStates, timeout=5)
-                                self.previous_pos.pose[1].orientation.w = abs(posData.pose[1].orientation.w)
-                        except:
-                                pass
-                 
-                self.radius = 1
+                self.previous_pos = self.getPosData()
+                  
+                # Learning Parameters
+                self.radius = 3
+                self.throttle = 400
+                self.degreeMappings = [65, 75, 85, 90, 95, 105, 115]
+                self.radianMappings = [-0.436, -0.261799, -0.0872665, 0, 0.0872665, 0.261799, 0.436]       
+                self.maxDeviationFromCenter = 6
                 
         def _seed(self, seed=None):
                 self.np_random, seed = seeding.np_random(seed)
                 return [seed] 
                 
         def _step(self, action):
-                print("Action taken", action)
-                rospy.wait_for_service('/gazebo/unpause_physics')
-                try:
-                        self.unpause()
-                except (rospy.ServiceException) as e:
-                        print ("/gazebo/unpause_physics service call failed")
-
+                self.unpausePhysics()
 
                 #TODO can look into mirroring joints to make sure the wheels spin and turn tgt                
-                self.throtle1.publish(350)
-		self.throtle2.publish(350)
+                self.throtle1.publish(self.throttle)
+		self.throtle2.publish(self.throttle)
         
-                degreeMappings = [65, 75, 85, 90, 95, 105, 115]
-                radianMappings = [-0.436, -0.261799, -0.0872665, 0, 0.0872665, 0.261799, 0.436]              
                 if(action < 7):
-                        self.steer1.publish(radianMappings[action])
-		        self.steer2.publish(radianMappings[action])                
+                        self.steer1.publish(self.radianMappings[action])
+		        self.steer2.publish(self.radianMappings[action])                
                 else:
                         return
                 
-                imuData = None
-                posData = None
-                while imuData is None:
-                        try:
-                                imuData = rospy.wait_for_message('/drift_car/imu_data', Imu, timeout=5)
-                        except:
-                                pass
-                                
-                while posData is None:
-                        try:
-                                posData = rospy.wait_for_message('/gazebo/model_states', ModelStates, timeout=5)
-                                posData.pose[1].orientation.w = abs(posData.pose[1].orientation.w)
-                        except:
-                                pass
+                posData = self.getPosData()
+                imuData = self.getIMUData()                
+                self.pausePhysics()
                 
-                rospy.wait_for_service('/gazebo/pause_physics')
-                try:
-                        self.pause()
-                except (rospy.ServiceException) as e:
-                        print ("/gazebo/pause_physics service call failed")
-
                 # state: (x, y, theta, xDot, yDot, thetaDot)
                 state = (posData.pose[1].position.x, posData.pose[1].position.y, posData.pose[1].orientation.w,  
                     imuData.linear_acceleration.x,  imuData.linear_acceleration.y,  imuData.angular_velocity.x)
@@ -122,7 +96,7 @@ class GazeboEnv(gym.Env):
         def getReward(self, action, posData):
                 reward = 0.0
                 
-                largeActionDeltaPenalty = -100
+                largeActionDeltaPenalty = -1
                 actionDelta = self.previous_action - action
                 actionDeltaPenalty = (actionDelta ** 2) * largeActionDeltaPenalty
                 
@@ -133,9 +107,9 @@ class GazeboEnv(gym.Env):
                 prevAngle = self.previous_pos.pose[1].orientation.w
                 currAngle = posData.pose[1].orientation.w
                 if currAngle > prevAngle or abs(prevAngle - currAngle) <= angleRewardWindow:
-                        anglePotentialReward = 1
+                        anglePotentialReward = 10
                 else: 
-                        anglePotentialReward = -1
+                        anglePotentialReward = -10
                         
                 # Calculate the potential reward based on circular path.
                 x = posData.pose[1].position.x
@@ -145,48 +119,36 @@ class GazeboEnv(gym.Env):
                 reward = actionDeltaPenalty + anglePotentialReward + deviationPenalty
                 return reward
              
-        def isDone(self, posData):
-                maxDeviationFromCenter = 2
-        
+        def isDone(self, posData):       
                 #Done is true if the car ventures too far from the center of the circular drift
                 x = posData.pose[1].position.x
                 y = posData.pose[1].position.y
-                return (maxDeviationFromCenter <= ((x ** 2 + y ** 2) ** 0.5))
+                return (self.maxDeviationFromCenter <= ((x ** 2 + y ** 2) ** 0.5))
                 
         def _reset(self):
-                rospy.wait_for_service('/gazebo/reset_simulation')
+                #print("Reset called")  
+                rospy.wait_for_service('/gazebo/set_model_state')
                 try:
-                    self.reset_proxy()
+                    reset_pose = rospy.ServiceProxy('/gazebo/set_model_state', SetModelState)
+                    nullPosition = ModelState()
+                    nullPosition.model_name = "drift_car"
+                    nullPosition.pose.position.x = 0
+                    nullPosition.pose.position.y = 0
+                    nullPosition.pose.position.z = 0.1
+                    reset_pose(nullPosition)
                 except (rospy.ServiceException) as e:
-                    print ("/gazebo/reset_simulation service call failed")
+                    print ("/gazebo/set_model_state service call failed")
+                #print("Reset done")
+                
+                self.unpausePhysics()
+                posData = self.getPosData()
+                imuData = self.getIMUData()
+                self.pausePhysics()
 
-                rospy.wait_for_service('/gazebo/unpause_physics')
-                try:
-                    self.unpause()
-                except (rospy.ServiceException) as e:
-                    print ("/gazebo/unpause_physics service call failed")
-
-                imuData = None
-                posData = None
-                while imuData is None:
-                        try:
-                                imuData = rospy.wait_for_message('/drift_car/imu_data', Imu, timeout=5)
-                        except:
-                                pass
-                                
-                while posData is None:
-                        try:
-                                posData = rospy.wait_for_message('/gazebo/model_states', ModelStates, timeout=5)
-                                posData.pose[1].orientation.w = abs(posData.pose[1].orientation.w)
-                        except:
-                                pass
-
-                rospy.wait_for_service('/gazebo/pause_physics')
-                try:
-                    self.pause()
-                except (rospy.ServiceException) as e:
-                    print ("/gazebo/pause_physics service call failed")
-
+                self.previous_action = -1
+                self.previous_imu = {}
+                self.previous_pos = posData
+                                        
                 # state: (x, y, theta, xDot, yDot, thetaDot)
                 state = (posData.pose[1].position.x, posData.pose[1].position.y, posData.pose[1].orientation.w, 
                     imuData.linear_acceleration.x, imuData.linear_acceleration.y, imuData.angular_velocity.x)
@@ -209,6 +171,58 @@ class GazeboEnv(gym.Env):
                     self.gzclient_pid = int(subprocess.check_output(["pidof","-s","gzclient"]))
                 else:
                     self.gzclient_pid = 0
+    
+        def getIMUData(self):
+                #print("Fetching IMU Data")
+                imuData = None
+                while imuData is None:
+                        try:
+                                imuData = rospy.wait_for_message('/drift_car/imu_data', Imu, timeout=1)
+                        except Exception as e: 
+                                print(e)
+                                pass
+                #print("Fetched IMU Data")
+                return imuData
+                
+        def getPosData(self):
+                #print("Fetching Pos Data")
+                posData = None        
+                while posData is None:
+                        try:
+                                posData = rospy.wait_for_message('/gazebo/model_states', ModelStates, timeout=1)
+                                posData.pose[1].orientation.w = abs(posData.pose[1].orientation.w)
+                        except Exception as e: 
+                                print(e)
+                                pass
+                #print("Fetched Pos Data")
+                return posData
+    
+        def pausePhysics(self): 
+                #print("Pause called")                        
+                rospy.wait_for_service('/gazebo/pause_physics')
+                try:
+                    self.pause()
+                except (rospy.ServiceException) as e:
+                    print ("/gazebo/pause_physics service call failed")
+                #print("Pause done")
+                
+        def unpausePhysics(self):
+                #print("Unpause called")
+                rospy.wait_for_service('/gazebo/unpause_physics')
+                try:
+                    self.unpause()
+                except (rospy.ServiceException) as e:
+                    print ("/gazebo/unpause_physics service call failed")
+                #print("Unpause done")
+                    
+        def resetSimulation(self):
+                #print("Reset called")
+                rospy.wait_for_service('/gazebo/reset_simulation')
+                try:
+                    self.reset_proxy()
+                except (rospy.ServiceException) as e:
+                    print ("/gazebo/reset_simulation service call failed")
+                #print("Reset done")
     
         def _close(self):
                 tmp = os.popen("ps -Af").read()
