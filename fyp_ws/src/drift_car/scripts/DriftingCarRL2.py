@@ -207,7 +207,11 @@ if not os.path.exists(path):
     os.makedirs(path)
 
 total_step_count = 0
-with tf.Session() as sess:
+
+
+config = tf.ConfigProto()
+config.gpu_options.per_process_gpu_memory_fraction = 0.7
+with tf.Session(config=config) as sess:
     sess.run(init)    
     if load_model:
         print('Loading latest saved model...')

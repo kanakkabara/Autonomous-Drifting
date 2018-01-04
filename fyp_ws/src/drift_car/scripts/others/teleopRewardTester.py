@@ -44,7 +44,11 @@ if __name__=="__main__":
 	        while(1):
         	        env.render()
 			key = getKey()
-			if key == 'd' or key == 'a':                
+			if key == 'r':
+                                runningReward = [0]
+                                action = 3
+                                env.reset()
+			elif key == 'd' or key == 'a':                
                                 if key == 'a':
                                         action = action - 1             
                                         if action < 0:

@@ -26,10 +26,11 @@ class GazeboEnv(gym.Env):
                 
                 rospy.init_node('gym', anonymous=True)
                 
-                subprocess.Popen(["roslaunch", "drift_car_gazebo", "drift_car.launch"])
+                self.gazeboProcess = subprocess.Popen(["roslaunch", "drift_car_gazebo", "drift_car.launch"])
                 time.sleep(10)
-                subprocess.Popen(["roslaunch", "drift_car_gazebo_control", "drift_car_control.launch"])
-                
+                self.controlProcess = subprocess.Popen(["roslaunch", "drift_car_gazebo_control", "drift_car_control.launch"])
+                time.sleep(5)
+                                
                 print ("Gazebo launched!")      
                 
                 self.gzclient_pid = 0
@@ -56,7 +57,7 @@ class GazeboEnv(gym.Env):
                   
                 # Learning Parameters
                 self.radius = 3
-                self.throttle = 350
+                self.throttle = 400
                 self.degreeMappings = [65, 75, 85, 90, 95, 105, 115]
                 self.radianMappings = [-0.436, -0.261799, -0.0872665, 0, 0.0872665, 0.261799, 0.436]       
                 self.maxDeviationFromCenter = 6
@@ -170,13 +171,39 @@ class GazeboEnv(gym.Env):
                 else:
                     self.gzclient_pid = 0
     
+        def handleGazeboFailure(self):
+                print("Failed too many times, trying to restart Gazebo")
+                tmp = os.popen("ps -Af").read()
+                gzserver_count = tmp.count('gzserver')
+                gzclient_count = tmp.count('gzclient')
+                control_count = tmp.count('/usr/bin/python /opt/ros/kinetic/bin/roslaunch drift_car_gazebo_control drift_car_control.launch')               
+                
+                if gzclient_count > 0:
+                    os.system("killall -9 gzclient")
+                if gzserver_count > 0:
+                    os.system("killall -9 gzserver")    
+                if control_count > 0:
+                    os.system('pkill -TERM -P {pid}'.format(pid=self.controlProcess.pid))
+                
+                if (gzclient_count or gzserver_count or control_count > 0):
+                    os.wait()
+                        
+                self.gazeboProcess = subprocess.Popen(["roslaunch", "drift_car_gazebo", "drift_car.launch"])
+                time.sleep(10)
+                self.controlProcess = subprocess.Popen(["roslaunch", "drift_car_gazebo_control", "drift_car_control.launch"])
+                time.sleep(5)
+    
         def getIMUData(self):
                 #print("Fetching IMU Data")
+                failureCount = 0
                 imuData = None
                 while imuData is None:
                         try:
                                 imuData = rospy.wait_for_message('/drift_car/imu_data', Imu, timeout=1)
                         except Exception as e: 
+                                failureCount += 1 
+                                if failureCount % 10 == 0:
+                                        self.handleGazeboFailure()     
                                 print(e)
                                 pass
                 #print("Fetched IMU Data")
@@ -184,12 +211,16 @@ class GazeboEnv(gym.Env):
                 
         def getPosData(self):
                 #print("Fetching Pos Data")
+                failureCount = 0
                 posData = None        
                 while posData is None:
                         try:
                                 posData = rospy.wait_for_message('/gazebo/model_states', ModelStates, timeout=1)
                                 posData.pose[1].orientation.w = abs(posData.pose[1].orientation.w)
-                        except Exception as e: 
+                        except Exception as e:
+                                failureCount += 1
+                                if failureCount % 10 == 0:
+                                        self.handleGazeboFailure()          
                                 print(e)
                                 pass
                 #print("Fetched Pos Data")
