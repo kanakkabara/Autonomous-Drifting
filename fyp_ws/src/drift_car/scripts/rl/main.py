@@ -1,6 +1,8 @@
+#!/usr/bin/env python
 import argparse
 import os
 import gym
+import gym_drift_car
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import style
@@ -74,6 +76,8 @@ def train(config, env):
                     action = agent.take_action(s)
 
                 next_state, reward, done, _ = env.step(action)
+                if config.verbose:
+                        print("Post Action", action, " on step count", step_count, "total_step_count", total_step_count, "next_state", next_state, "reward", reward, "done", done)
                 d_int = 1 if done else 0
                 running_reward += reward
                 episode_buffer.append(
@@ -199,10 +203,13 @@ if __name__ == '__main__':
         action='store_true')
     parser.add_argument('--model_path', help='Path of saved model parameters',
                         default='./model')
-
+    parser.add_argument('--verbose', help='Verbose output', action='store_true')
+    
     config = parser.parse_args()
 
-    env = gym.make('MountainCar-v0')
+    #env = gym.make('MountainCar-v0')
+    env = gym.make('DriftCarGazeboEnv-v0')
+    
     # Additional network params.
     vars(config)['a_size'] = env.action_space.n
     vars(config)['s_size'] = env.observation_space.shape[0]
