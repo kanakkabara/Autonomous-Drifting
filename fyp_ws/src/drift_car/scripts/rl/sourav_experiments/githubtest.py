@@ -1,242 +1,281 @@
 import gym
 import tensorflow as tf
 import numpy as np
+from utils import target_network_update_ops, target_network_update_apply, ExperienceReplayBuffer
+from network_models import DQN
+import argparse
 
-# Create the Cart-Pole game environment
-env = gym.make('MountainCar-v0')
+def train(config, env):
+    train_episodes = config.total_episodes          # max number of episodes to learn from
+    max_steps = config.max_episode_length           # max steps in an episode
+    gamma = config.gamma                            # future reward discount
 
-class QNetwork:
-    def __init__(self, state_size, action_size, learning_rate=0.01, 
-                 hidden_size=10, 
-                 name='QNetwork'):
-        # state inputs to the Q-network
-        with tf.variable_scope(name):
-            self.inputs_ = tf.placeholder(tf.float32, [None, state_size], name='inputs')
+    # Exploration parameters
+    explore_start = 1.0                             # exploration probability at start
+    explore_stop = 0.01                             # minimum exploration probability 
+    decay_rate = config.epsilon_decay_rate          # exponential decay rate for exploration prob
+
+    # Network parameters
+    hidden_size = config.h_size               # number of units in each Q-network hidden layer
+    learning_rate = config.learning_rate         # Q-network learning rate
+
+    # Memory parameters
+    batch_size = config.batch_size                # experience mini-batch size
+    pretrain_length = batch_size   # number experiences to pretrain the memory
+
+
+
+    tf.reset_default_graph()
+    action_size = env.action_space.n
+    state_size = env.observation_space.shape[0]
+    mainQN = DQN(name='main', state_size=state_size, action_size=action_size, hidden_size=hidden_size, learning_rate=learning_rate)
+    targetQN = DQN(name='target', state_size=state_size, action_size=action_size, hidden_size=hidden_size, learning_rate=learning_rate)
+
+    targetQN_update = target_network_update_ops(tf.trainable_variables(), tau=config.tau)
+
+    # Initialize the simulation
+    env.reset()
+    # Take one random step to get the pole and cart moving
+    state, reward, done, _ = env.step(env.action_space.sample())
+
+    memory = ExperienceReplayBuffer()
+
+    # Make a bunch of random actions and store the experiences
+    for ii in range(pretrain_length):
+        # Uncomment the line below to watch the simulation
+        # env.render()
+
+        # Make a random action
+        action = env.action_space.sample()
+        next_state, reward, done, _ = env.step(action)
+
+        if done:
+            # The simulation fails so no next state
+            next_state = np.zeros(state.shape)
+            # Add experience to memory
+            memory.add((state, action, reward, next_state))
             
-            # One hot encode the actions to later choose the Q-value for the action
-            self.actions_ = tf.placeholder(tf.int32, [None], name='actions')
-            one_hot_actions = tf.one_hot(self.actions_, action_size)
-            
-            # Target Q values for training
-            self.targetQs_ = tf.placeholder(tf.float32, [None], name='target')
-            
-            # ReLU hidden layers
-            self.fc1 = tf.contrib.layers.fully_connected(self.inputs_, hidden_size)
-            self.fc2 = tf.contrib.layers.fully_connected(self.fc1, hidden_size)
-            self.fc3 = tf.contrib.layers.fully_connected(self.fc2, hidden_size)
-
-            value_stream_hid = tf.contrib.layers.fully_connected(self.fc3, hidden_size//2)
-            value_stream = tf.contrib.layers.fully_connected(value_stream_hid, 1, activation_fn=None)
-
-            advantage_stream_hid = tf.contrib.layers.fully_connected(self.fc3, hidden_size//2)
-            advantage_stream = tf.contrib.layers.fully_connected(advantage_stream_hid, action_size, activation_fn=None)
-
-            # Linear output layer
-            self.output = value_stream + tf.subtract(advantage_stream, tf.reduce_mean(advantage_stream, axis=1, keep_dims=True))
-            
-            ### Train with loss (targetQ - Q)^2
-            # output has length 2, for two actions. This next line chooses
-            # one value from output (per row) according to the one-hot encoded actions.
-            self.Q = tf.reduce_sum(tf.multiply(self.output, one_hot_actions), axis=1)
-            
-            self.loss = tf.reduce_mean(tf.square(self.targetQs_ - self.Q))
-            self.opt = tf.train.AdamOptimizer(learning_rate).minimize(self.loss)
-
-# Get the update operations to perform.
-def target_network_update_ops(tvars, tau):
-    op_holder = []
-    num_variables = len(tvars)
-    for ix, var in enumerate(tvars[0:num_variables // 2]):
-        # The trainable variables for the target network is
-        # in the second half of the list of tvars.
-        updated_value = tvars[ix + num_variables //
-                              2].value() * (1 - tau) + var.value() * tau
-        op_holder.append(tvars[ix + num_variables // 2].assign(updated_value))
-    return op_holder
-
-
-# Apply the update operations on the target network.
-def target_network_update_apply(sess, ops):
-    for op in ops:
-        sess.run(op)
-
-
-from collections import deque
-class Memory():
-    def __init__(self, max_size = 1e6):
-        self.buffer = deque(maxlen=max_size)
-    
-    def add(self, experience):
-        self.buffer.append(experience)
-            
-    def sample(self, batch_size):
-        idx = np.random.choice(np.arange(len(self.buffer)), 
-                               size=batch_size, 
-                               replace=False)
-        return [self.buffer[ii] for ii in idx]
+            # Start new episode
+            env.reset()
+            # Take one random step to get the pole and cart moving
+            state, reward, done, _ = env.step(env.action_space.sample())
+        else:
+            # Add experience to memory
+            memory.add((state, action, reward, next_state))
+            state = next_state
 
 
 
 
-train_episodes = 1000          # max number of episodes to learn from
-max_steps = 200                # max steps in an episode
-gamma = 0.99                   # future reward discount
+    # Now train with experiences
+    saver = tf.train.Saver()
+    rewards_list = []
+    with tf.Session() as sess:
+        # Initialize variables
+        sess.run(tf.global_variables_initializer())
+        summary_writer = tf.summary.FileWriter(config.summary_path, sess.graph)
+        all_summaries = tf.summary.merge_all()
 
-# Exploration parameters
-explore_start = 1.0            # exploration probability at start
-explore_stop = 0.01            # minimum exploration probability 
-decay_rate = 0.0001            # exponential decay rate for exploration prob
+        if config.load_model:
+            print('Loading latest saved model...')
+            ckpt = tf.train.get_checkpoint_path(config.model_path)
+            saver.restore(sess, ckpt.model_checkpoint_path)
 
-# Network parameters
-hidden_size = 64               # number of units in each Q-network hidden layer
-learning_rate = 0.0001         # Q-network learning rate
-
-# Memory parameters
-memory_size = 10000            # memory capacity
-batch_size = 32                # experience mini-batch size
-pretrain_length = batch_size   # number experiences to pretrain the memory
-
-
-
-tf.reset_default_graph()
-action_size = env.action_space.n
-state_size = env.observation_space.shape[0]
-mainQN = QNetwork(name='main', state_size=state_size, action_size=action_size, hidden_size=hidden_size, learning_rate=learning_rate)
-targetQN = QNetwork(name='target', state_size=state_size, action_size=action_size, hidden_size=hidden_size, learning_rate=learning_rate)
-
-targetQN_update = target_network_update_ops(tf.trainable_variables(), tau=0.999)
-
-# Initialize the simulation
-env.reset()
-# Take one random step to get the pole and cart moving
-state, reward, done, _ = env.step(env.action_space.sample())
-
-memory = Memory(max_size=memory_size)
-
-# Make a bunch of random actions and store the experiences
-for ii in range(pretrain_length):
-    # Uncomment the line below to watch the simulation
-    # env.render()
-
-    # Make a random action
-    action = env.action_space.sample()
-    next_state, reward, done, _ = env.step(action)
-
-    if done:
-        # The simulation fails so no next state
-        next_state = np.zeros(state.shape)
-        # Add experience to memory
-        memory.add((state, action, reward, next_state))
+        step = 0
+        for ep in range(1, train_episodes):
+            total_reward = 0
+            t = 0
+            while t < max_steps:
+                step += 1
+                if config.render_env:
+                    env.render() 
+                
+                # Explore or Exploit
+                explore_p = explore_stop + (explore_start - explore_stop)*np.exp(-decay_rate*step) 
+                if explore_p > np.random.rand():
+                    # Make a random action
+                    action = env.action_space.sample()
+                else:
+                    # Get action from Q-network
+                    feed = {mainQN.inputs_: [state]}
+                    Qs = sess.run(mainQN.output, feed_dict=feed)
+                    action = np.argmax(Qs)
+                
+                # Take action, get new state and reward
+                next_state, reward, done, _ = env.step(action)
         
-        # Start new episode
-        env.reset()
-        # Take one random step to get the pole and cart moving
-        state, reward, done, _ = env.step(env.action_space.sample())
-    else:
-        # Add experience to memory
-        memory.add((state, action, reward, next_state))
-        state = next_state
+                total_reward += reward
+                
+                if done:
+                    # the episode ends so no next state
+                    next_state = np.zeros(state.shape)
+                    t = max_steps
+                    
+                    print('Episode: {}'.format(ep),
+                          'Total reward: {}'.format(total_reward),
+                          'Training loss: {:.4f}'.format(loss),
+                          'Explore P: {:.4f}'.format(explore_p))
+                    rewards_list.append((ep, total_reward))
+                    
+                    # Add experience to memory
+                    memory.add((state, action, reward, next_state))
+                    
+                    # Start new episode
+                    env.reset()
+                    # Take one random step to get the pole and cart moving
+                    state, reward, done, _ = env.step(env.action_space.sample())
+
+                else:
+                    # Add experience to memory
+                    memory.add((state, action, reward, next_state))
+                    state = next_state
+                    t += 1
+                
+                # Sample mini-batch from memory
+                for i in range(3):
+                    batch = memory.sample(batch_size)
+                    states = np.array([each[0] for each in batch])
+                    actions = np.array([each[1] for each in batch])
+                    rewards = np.array([each[2] for each in batch])
+                    next_states = np.array([each[3] for each in batch])
+                    
+                    # Train network
+                    Q_main_next_state = sess.run(mainQN.output, feed_dict={mainQN.inputs_:next_states})
+                    action_next_state = np.argmax(Q_main_next_state, axis=1)
+                    Q_target_next_state = sess.run(targetQN.output, feed_dict={targetQN.inputs_:next_states})
+                    target_Qs = Q_target_next_state[range(0, batch_size), action_next_state]
+                    
+                    # Set target_Qs to 0 for states where episode ends
+                    episode_ends = (next_states == np.zeros(states[0].shape)).all(axis=1)
+                    target_Qs[episode_ends] = 0
+                    
+                    targets = rewards + gamma * target_Qs
+
+                    loss, summ, _ = sess.run([mainQN.loss, all_summaries, mainQN.opt],
+                                        feed_dict={mainQN.inputs_: states,
+                                                   mainQN.targetQs_: targets,
+                                                   mainQN.actions_: actions,
+                                                   targetQN.inputs_: states})
+
+                if step % config.summary_out_every == 0:
+                    scalar_summ = tf.Summary()
+                    scalar_summ.value.add(simple_value=explore_p, tag='Explore P')
+                    scalar_summ.value.add(simple_value=loss, tag='Mean loss')
+                    scalar_summ.value.add(simple_value=np.mean(rewards_list[-10:]), tag='Mean reward')
+                    summary_writer.add_summary(summ, step)
+                    summary_writer.add_summary(scalar_summ, step)
+
+                target_network_update_apply(sess, targetQN_update)
+
+        # Save model.
+        if config.save_model and total_step_count > config.pretrain_steps and \
+                episode_count % config.save_model_episode_interval == 0:
+            print('Saving model...')
+            agent.save_agent_state(
+                path +
+                '/model-' +
+                str(ep) +
+                '.ckpt', step)    		
 
 
 
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    # Integer hyperparams.
+    parser.add_argument(
+        '-bs',
+        "--batch_size",
+        help='The batch size for training',
+        type=int,
+        default=64)
+    parser.add_argument(
+        '-te',
+        '--total_episodes',
+        help='Total number of episodes to run algorithm (Default: 1m)',
+        type=int,
+        default=10000)
+    parser.add_argument('--max_episode_length', help='Length of each episode',
+                        type=int, default=300)
+    parser.add_argument(
+        '-re',
+        '--render_env',
+        help='Render learning environment',
+        action='store_true')
 
-# Now train with experiences
-saver = tf.train.Saver()
-rewards_list = []
-with tf.Session() as sess:
-    # Initialize variables
-    sess.run(tf.global_variables_initializer())
+    # Float hyperparameters.
+    parser.add_argument(
+        '-g',
+        '--gamma',
+        help='Discount factor',
+        type=float,
+        default=0.99)
+
+    parser.add_argument('--tau', help='Controls update rate of target network',
+                        type=float, default=0.999)
+    parser.add_argument(
+        '-lr',
+        '--learning_rate',
+        help='Learning rate of algorithm',
+        type=float,
+        default=1e-4)
+
+    parser.add_argument(
+        '-edr',
+        '--epsilon_decay_rate',
+        help='Rate of epsilon decay',
+        type=float,
+        default=0.0001)
+
+
+    # Intervals.
+    parser.add_argument(
+        '--save_model_interval',
+        help='How often to save model. (Default: 5 ep)',
+        type=int,
+        default=5)
+    parser.add_argument(
+        '-eui',
+        '--epsilon_update_interval',
+        help='How often to update epsilon (Default: 10k steps)',
+        type=int,
+        default=1e5)
+    parser.add_argument(
+        '-soe',
+        '--summary_out_every',
+        help='How often to print out summaries (Default: 200 steps)',
+        type=int,
+        default=200)
+
+    parser.add_argument(
+        '--chart_refresh_interval',
+        help='Number of episodes between chart updates (Default: 100 ep)',
+        type=int,
+        default=100)
+
+    # Model load/save and path.
+    parser.add_argument(
+        '-lm',
+        '--load_model',
+        help='Load saved model parameters',
+        action='store_true')
+    parser.add_argument(
+        '-sm',
+        '--save_model',
+        help='Periodically save model parameters',
+        action='store_true')
+    parser.add_argument('--model_path', help='Path of saved model parameters',
+                        default='./model')
+
+    parser.add_argument('--summary_path', help='Path of training summary',
+                        default='./summary/1')
+    parser.add_argument('--verbose', help='Verbose output', action='store_true')
     
-    step = 0
-    for ep in range(1, train_episodes):
-        total_reward = 0
-        t = 0
-        while t < max_steps:
-            step += 1
-            # Uncomment this next line to watch the training
-            env.render() 
-            
-            # Explore or Exploit
-            explore_p = explore_stop + (explore_start - explore_stop)*np.exp(-decay_rate*step) 
-            if explore_p > np.random.rand():
-                # Make a random action
-                action = env.action_space.sample()
-            else:
-                # Get action from Q-network
-                feed = {mainQN.inputs_: state.reshape((1, *state.shape))}
-                Qs = sess.run(mainQN.output, feed_dict=feed)
-                action = np.argmax(Qs)
-            
-            # Take action, get new state and reward
-            next_state, reward, done, _ = env.step(action)
+    config = parser.parse_args()
+
+    env = gym.make('CartPole-v0')
+    #env = gym.make('DriftCarGazeboEnv-v0')
     
-            total_reward += reward
-            
-            if done:
-                # the episode ends so no next state
-                next_state = np.zeros(state.shape)
-                t = max_steps
-                
-                print('Episode: {}'.format(ep),
-                      'Total reward: {}'.format(total_reward),
-                      'Training loss: {:.4f}'.format(loss),
-                      'Explore P: {:.4f}'.format(explore_p))
-                rewards_list.append((ep, total_reward))
-                
-                # Add experience to memory
-                memory.add((state, action, reward, next_state))
-                
-                # Start new episode
-                env.reset()
-                # Take one random step to get the pole and cart moving
-                state, reward, done, _ = env.step(env.action_space.sample())
-
-            else:
-                # Add experience to memory
-                memory.add((state, action, reward, next_state))
-                state = next_state
-                t += 1
-            
-            # Sample mini-batch from memory
-            #for k in range(20):
-            batch = memory.sample(batch_size)
-            states = np.array([each[0] for each in batch])
-            actions = np.array([each[1] for each in batch])
-            rewards = np.array([each[2] for each in batch])
-            next_states = np.array([each[3] for each in batch])
-            
-            # Train network
-            Q_main_next_state = sess.run(mainQN.output, feed_dict={mainQN.inputs_:next_states})
-            action_next_state = np.argmax(Q_main_next_state, axis=1)
-            Q_target_next_state = sess.run(targetQN.output, feed_dict={targetQN.inputs_:next_states})
-            target_Qs = Q_target_next_state[range(0, batch_size), action_next_state]
-            
-            # Set target_Qs to 0 for states where episode ends
-            episode_ends = (next_states == np.zeros(states[0].shape)).all(axis=1)
-            target_Qs[episode_ends] = 0
-            
-            targets = rewards + gamma * target_Qs
-
-            loss, _ = sess.run([mainQN.loss, mainQN.opt],
-                                feed_dict={mainQN.inputs_: states,
-                                           mainQN.targetQs_: targets,
-                                           mainQN.actions_: actions})
-
-            target_network_update_apply(sess, targetQN_update)
-        		
-    saver.save(sess, "checkpoints/cartpole.ckpt")
-
-
-
-import matplotlib.pyplot as plt
-
-def running_mean(x, N):
-    cumsum = np.cumsum(np.insert(x, 0, 0)) 
-    return (cumsum[N:] - cumsum[:-N]) / N
-
-eps, rews = np.array(rewards_list).T
-smoothed_rews = running_mean(rews, 10)
-plt.plot(eps[-len(smoothed_rews):], smoothed_rews)
-plt.plot(eps, rews, color='grey', alpha=0.3)
-plt.xlabel('Episode')
-plt.ylabel('Total Reward')
+    # Additional network params.
+    vars(config)['h_size'] = 64
+    # Train the network.
+    train(config, env)
