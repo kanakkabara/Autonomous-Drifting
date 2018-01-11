@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import tensorflow as tf 
+import tensorflow.contrib.slim as slim
 
 class DQN:
     def __init__(self, state_size, action_size, learning_rate=0.01, 
@@ -8,7 +9,7 @@ class DQN:
         # state inputs to the Q-network
         with tf.variable_scope(name):
             with tf.name_scope("Prediction"):
-                self.inputs_ = tf.placeholder(tf.float32, [None, state_size], name='inputs')
+                self.inputs_ = tf.placeholder(dtype=tf.float32, shape=[None, state_size], name='inputs')
                 # ReLU hidden layers
                 self.fc1 = self._linear(self.inputs_, hidden_size, scope='layer1')
                 self.fc2 = self._linear(self.fc1, hidden_size, scope='layer2')
@@ -41,19 +42,28 @@ class DQN:
                 self.loss = tf.reduce_mean(tf.square(self.targetQs_ - self.Q))
                 self.opt = tf.train.AdamOptimizer(learning_rate).minimize(self.loss)
 
-    def _linear(self, input, o_size, activation_fn=tf.nn.relu, scope="linear"):
-        input_size = input.get_shape().as_list()[1]
-        with tf.variable_scope(scope):
-            W = tf.get_variable('Weights', shape=[input_size, o_size], initializer=tf.contrib.layers.xavier_initializer())
-            variable_summaries(W)
-            b = tf.get_variable('b', shape=[o_size], initializer=tf.constant_initializer(0.02))
-            variable_summaries(b)
+    def _linear(self, x, o_size, activation_fn=tf.nn.relu, scope="linear"):
+    #     input_size = input_.get_shape().as_list()[1]
+    #     with tf.variable_scope(scope):
+    #         W = tf.get_variable('Weights', shape=[input_size, o_size], initializer=tf.contrib.layers.xavier_initializer(), dtype=tf.float32)
+    #         variable_summaries(W)
+    #         b = tf.get_variable('b', shape=[o_size], initializer=tf.constant_initializer(0.02))
+    #         variable_summaries(b)
             
-            out = tf.nn.bias_add(tf.matmul(input, W), b)
-            if activation_fn:
-                out = activation_fn(out)
-            tf.summary.histogram('activations', out)
-            return out
+    #         out = tf.nn.bias_add(tf.matmul(input_, W), b)
+    #         if activation_fn:
+    #             out = activation_fn(out)
+    #         tf.summary.histogram('activations', out)
+    #         return out
+
+    # def relu_linear_layer(self, x, out_size, scope='relu_batch_norm'):
+        initializer = tf.truncated_normal_initializer(0, 0.02)
+        return slim.fully_connected(x, o_size,
+                                    biases_initializer=tf.constant_initializer(0.02),
+                                    weights_initializer=initializer,
+                                    activation_fn=activation_fn,
+                                    scope=scope)
+
 
 def variable_summaries(var):
   """Attach a lot of summaries to a Tensor (for TensorBoard visualization)."""

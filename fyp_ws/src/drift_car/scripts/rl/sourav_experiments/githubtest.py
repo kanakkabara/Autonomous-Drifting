@@ -1,4 +1,5 @@
 import gym
+import gym_drift_car
 import tensorflow as tf
 import numpy as np
 from utils import target_network_update_ops, target_network_update_apply, ExperienceReplayBuffer
@@ -70,6 +71,7 @@ def train(config, env):
     # Now train with experiences
     saver = tf.train.Saver()
     rewards_list = []
+    #with tf.device('/gpu:0'):
     with tf.Session() as sess:
         # Initialize variables
         sess.run(tf.global_variables_initializer())
@@ -112,9 +114,9 @@ def train(config, env):
                     t = max_steps
                     
                     print('Episode: {}'.format(ep),
-                          'Total reward: {}'.format(total_reward),
-                          'Training loss: {:.4f}'.format(loss),
-                          'Explore P: {:.4f}'.format(explore_p))
+                        'Total reward: {}'.format(total_reward),
+                        'Training loss: {:.4f}'.format(loss),
+                        'Explore P: {:.4f}'.format(explore_p))
                     rewards_list.append((ep, total_reward))
                     
                     # Add experience to memory
@@ -127,17 +129,17 @@ def train(config, env):
 
                 else:
                     # Add experience to memory
-                    memory.add((state, action, reward, next_state))
+                    memory.add([state, action, reward, next_state])
                     state = next_state
                     t += 1
                 
                 # Sample mini-batch from memory
                 for i in range(3):
                     batch = memory.sample(batch_size)
-                    states = np.array([each[0] for each in batch])
-                    actions = np.array([each[1] for each in batch])
-                    rewards = np.array([each[2] for each in batch])
-                    next_states = np.array([each[3] for each in batch])
+                    states = np.vstack(batch[:, 0])
+                    actions = batch[:,1]
+                    rewards = batch[:, 2]
+                    next_states = np.vstack(batch[:, 3])
                     
                     # Train network
                     Q_main_next_state = sess.run(mainQN.output, feed_dict={mainQN.inputs_:next_states})
@@ -151,19 +153,21 @@ def train(config, env):
                     
                     targets = rewards + gamma * target_Qs
 
-                    loss, summ, _ = sess.run([mainQN.loss, all_summaries, mainQN.opt],
+                    loss, _ = sess.run([mainQN.loss, mainQN.opt],
                                         feed_dict={mainQN.inputs_: states,
-                                                   mainQN.targetQs_: targets,
-                                                   mainQN.actions_: actions,
-                                                   targetQN.inputs_: states})
+                                                mainQN.targetQs_: targets,
+                                                mainQN.actions_: actions
+                                                # TODO FIX ITTT
+                                                #targetQN.inputs_: []
+                                                })
 
-                if step % config.summary_out_every == 0:
-                    scalar_summ = tf.Summary()
-                    scalar_summ.value.add(simple_value=explore_p, tag='Explore P')
-                    scalar_summ.value.add(simple_value=loss, tag='Mean loss')
-                    scalar_summ.value.add(simple_value=np.mean(rewards_list[-10:]), tag='Mean reward')
-                    summary_writer.add_summary(summ, step)
-                    summary_writer.add_summary(scalar_summ, step)
+                # if step % config.summary_out_every == 0:
+                #     scalar_summ = tf.Summary()
+                #     scalar_summ.value.add(simple_value=explore_p, tag='Explore P')
+                #     scalar_summ.value.add(simple_value=loss, tag='Mean loss')
+                #     scalar_summ.value.add(simple_value=np.mean(rewards_list[-10:]), tag='Mean reward')
+                #     summary_writer.add_summary(summ, step)
+                #     summary_writer.add_summary(scalar_summ, step)
 
                 target_network_update_apply(sess, targetQN_update)
 
@@ -272,10 +276,10 @@ if __name__ == '__main__':
     
     config = parser.parse_args()
 
-    env = gym.make('CartPole-v0')
-    #env = gym.make('DriftCarGazeboEnv-v0')
+    #env = gym.make('CartPole-v0')
+    env = gym.make('DriftCarGazeboEnv-v0')
     
     # Additional network params.
-    vars(config)['h_size'] = 64
+    vars(config)['h_size'] = 500
     # Train the network.
     train(config, env)

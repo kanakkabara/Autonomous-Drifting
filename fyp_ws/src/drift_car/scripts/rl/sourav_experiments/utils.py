@@ -32,7 +32,8 @@ class ExperienceReplayBuffer():
         self.buffer.append(experience)
             
     def sample(self, batch_size):
-        idx = np.random.choice(np.arange(len(self.buffer)), 
-                               size=batch_size, 
-                               replace=False)
-        return [self.buffer[ii] for ii in idx]
+        return np.reshape(
+            np.array(
+                random.sample(
+                    self.buffer, batch_size)), [
+                batch_size, 4])

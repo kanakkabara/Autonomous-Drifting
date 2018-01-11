@@ -55,3 +55,6 @@ gym_drift_car.egg-info/
 	
 # Model safe points		
 model/
+
+#Tensorboard Summary
+summary/
