@@ -1,5 +1,5 @@
 import gym
-import gym_drift_car
+# import gym_drift_car
 import tensorflow as tf
 import numpy as np
 from utils import target_network_update_ops, target_network_update_apply, ExperienceReplayBuffer
@@ -25,13 +25,11 @@ def train(config, env):
     pretrain_length = batch_size   # number experiences to pretrain the memory
 
 
-
     tf.reset_default_graph()
     action_size = env.action_space.n
     state_size = env.observation_space.shape[0]
     mainQN = DQN(name='main', state_size=state_size, action_size=action_size, hidden_size=hidden_size, learning_rate=learning_rate)
     targetQN = DQN(name='target', state_size=state_size, action_size=action_size, hidden_size=hidden_size, learning_rate=learning_rate)
-
     targetQN_update = target_network_update_ops(tf.trainable_variables(), tau=config.tau)
 
     # Initialize the simulation
@@ -77,7 +75,6 @@ def train(config, env):
         sess.run(tf.global_variables_initializer())
         summary_writer = tf.summary.FileWriter(config.summary_path, sess.graph)
         all_summaries = tf.summary.merge_all()
-
         if config.load_model:
             print('Loading latest saved model...')
             ckpt = tf.train.get_checkpoint_path(config.model_path)
@@ -117,7 +114,7 @@ def train(config, env):
                         'Total reward: {}'.format(total_reward),
                         'Training loss: {:.4f}'.format(loss),
                         'Explore P: {:.4f}'.format(explore_p))
-                    rewards_list.append((ep, total_reward))
+                    rewards_list.append(total_reward)
                     
                     # Add experience to memory
                     memory.add((state, action, reward, next_state))
@@ -152,22 +149,23 @@ def train(config, env):
                     target_Qs[episode_ends] = 0
                     
                     targets = rewards + gamma * target_Qs
-
+                
                     loss, _ = sess.run([mainQN.loss, mainQN.opt],
                                         feed_dict={mainQN.inputs_: states,
                                                 mainQN.targetQs_: targets,
                                                 mainQN.actions_: actions
-                                                # TODO FIX ITTT
-                                                #targetQN.inputs_: []
+                                                # # TODO FIX ITTT
+                                                # targetQN.inputs_: states
                                                 })
 
-                # if step % config.summary_out_every == 0:
-                #     scalar_summ = tf.Summary()
-                #     scalar_summ.value.add(simple_value=explore_p, tag='Explore P')
-                #     scalar_summ.value.add(simple_value=loss, tag='Mean loss')
-                #     scalar_summ.value.add(simple_value=np.mean(rewards_list[-10:]), tag='Mean reward')
-                #     summary_writer.add_summary(summ, step)
-                #     summary_writer.add_summary(scalar_summ, step)
+                if step % config.summary_out_every == 0:
+                    scalar_summ = tf.Summary()
+                    scalar_summ.value.add(simple_value=explore_p, tag='Explore P')
+                    scalar_summ.value.add(simple_value=loss, tag='Mean loss')
+                    scalar_summ.value.add(simple_value=np.mean(rewards_list[-10:]), tag='Mean reward')
+                    #summary_writer.add_summary(summ, step)
+                    summary_writer.add_summary(scalar_summ, step)
+                    summary_writer.flush()
 
                 target_network_update_apply(sess, targetQN_update)
 
@@ -221,14 +219,14 @@ if __name__ == '__main__':
         '--learning_rate',
         help='Learning rate of algorithm',
         type=float,
-        default=1e-4)
+        default=1e-10)
 
     parser.add_argument(
         '-edr',
         '--epsilon_decay_rate',
         help='Rate of epsilon decay',
         type=float,
-        default=0.0001)
+        default=1e-5)
 
 
     # Intervals.
@@ -276,8 +274,8 @@ if __name__ == '__main__':
     
     config = parser.parse_args()
 
-    #env = gym.make('CartPole-v0')
-    env = gym.make('DriftCarGazeboEnv-v0')
+    env = gym.make('CartPole-v0')
+    # env = gym.make('DriftCarGazeboEnv-v0')
     
     # Additional network params.
     vars(config)['h_size'] = 500
