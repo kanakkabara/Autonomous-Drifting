@@ -12,6 +12,7 @@ from gazebo_msgs.srv import SetModelState
 import numpy as np
 
 import os
+import math
 import signal
 import subprocess
 import time
@@ -84,7 +85,7 @@ class GazeboEnv(gym.Env):
                 # state: (x, y, theta, xDot, yDot, thetaDot)
                 state = (posData.pose[1].position.x, posData.pose[1].position.y, posData.pose[1].orientation.w,  
                     imuData.linear_acceleration.x,  imuData.linear_acceleration.y,  imuData.angular_velocity.x)
-                reward = self.getReward(action, posData)
+                reward = self.getRewardExponentialCost(posData)
                 done = self.isDone(posData)
               
                 self.previous_imu = imuData
@@ -92,7 +93,24 @@ class GazeboEnv(gym.Env):
                 self.previous_action = action
                 return np.array(state), reward, done, {}
                 
-        def getReward(self, action, posData):
+
+        def getRewardExponentialCost(self, posData):
+            desiredSideVel = 4
+            desiredForwardVel = 4
+            desiredAngularVel = 4
+
+            carSideVel = posData.twist.linear.x
+            carForwardVel = posData.twist.linear.y
+            carAngularVel = posData.twist.angular.z
+
+            sigma = 1
+            deviationMagnitude = (carSideVel - desiredSideVel)**2 + \
+                                (carForwardVel - desiredForwardVel)**2 + \
+                                (carAngularVel - desiredAngularVel)**2
+
+            return 1 - math.exp(-deviationMagnitude/(2 * sigma**2))
+        
+        def getRewardPotentialBased(self, action, posData):
                 reward = 0.0
                 
                 largeActionDeltaPenalty = -1
