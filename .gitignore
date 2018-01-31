@@ -54,7 +54,7 @@ CATKIN_IGNORE
 gym_drift_car.egg-info/
 	
 # Model safe points		
-model/
+models/
 
 #Tensorboard Summary
 summary/

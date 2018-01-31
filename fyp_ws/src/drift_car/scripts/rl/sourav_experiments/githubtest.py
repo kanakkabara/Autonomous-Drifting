@@ -1,10 +1,11 @@
 import gym
-# import gym_drift_car
+import gym_drift_car
 import tensorflow as tf
 import numpy as np
 from utils import target_network_update_ops, target_network_update_apply, ExperienceReplayBuffer
 from network_models import DQN
 import argparse
+import datetime
 
 def train(config, env):
     train_episodes = config.total_episodes          # max number of episodes to learn from
@@ -77,20 +78,23 @@ def train(config, env):
         all_summaries = tf.summary.merge_all()
         if config.load_model:
             print('Loading latest saved model...')
-            ckpt = tf.train.get_checkpoint_path(config.model_path)
-            saver.restore(sess, ckpt.model_checkpoint_path)
+            ckpt = tf.train.latest_checkpoint(config.model_path)
+            saver.restore(sess, ckpt)
+            
 
-        step = 0
+        total_step_count = 0
         for ep in range(1, train_episodes):
             total_reward = 0
             t = 0
             while t < max_steps:
-                step += 1
+                total_step_count += 1
                 if config.render_env:
                     env.render() 
                 
                 # Explore or Exploit
-                explore_p = explore_stop + (explore_start - explore_stop)*np.exp(-decay_rate*step) 
+                explore_p = explore_stop + (explore_start - explore_stop)*np.exp(-decay_rate*total_step_count) 
+                if config.load_model:
+                    explore_p = 0
                 if explore_p > np.random.rand():
                     # Make a random action
                     action = env.action_space.sample()
@@ -158,27 +162,22 @@ def train(config, env):
                                                 # targetQN.inputs_: states
                                                 })
 
-                if step % config.summary_out_every == 0:
+                if total_step_count % config.summary_out_every == 0:
                     scalar_summ = tf.Summary()
                     scalar_summ.value.add(simple_value=explore_p, tag='Explore P')
                     scalar_summ.value.add(simple_value=loss, tag='Mean loss')
                     scalar_summ.value.add(simple_value=np.mean(rewards_list[-10:]), tag='Mean reward')
-                    #summary_writer.add_summary(summ, step)
-                    summary_writer.add_summary(scalar_summ, step)
+                    #summary_writer.add_summary(summ, total_step_count)
+                    summary_writer.add_summary(scalar_summ, total_step_count)
                     summary_writer.flush()
 
                 target_network_update_apply(sess, targetQN_update)
 
-        # Save model.
-        if config.save_model and total_step_count > config.pretrain_steps and \
-                episode_count % config.save_model_episode_interval == 0:
-            print('Saving model...')
-            agent.save_agent_state(
-                path +
-                '/model-' +
-                str(ep) +
-                '.ckpt', step)    		
-
+            # Save model.
+            if config.save_model and total_step_count > config.pretrain_steps and \
+                    ep % config.save_model_interval == 0:
+                print('Saving model...')
+                saver.save(sess, config.model_path +'/model' + str(ep) + '.ckpt', total_step_count)
 
 
 if __name__ == '__main__':
@@ -196,8 +195,16 @@ if __name__ == '__main__':
         help='Total number of episodes to run algorithm (Default: 1m)',
         type=int,
         default=10000)
-    parser.add_argument('--max_episode_length', help='Length of each episode',
-                        type=int, default=300)
+    parser.add_argument(
+        '--pretrain_steps',
+        help='Number of steps to run algorithm without updating networks',
+        type=int,
+        default=10000)
+    parser.add_argument(
+        '--max_episode_length',
+        help='Length of each episode',
+        type=int,
+        default=300)
     parser.add_argument(
         '-re',
         '--render_env',
@@ -211,22 +218,25 @@ if __name__ == '__main__':
         help='Discount factor',
         type=float,
         default=0.99)
-
-    parser.add_argument('--tau', help='Controls update rate of target network',
-                        type=float, default=0.999)
+    parser.add_argument(
+        '--tau',
+        help='Controls update rate of target network',                        
+        type=float,
+        default=0.999)
     parser.add_argument(
         '-lr',
         '--learning_rate',
         help='Learning rate of algorithm',
         type=float,
-        default=1e-10)
-
+        default=1e-4)
+        #default=1e-10)
     parser.add_argument(
         '-edr',
         '--epsilon_decay_rate',
         help='Rate of epsilon decay',
         type=float,
-        default=1e-5)
+        default=0.0001)
+        #default=1e-5)
 
 
     # Intervals.
@@ -247,7 +257,6 @@ if __name__ == '__main__':
         help='How often to print out summaries (Default: 200 steps)',
         type=int,
         default=200)
-
     parser.add_argument(
         '--chart_refresh_interval',
         help='Number of episodes between chart updates (Default: 100 ep)',
@@ -265,17 +274,24 @@ if __name__ == '__main__':
         '--save_model',
         help='Periodically save model parameters',
         action='store_true')
-    parser.add_argument('--model_path', help='Path of saved model parameters',
-                        default='./model')
-
-    parser.add_argument('--summary_path', help='Path of training summary',
-                        default='./summary/1')
-    parser.add_argument('--verbose', help='Verbose output', action='store_true')
+    parser.add_argument(
+        '--model_path',
+        help='Path of saved model parameters',                        
+        default='./models/'+str(datetime.datetime.now()))
+    parser.add_argument(
+        '--summary_path',
+        help='Path of training summary',
+        default='./summary/'+str(datetime.datetime.now()))
+    parser.add_argument(
+        '--verbose',
+        help='Verbose output',
+        action='store_true')
     
     config = parser.parse_args()
 
-    env = gym.make('CartPole-v0')
-    # env = gym.make('DriftCarGazeboEnv-v0')
+    # env = gym.make('CartPole-v0')
+    env = gym.make('DriftCarGazeboEnv-v0')
+    # env = gym.make('MountainCar-v0')
     
     # Additional network params.
     vars(config)['h_size'] = 500
