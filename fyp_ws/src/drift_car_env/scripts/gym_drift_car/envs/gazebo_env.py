@@ -99,16 +99,16 @@ class GazeboEnv(gym.Env):
             desiredForwardVel = 4
             desiredAngularVel = 4
 
-            carSideVel = posData.twist.linear.x
-            carForwardVel = posData.twist.linear.y
-            carAngularVel = posData.twist.angular.z
+            carSideVel = posData.twist[1].linear.x
+            carForwardVel = posData.twist[1].linear.y
+            carAngularVel = posData.twist[1].angular.z
 
             sigma = 1
             deviationMagnitude = (carSideVel - desiredSideVel)**2 + \
                                 (carForwardVel - desiredForwardVel)**2 + \
                                 (carAngularVel - desiredAngularVel)**2
 
-            return 1 - math.exp(-deviationMagnitude/(2 * sigma**2))
+            return math.exp(-deviationMagnitude/(2 * sigma**2)) - 1
         
         def getRewardPotentialBased(self, action, posData):
                 reward = 0.0
