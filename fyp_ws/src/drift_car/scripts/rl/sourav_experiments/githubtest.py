@@ -194,7 +194,7 @@ if __name__ == '__main__':
         '--total_episodes',
         help='Total number of episodes to run algorithm (Default: 1m)',
         type=int,
-        default=10000)
+        default=1000000)
     parser.add_argument(
         '--pretrain_steps',
         help='Number of steps to run algorithm without updating networks',
@@ -228,15 +228,15 @@ if __name__ == '__main__':
         '--learning_rate',
         help='Learning rate of algorithm',
         type=float,
-        default=1e-4)
-        #default=1e-10)
+        default=1e-10)
+	#default=1e-4)
     parser.add_argument(
         '-edr',
         '--epsilon_decay_rate',
         help='Rate of epsilon decay',
         type=float,
-        default=0.0001)
-        #default=1e-5)
+        default=1e-5)
+        #default=0.0001)
 
 
     # Intervals.
