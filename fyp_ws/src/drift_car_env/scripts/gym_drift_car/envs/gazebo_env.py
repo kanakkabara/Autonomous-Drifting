@@ -99,9 +99,9 @@ class GazeboEnv(gym.Env):
             desiredForwardVel = 4
             desiredAngularVel = 4
 
-            carSideVel = posData.twist[0].linear.x
-            carForwardVel = posData.twist[0].linear.y
-            carAngularVel = posData.twist[0].angular.z
+            carSideVel = posData.twist[1].linear.x
+            carForwardVel = posData.twist[1].linear.y
+            carAngularVel = posData.twist[1].angular.z
 
             sigma = 1
             deviationMagnitude = (carSideVel - desiredSideVel)**2 + \
