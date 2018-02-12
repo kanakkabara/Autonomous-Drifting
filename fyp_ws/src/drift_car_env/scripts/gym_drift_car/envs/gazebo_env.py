@@ -58,7 +58,7 @@ class GazeboEnv(gym.Env):
                   
                 # Learning Parameters
                 self.radius = 3
-                self.throttle = 400
+                self.throttle = 450
                 self.degreeMappings = [65, 75, 85, 90, 95, 105, 115]
                 self.radianMappings = [-0.436, -0.261799, -0.0872665, 0, 0.0872665, 0.261799, 0.436]       
                 self.maxDeviationFromCenter = 4
