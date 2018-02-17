@@ -36,7 +36,7 @@ class DQNetwork():
             activation_fn=None,
             scope=name+'-value2')
 
-        advantage = self.relu_linear_layer(layer3, o_size, name+'-adv1')
+        advantage = self.relu_linear_layer(layer4, o_size, name+'-adv1')
         advantage = slim.fully_connected(advantage, a_size,
             biases_initializer=tf.constant_initializer(0.02),
             weights_initializer=tf.truncated_normal_initializer(0, 0.02),
@@ -62,7 +62,7 @@ class DQNetwork():
         self.update = self.optimizer.minimize(self.prediction_loss)
 
     def relu_linear_layer(self, x, out_size, scope='relu_batch_norm'):
-        initializer = tf.truncated_normal_initializer()
+        initializer = tf.truncated_normal_initializer(0, 0.02)
         return slim.fully_connected(x, out_size,
                                     biases_initializer=tf.constant_initializer(0.02),
                                     weights_initializer=initializer,

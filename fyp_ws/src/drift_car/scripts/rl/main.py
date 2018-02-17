@@ -38,8 +38,12 @@ def train(config, env):
     epsilon = 1.0
     tf.reset_default_graph()
     annealing_rate = (epsilon - config.epsilon_min) / config.total_episodes
-    with tf.Session() as sess:
-        agent = QAgent(sess, config)
+
+    tfConfig = tf.ConfigProto()
+    tfConfig.gpu_options.per_process_gpu_memory_fraction = config.gpu
+    with tf.Session(config=tfConfig) as sess:
+#       agent = QAgent(sess, config)
+        agent = DDQNAgent(sess, config)
         sess.run(tf.global_variables_initializer())
         fig.show()
         fig.canvas.draw()
@@ -205,9 +209,10 @@ if __name__ == '__main__':
     parser.add_argument('--model_path', help='Path of saved model parameters',
                         default='./model')
     parser.add_argument('--verbose', help='Verbose output', action='store_true')
-    
+    parser.add_argument('--gpu', help='GPU Fraction', type=float, default=1.0)
     config = parser.parse_args()
 
+    #env = gym.make('MountainCar-v0')   
     env = gym.make('CartPole-v0')
     #env = gym.make('DriftCarGazeboEnv-v0')
     
