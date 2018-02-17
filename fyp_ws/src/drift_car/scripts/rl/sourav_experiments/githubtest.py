@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import gym
 import gym_drift_car
 import tensorflow as tf
@@ -6,6 +7,8 @@ from utils import target_network_update_ops, target_network_update_apply, Experi
 from network_models import DQN
 import argparse
 import datetime
+import json
+import os
 
 def train(config, env):
     train_episodes = config.total_episodes          # max number of episodes to learn from
@@ -171,6 +174,13 @@ def train(config, env):
                     summary_writer.add_summary(scalar_summ, total_step_count)
                     summary_writer.flush()
 
+                    if os.path.exists(config.summary_path):
+                        with open(config.summary_path+'/hyperparams.json', 'w') as fp:
+                            jsonDict = {"config" : vars(config)}
+                            jsonDict["total_step_count"] = total_step_count
+                            jsonDict["explore_p"] = explore_p
+                            json.dump(jsonDict, fp, sort_keys=True, indent=4)
+
                 target_network_update_apply(sess, targetQN_update)
 
             # Save model.
@@ -178,7 +188,6 @@ def train(config, env):
                     ep % config.save_model_interval == 0:
                 print('Saving model...')
                 saver.save(sess, config.model_path +'/model' + str(ep) + '.ckpt', total_step_count)
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

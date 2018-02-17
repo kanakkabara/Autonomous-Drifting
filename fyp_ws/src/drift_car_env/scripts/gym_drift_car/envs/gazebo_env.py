@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import gym
 from gym import error, spaces, utils
 from gym.utils import seeding
@@ -21,9 +22,12 @@ from os import path
 class GazeboEnv(gym.Env):
         metadata = {'render.modes': ['human']}
         def __init__(self):
-                subprocess.Popen("roscore")
-                time.sleep(1)
-                print ("Roscore launched!")
+                tmp = os.popen("ps -Af").read()
+                roscore_count = tmp.count('roscore')
+                if roscore_count == 0:
+                    subprocess.Popen("roscore")
+                    time.sleep(1)
+                    print ("Roscore launched!")
                 
                 rospy.init_node('gym', anonymous=True)
                 
