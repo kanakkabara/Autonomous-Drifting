@@ -9,7 +9,7 @@ from matplotlib import style
 import tensorflow as tf
 import time
 
-from agents import DDQNAgent
+from agents import DDQNAgent, QAgent
 style.use('fivethirtyeight')
 
 fig = plt.figure(figsize=(10, 10))
@@ -38,9 +38,11 @@ def train(config, env):
     epsilon = 1.0
     tf.reset_default_graph()
     annealing_rate = (epsilon - config.epsilon_min) / config.total_episodes
+
     tfConfig = tf.ConfigProto()
     tfConfig.gpu_options.per_process_gpu_memory_fraction = config.gpu
     with tf.Session(config=tfConfig) as sess:
+#       agent = QAgent(sess, config)
         agent = DDQNAgent(sess, config)
         sess.run(tf.global_variables_initializer())
         fig.show()
@@ -76,6 +78,7 @@ def train(config, env):
                     action = np.random.randint(0, config.a_size)
                 else:
                     action = agent.take_action(s)
+                    print(action)
 
                 next_state, reward, done, _ = env.step(action)
                 if config.verbose:
@@ -158,9 +161,9 @@ if __name__ == '__main__':
         '--epsilon_min',
         help='Minimum allowable value for epsilon',
         type=float,
-        default=0.01)
+        default=0.0)
     parser.add_argument('--tau', help='Controls update rate of target network',
-                        type=float, default=0.01)
+                        type=float, default=0.1)
     parser.add_argument(
         '-lr',
         '--learning_rate',
@@ -216,7 +219,7 @@ if __name__ == '__main__':
     # Additional network params.
     vars(config)['a_size'] = env.action_space.n
     vars(config)['s_size'] = env.observation_space.shape[0]
-    vars(config)['h_size'] = 512
-    vars(config)['o_size'] = 512
+    vars(config)['h_size'] = 200
+    vars(config)['o_size'] = 200
     # Train the network.
     train(config, env)

@@ -48,16 +48,16 @@ if __name__=="__main__":
                                 runningReward = [0]
                                 action = 3
                                 env.reset()
+                                env.step(action)
 			elif key == 'd' or key == 'a':                
-                                if key == 'a':
+                                if key == 'd':
                                         action = action - 1             
                                         if action < 0:
                                                 action = 0
-                                if key == 'd':  
+                                if key == 'a':  
                                         action = action + 1
                                         if action > 6:
                                                 action = 6
-                                print(action)
                                 next_state, reward, done, _ = env.step(action)
                                 runningReward.append(runningReward[-1] + reward)
 			elif (key == '\x03'):
