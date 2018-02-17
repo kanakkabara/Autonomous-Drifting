@@ -1,144 +1,77 @@
 #!/usr/bin/env python
-import tensorflow as tf
+import tensorflow as tf 
 import tensorflow.contrib.slim as slim
-import numpy as np
-from utilities import huber_loss
 
-# Dueling DQN model.
+class DQN:
+    def __init__(self, state_size, action_size, learning_rate=0.01, 
+                 hidden_size=10, 
+                 name='QNetwork'):
+        # state inputs to the Q-network
+        with tf.variable_scope(name):
+            with tf.name_scope("Prediction"):
+                self.inputs_ = tf.placeholder(dtype=tf.float32, shape=[None, state_size], name='inputs')
+                # ReLU hidden layers
+                self.fc1 = self._linear(self.inputs_, hidden_size, scope='layer1')
+                self.fc2 = self._linear(self.fc1, hidden_size, scope='layer2')
+                self.fc3 = self._linear(self.fc2, hidden_size, scope='layer3')
 
+                value_stream_hid = self._linear(self.fc3, hidden_size//2, scope='value_hid')
+                #tf.contrib.layers.fully_connected(self.fc3, hidden_size//2)
+                value_stream = self._linear(value_stream_hid, 1, activation_fn=None, scope='value_stream')
+                #tf.contrib.layers.fully_connected(value_stream_hid, 1, activation_fn=None)
 
-class DQNetwork():
-    def __init__(self, lr, s_size, a_size, h_size, o_size, name):
-        if o_size % 2 != 0:
-            raise ValueError('Number of outputs from final layer must be even')
+                advantage_stream_hid = self._linear(self.fc3, hidden_size//2, scope='adv_hid')
+                #tf.contrib.layers.fully_connected(self.fc3, hidden_size//2)
+                advantage_stream = self._linear(advantage_stream_hid, action_size, activation_fn=None, scope='adv_stream')
+                #tf.contrib.layers.fully_connected(advantage_stream_hid, action_size, activation_fn=None)
+                
 
-        # Forward pass of the network.
-        # output: batch_size x s_size
-        self.state_input = tf.placeholder(
-            shape=[None, s_size], dtype=tf.float32)
+                # Linear output layer
+                self.output = value_stream + tf.subtract(advantage_stream, tf.reduce_mean(advantage_stream, axis=1, keep_dims=True))    
 
-        #initializer = tf.truncated_normal_initializer(0, 0.02)
-        # output: batch_size x h_size
-        layer1 = self.relu_linear_layer(
-            self.state_input, h_size, name + "-layer1")
-        # Layer 2.
-        layer2 = self.relu_linear_layer(layer1, h_size, name + "-layer2")
-        # Layer 3
-        layer3 = self.relu_linear_layer(layer2, h_size, name + "-layer3")
+            with tf.name_scope('Training'):
+                # One hot encode the actions to later choose the Q-value for the action
+                self.actions_ = tf.placeholder(tf.int32, [None], name='actions')
+                one_hot_actions = tf.one_hot(self.actions_, action_size)
+                # Target Q values for training
+                self.targetQs_ = tf.placeholder(tf.float32, [None], name='target')
 
-        # Layer 4
-        self.layer4 = self.relu_linear_layer(layer3, a_size, name + "-Qout")
+                ### Train with loss (targetQ - Q)^2
+                self.Q = tf.reduce_sum(tf.multiply(self.output, one_hot_actions), axis=1)
+                
+                self.loss = tf.reduce_mean(tf.square(self.targetQs_ - self.Q))
+                self.opt = tf.train.AdamOptimizer(learning_rate).minimize(self.loss)
 
-        value = self.relu_linear_layer(layer4, o_size, name+'-value1')
-        value = slim.fully_connected(value, 1, 
-            biases_initializer=tf.constant_initializer(0.02),
-            weights_initializer=tf.truncated_normal_initializer(0, 0.02),
-            activation_fn=None,
-            scope=name+'-value2')
+    def _linear(self, x, o_size, activation_fn=tf.nn.relu, scope="linear"):
+    #     input_size = input_.get_shape().as_list()[1]
+    #     with tf.variable_scope(scope):
+    #         W = tf.get_variable('Weights', shape=[input_size, o_size], initializer=tf.contrib.layers.xavier_initializer(), dtype=tf.float32)
+    #         variable_summaries(W)
+    #         b = tf.get_variable('b', shape=[o_size], initializer=tf.constant_initializer(0.02))
+    #         variable_summaries(b)
+            
+    #         out = tf.nn.bias_add(tf.matmul(input_, W), b)
+    #         if activation_fn:
+    #             out = activation_fn(out)
+    #         tf.summary.histogram('activations', out)
+    #         return out
 
-        advantage = self.relu_linear_layer(layer4, o_size, name+'-adv1')
-        advantage = slim.fully_connected(advantage, a_size,
-            biases_initializer=tf.constant_initializer(0.02),
-            weights_initializer=tf.truncated_normal_initializer(0, 0.02),
-            activation_fn=None,
-            scope=name+'-adv2')
-
-        self.Qout = value + tf.subtract(advantage, tf.reduce_mean(advantage, axis=1, keep_dims=True))
-        # Predict action that maximizes Q-value.
-        self.action_predicted = tf.argmax(self.Qout, axis=1)
-
-        # Evaluate loss and backward pass.
-        self.target_Q = tf.placeholder(shape=[None], dtype=tf.float32, name='target_q')
-        self.actions_taken = tf.placeholder(shape=[None], dtype=tf.int32, name='action_taken')
-        self.action_taken_one_hot = tf.one_hot(
-            self.actions_taken, a_size, 1.0, 0.0, dtype=tf.float32, name='action_one_hot')
-        self.predicted_Q = tf.reduce_sum(self.Qout * self.action_taken_one_hot, axis=1)
-
-        self.prediction_loss = tf.reduce_mean(
-            huber_loss(self.predicted_Q - self.target_Q))
-
-        # Optimizer
-        self.optimizer = tf.train.AdamOptimizer(learning_rate=lr)
-        self.update = self.optimizer.minimize(self.prediction_loss)
-
-    def relu_linear_layer(self, x, out_size, scope='relu_batch_norm'):
+    # def relu_linear_layer(self, x, out_size, scope='relu_batch_norm'):
         initializer = tf.truncated_normal_initializer(0, 0.02)
-        return slim.fully_connected(x, out_size,
+        return slim.fully_connected(x, o_size,
                                     biases_initializer=tf.constant_initializer(0.02),
                                     weights_initializer=initializer,
-                                    activation_fn=tf.nn.relu,
+                                    activation_fn=activation_fn,
                                     scope=scope)
 
 
-
-class QNetwork():
-    def __init__(self, lr, s_size, a_size, h_size, o_size, name):
-        # if o_size % 2 != 0:
-        #     raise ValueError('Number of outputs from final layer must be even')
-
-        # # Forward pass of the network.
-        # # output: batch_size x s_size
-        # self.state_input = tf.placeholder(
-        #     shape=[None, s_size], dtype=tf.float32)
-
-        # # output: batch_size x h_size
-        # layer1 = self.relu_linear_layer(
-        #     self.state_input, h_size, name + "-layer1")
-        # # Layer 2.
-        # layer2 = self.relu_linear_layer(layer1, h_size, name + "-layer2")
-
-
-        # self.Qout = slim.fully_connected(layer2, a_size, biases_initializer=tf.constant_initializer(0.02),
-        # weights_initializer=tf.truncated_normal_initializer(0, 0.02), activation_fn=None, scope=name+"-Qout")
-
-        # # Predict action that maximizes Q-value.
-        # self.action_predicted = tf.argmax(self.Qout, axis=1)
-
-        # # Evaluate loss and backward pass.
-        # self.target_Q = tf.placeholder(shape=[None], dtype=tf.float32, name='target_q')
-        # self.actions_taken = tf.placeholder(shape=[None], dtype=tf.int32, name='action_taken')
-        # self.action_taken_one_hot = tf.one_hot(
-        #     self.actions_taken, a_size, 1.0, 0.0, dtype=tf.float32, name='action_one_hot')
-        # self.predicted_Q = tf.reduce_sum(self.Qout * self.action_taken_one_hot, axis=1)
-
-        # self.prediction_loss = tf.reduce_mean(
-        #     huber_loss(self.predicted_Q - self.target_Q))
-
-        # # Optimizer
-        # self.optimizer = tf.train.AdamOptimizer(learning_rate=lr)
-        # self.update = self.optimizer.minimize(self.prediction_loss)
-
-
-        #These lines establish the feed-forward part of the network used to choose actions
-        self.state_input = tf.placeholder(shape=[None, s_size],dtype=tf.float32)
-        layer1  = self.relu_linear_layer(self.state_input, h_size, "layer1")
-        layer2  = self.relu_linear_layer(layer1, h_size, "layer2")
-        layer3  = self.relu_linear_layer(layer2, h_size, "layer3")
-        layer4  = self.relu_linear_layer(layer3, h_size, "layer4")
-        layer5  = self.relu_linear_layer(layer4, h_size, "layer5")
-        # layer6  = self.relu_linear_layer(layer5, h_size, "layer6")
-        # layer7  = self.relu_linear_layer(layer6, h_size, "layer7")
-        # layer8  = self.relu_linear_layer(layer7, h_size, "layer8")
-        # layer9  = self.relu_linear_layer(layer8, h_size, "layer9")
-        self.Qout = slim.fully_connected(layer5, a_size, biases_initializer=tf.constant_initializer(0.02),
-            weights_initializer=tf.truncated_normal_initializer(0, 0.02), activation_fn=None, scope=name+"-Qout")
-
-        self.action_predicted = tf.argmax(self.Qout,1)
-
-        #Below we obtain the loss by taking the sum of squares difference between the target and prediction Q values.
-        self.target_Q = tf.placeholder(shape=[None],dtype=tf.float32)
-        self.actions_taken = tf.placeholder(shape=[None], dtype=tf.int32)
-        self.actions_one_hot = tf.one_hot(self.actions_taken, a_size, 1.0, 0.0, name="one_hot", dtype=tf.float32)
-        self.predicted_Q = tf.reduce_sum(self.Qout * self.actions_one_hot, axis=1)
-        self.prediction_loss = tf.reduce_sum(tf.square(self.target_Q - self.predicted_Q))
-        self.optimizer = tf.train.AdamOptimizer(learning_rate=lr)
-        self.update = self.optimizer.minimize(self.prediction_loss)
-
-    def relu_linear_layer(self, x, out_size, scope='relu_batch_norm'):
-        initializer = tf.truncated_normal_initializer(0, 0.02)
-        return slim.fully_connected(x, out_size,
-                                    biases_initializer=tf.constant_initializer(0.02),
-                                    weights_initializer=initializer,
-                                    activation_fn=tf.nn.relu,
-                                    scope=scope)
-
+def variable_summaries(var):
+  """Attach a lot of summaries to a Tensor (for TensorBoard visualization)."""
+  mean = tf.reduce_mean(var)
+  tf.summary.scalar('mean', mean)
+  with tf.name_scope('stddev'):
+    stddev = tf.sqrt(tf.reduce_mean(tf.square(var - mean)))
+  tf.summary.scalar('stddev', stddev)
+  tf.summary.scalar('max', tf.reduce_max(var))
+  tf.summary.scalar('min', tf.reduce_min(var))
+  tf.summary.histogram('histogram', var)
