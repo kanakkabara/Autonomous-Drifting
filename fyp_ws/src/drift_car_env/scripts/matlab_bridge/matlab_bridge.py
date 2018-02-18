@@ -2,7 +2,7 @@
 import rospy
 import gym
 import gym_drift_car
-from std_msgs.msg import Int8, Float64MultiArray, MultiArrayLayout, MultiArrayDimension
+from std_msgs.msg import Int8, Float64, Float64MultiArray, MultiArrayLayout, MultiArrayDimension
 import numpy 
 import os
 import subprocess
@@ -39,9 +39,9 @@ if __name__ == '__main__':
         time.sleep(1)
         print ("Roscore launched!")
 
-    env = gym.make('DriftCarGazeboEnv-v0')
+    env = gym.make('DriftCarGazeboContinuous-v0')
     pub = rospy.Publisher('matlab_bridge/state', Float64MultiArray, queue_size=1)    
-    rospy.Subscriber('matlab_bridge/action', Int8, callback, (env, pub))
+    rospy.Subscriber('matlab_bridge/action', Float64, callback, (env, pub))
     
     env.reset()
     rospy.spin()
