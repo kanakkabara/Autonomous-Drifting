@@ -58,7 +58,7 @@ class GazeboEnv(gym.Env):
                 else:
                         self.degreeMappings = [65, 75, 85, 90, 95, 105, 115]
                         self.radianMappings = [-0.436, -0.261799, -0.0872665, 0, 0.0872665, 0.261799, 0.436] 
-                        self.action_space = spaces.Discrete(len(degreeMappings))
+                        self.action_space = spaces.Discrete(len(self.degreeMappings))
                 
                 high = np.array([np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max])
                 self.observation_space = spaces.Box(-high, high)   
@@ -71,7 +71,7 @@ class GazeboEnv(gym.Env):
                   
                 # Learning Parameters
                 self.radius = 3
-                self.throttle = 450      
+                self.throttle = 400      
                 self.maxDeviationFromCenter = 4
                 
         def _seed(self, seed=None):
@@ -94,37 +94,37 @@ class GazeboEnv(gym.Env):
                         self.steer2.publish(self.radianMappings[action])                
 
                 posData = self.getPosData()
-                imuData = self.getIMUData()                
+                #imuData = self.getIMUData()                
 
                 self.pausePhysics()
                 
                 # state: (x, y, theta, xDot, yDot, thetaDot)
                 state = (posData.pose[1].position.x, posData.pose[1].position.y, posData.pose[1].orientation.w,  
-                    imuData.linear_acceleration.x,  imuData.linear_acceleration.y,  imuData.angular_velocity.x)
+                    posData.twist[1].linear.x,  posData.twist[1].linear.y,  posData.twist[1].angular.x)
                 reward = self.getRewardExponentialCost(posData)
                 done = self.isDone(posData)
               
-                self.previous_imu = imuData
+                #self.previous_imu = imuData
                 self.previous_pos = posData     
                 self.previous_action = action
                 return np.array(state), reward, done, {}
                 
 
         def getRewardExponentialCost(self, posData):
-            desiredSideVel = 4
-            desiredForwardVel = 4
-            desiredAngularVel = 4
+                desiredSideVel = 4
+                desiredForwardVel = 4
+                desiredAngularVel = 4
 
-            carSideVel = posData.twist[1].linear.x
-            carForwardVel = posData.twist[1].linear.y
-            carAngularVel = posData.twist[1].angular.z
+                carSideVel = posData.twist[1].linear.x
+                carForwardVel = posData.twist[1].linear.y
+                carAngularVel = posData.twist[1].angular.z
 
-            sigma = 1
-            deviationMagnitude = (carSideVel - desiredSideVel)**2 + \
+                sigma = 1
+                deviationMagnitude = (carSideVel - desiredSideVel)**2 + \
                                 (carForwardVel - desiredForwardVel)**2 + \
                                 (carAngularVel - desiredAngularVel)**2
 
-            return math.exp(-deviationMagnitude/(2 * sigma**2)) - 1
+                return math.exp(-deviationMagnitude/(2 * sigma**2)) - 1
         
         def getRewardPotentialBased(self, action, posData):
                 reward = 0.0
