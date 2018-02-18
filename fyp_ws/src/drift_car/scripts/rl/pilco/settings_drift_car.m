@@ -13,11 +13,11 @@
 
 rand('seed',1); randn('seed',1); format short; format compact; 
 % include some paths
-try
-  rd = '../modules/pilco-matlab/';
-  addpath([rd 'base'],[rd 'util'],[rd 'gp'],[rd 'control'],[rd 'loss']);
-catch
-end
+% try
+%   rd = '../modules/pilco-matlab/';
+%   addpath([rd 'base'],[rd 'util'],[rd 'gp'],[rd 'control'],[rd 'loss']);
+% catch
+% end
 
 
 % 1. Define state and important indices
@@ -53,7 +53,7 @@ difi = [1 2 3 4 5 6];        % variables that are learned via differences
 dt = 0.10;                         % [s] sampling time
 T = 8.0;                           % [s] initial prediction horizon time
 H = ceil(T/dt);                    % prediction steps (optimization horizon)
-mu0 = [0 0 0 0 0 0 0]';            % initial state mean
+mu0 = [0 0 0 0 0 0]';             % initial state mean
 S0 = diag([0.1 0.1 0.1 0.1 0.1 0.1].^2);
 N = 15;                            % number controller optimizations
 J = 3;                             % initial J trajectories of length H
@@ -62,39 +62,44 @@ nc = 10;                          % number of controller basis functions
 
 % 3. Plant structure
 %plant.dynamics = @dynamics_cp;                    % dynamics ode function
-%plant.noise = diag(ones(1,4)*0.01.^2);            % measurement noise
+plant.noise = diag(ones(1,6)*0.01.^2);            % measurement noise
 %plant.dt = dt;
 %plant.ctrl = @zoh;                                % controler is zero order hold
-%plant.augi = augi;
-%plant.angi = angi;
-%plant.poli = poli;
-%plant.dyno = dyno;
-%plant.dyni = dyni;
-%plant.difi = difi;
+plant.augi = augi;
+plant.angi = angi;
+plant.odei = odei;
+plant.poli = poli;
+plant.dyno = dyno;
+plant.dyni = dyni;
+plant.difi = difi;
 plant.prop = @propagated;
+plant.actionPub = rospublisher('/matlab_bridge/action', 'std_msgs/Float64');
+plant.stateSub = rossubscriber('/matlab_bridge/state');
 
 % 4. Policy structure
 policy.fcn = @(policy,m,s)conCat(@congp,@gSat,policy,m,s);% controller 
                                                           % representation
-policy.maxU = 0.436;                                         % max. amplitude of 
+policy.maxU = 0.436;                                      % max. amplitude of 
                                                           % control
 [mm ss cc] = gTrig(mu0, S0, plant.angi);                  % represent angles 
-mm = [mu0; mm]; cc = S0*cc; ss = [S0 cc; cc' ss];         % in complex plane          
+mm = [mu0; mm]; 
+cc = S0*cc; 
+ss = [S0 cc; cc' ss];         % in complex plane          
 policy.p.inputs = gaussian(mm(poli), ss(poli,poli), nc)'; % init. location of 
                                                           % basis functions
 policy.p.targets = 0.1*randn(nc, length(policy.maxU));    % init. policy targets 
                                                           % (close to zero)
-policy.p.hyp = log([1 1 1 0.7 0.7 1 0.01])';              % initialize policy
+policy.p.hyp = log([1 1 1 1 1 0.7 0.7 1 0.01])';              % initialize policy
                                                           % hyper-parameters
 
 % 5. Set up the cost structure
-cost.fcn = @loss_cp;                       % cost function
+cost.fcn = @loss_drift_car;                       % cost function
 cost.gamma = 1;                            % discount factor
 cost.p = 0.5;                              % length of pendulum
 cost.width = 0.25;                         % cost function width
 cost.expl =  0.0;                          % exploration parameter (UCB)
 cost.angle = plant.angi;                   % index of angle (for cost function)
-cost.target = [0 0 0 pi]';                 % target state
+cost.target = [0 0 0 0 0 0]';                 % target state
 
 % 6. Dynamics model structure
 dynmodel.fcn = @gp1d;                % function for GP predictions
@@ -109,7 +114,7 @@ trainOpt = [300 500];                % defines the max. number of line searches
 opt.length = 150;                        % max. number of line searches
 opt.MFEPLS = 30;                         % max. number of function evaluations
                                          % per line search
-opt.verbosity = 0;                       % verbosity: specifies how much 
+opt.verbosity = 3;                       % verbosity: specifies how much 
                                          % information is displayed during
                                          % policy learning. Options: 0-3
 
