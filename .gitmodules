@@ -1,3 +1,0 @@
-[submodule "fyp_ws/src/drift_car/scripts/rl/pilco-matlab"]
-	path = fyp_ws/src/drift_car/scripts/rl/pilco-matlab
-	url = https://github.com/ICL-SML/pilco-matlab.git
