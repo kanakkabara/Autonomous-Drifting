@@ -101,7 +101,7 @@ class GazeboEnv(gym.Env):
                 # state: (x, y, theta, xDot, yDot, thetaDot)
                 state = (posData.pose[1].position.x, posData.pose[1].position.y, posData.pose[1].orientation.w,  
                     posData.twist[1].linear.x,  posData.twist[1].linear.y,  posData.twist[1].angular.z)
-                reward = self.getRewardExponentialCost(posData)
+                reward = self.getRewardExponential(posData)
                 done = self.isDone(posData)
               
                 #self.previous_imu = imuData
@@ -110,16 +110,16 @@ class GazeboEnv(gym.Env):
                 return np.array(state), reward, done, {}
                 
 
-        def getRewardExponentialCost(self, posData):
+        def getRewardExponential(self, posData):
                 desiredSideVel = 4
                 desiredForwardVel = 4
-                desiredAngularVel = 4
+                desiredAngularVel = 8
 
                 carSideVel = posData.twist[1].linear.x
                 carForwardVel = posData.twist[1].linear.y
                 carAngularVel = posData.twist[1].angular.z
 
-                sigma = 1
+                sigma = 0.5
                 deviationMagnitude = (carSideVel - desiredSideVel)**2 + \
                                 (carForwardVel - desiredForwardVel)**2 + \
                                 (carAngularVel - desiredAngularVel)**2
