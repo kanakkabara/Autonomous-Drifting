@@ -100,7 +100,7 @@ class GazeboEnv(gym.Env):
                 
                 # state: (x, y, theta, xDot, yDot, thetaDot)
                 state = (posData.pose[1].position.x, posData.pose[1].position.y, posData.pose[1].orientation.w,  
-                    posData.twist[1].linear.x,  posData.twist[1].linear.y,  posData.twist[1].angular.x)
+                    posData.twist[1].linear.x,  posData.twist[1].linear.y,  posData.twist[1].angular.z)
                 reward = self.getRewardExponentialCost(posData)
                 done = self.isDone(posData)
               

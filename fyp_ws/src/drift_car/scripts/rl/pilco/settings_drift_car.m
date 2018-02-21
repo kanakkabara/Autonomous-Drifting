@@ -43,7 +43,7 @@ rand('seed',1); randn('seed',1); format short; format compact;
 odei = [1 2 3 4 5 6];
 augi = [];                   % variables to be augmented
 dyno = [1 2 3 4 5 6];        % variables to be predicted (and known to loss)
-angi = [3]                   % angle variables
+angi = [3];                  % angle variables
 dyni = [1 2 4 5 6 7 8];      % variables that serve as inputs to the dynamics GP
 poli = [1 2 4 5 6 7 8];      % variables that serve as inputs to the policy
 difi = [1 2 3 4 5 6];        % variables that are learned via differences
@@ -51,7 +51,7 @@ difi = [1 2 3 4 5 6];        % variables that are learned via differences
 
 % 2. Set up the scenario
 dt = 0.10;                         % [s] sampling time
-T = 8.0;                           % [s] initial prediction horizon time
+T = 15.0;                           % [s] initial prediction horizon time
 H = ceil(T/dt);                    % prediction steps (optimization horizon)
 mu0 = [0 0 0 0 0 0]';             % initial state mean
 S0 = diag([0.1 0.1 0.1 0.1 0.1 0.1].^2);
@@ -96,10 +96,10 @@ policy.p.hyp = log([1 1 1 1 1 0.7 0.7 1 0.01])';              % initialize polic
 cost.fcn = @loss_drift_car;                       % cost function
 cost.gamma = 1;                            % discount factor
 cost.p = 0.5;                              % length of pendulum
-cost.width = 0.25;                         % cost function width
+cost.width = 0.5;                         % cost function width
 cost.expl =  0.0;                          % exploration parameter (UCB)
 cost.angle = plant.angi;                   % index of angle (for cost function)
-cost.target = [0 0 0 0 0 0]';                 % target state
+cost.target = [0 0 0 4 4 8]';              % target state
 
 % 6. Dynamics model structure
 dynmodel.fcn = @gp1d;                % function for GP predictions
