@@ -23,12 +23,7 @@ basename = 'driftCar_';           % filename used for saving data
 for jj = 1:J
   [xx, yy, realCost{jj}, latent{jj}] = ...
     rollout(gaussian(mu0, S0), struct('maxU',policy.maxU), H, plant, cost);
-  x = [x; xx]; y = [y; yy];       % augment training sets for dynamics model
-  if plotting.verbosity > 0;      % visualization of trajectory
-    if ~ishandle(1); figure(1); else set(0,'CurrentFigure',1); end; clf(1);
-    draw_rollout_cp;
-  end
-  
+  x = [x; xx]; y = [y; yy];       % augment training sets for dynamics model  
 end
 
 mu0Sim(odei,:) = mu0; S0Sim(odei,odei) = S0;
@@ -40,8 +35,4 @@ for j = 1:N
   learnPolicy;     % learn policy
   applyController;
   disp(['controlled trial # ' num2str(j)]);
-  if plotting.verbosity > 0;      % visualization of trajectory
-    if ~ishandle(1); figure(1); else set(0,'CurrentFigure',1); end; clf(1);
-    draw_rollout_cp;
-  end
 end

@@ -51,7 +51,7 @@ difi = [1 2 3 4 5 6];        % variables that are learned via differences
 
 % 2. Set up the scenario
 dt = 0.10;                         % [s] sampling time
-T = 15.0;                           % [s] initial prediction horizon time
+T = 10.0;                           % [s] initial prediction horizon time
 H = ceil(T/dt);                    % prediction steps (optimization horizon)
 mu0 = [0 0 0 0 0 0]';             % initial state mean
 S0 = diag([0.1 0.1 0.1 0.1 0.1 0.1].^2);
@@ -73,9 +73,10 @@ plant.dyno = dyno;
 plant.dyni = dyni;
 plant.difi = difi;
 plant.prop = @propagated;
-plant.actionPub = rospublisher('/matlab_bridge/action', 'std_msgs/Float64');
+plant.actionPub = rospublisher('/matlab_bridge/action', 'std_msgs/Float64MultiArray');
 plant.stateSub = rossubscriber('/matlab_bridge/state');
-
+plant.actOn = 0; % 0 for simulator, 1 for actual car
+ 
 % 4. Policy structure
 policy.fcn = @(policy,m,s)conCat(@congp,@gSat,policy,m,s);% controller 
                                                           % representation
@@ -96,10 +97,10 @@ policy.p.hyp = log([1 1 1 1 1 0.7 0.7 1 0.01])';              % initialize polic
 cost.fcn = @loss_drift_car;                       % cost function
 cost.gamma = 1;                            % discount factor
 cost.p = 0.5;                              % length of pendulum
-cost.width = 0.5;                         % cost function width
+cost.width = 5;                         % cost function width
 cost.expl =  0.0;                          % exploration parameter (UCB)
 cost.angle = plant.angi;                   % index of angle (for cost function)
-cost.target = [0 0 0 4 4 8]';              % target state
+cost.target = [0 0 0 5 -2 6]';              % target state
 
 % 6. Dynamics model structure
 dynmodel.fcn = @gp1d;                % function for GP predictions
@@ -119,7 +120,7 @@ opt.verbosity = 3;                       % verbosity: specifies how much
                                          % policy learning. Options: 0-3
 
 % 8. Plotting verbosity
-plotting.verbosity = 0;            % 0: no plots
+plotting.verbosity = 2;            % 0: no plots
                                    % 1: some plots
                                    % 2: all plots
 
