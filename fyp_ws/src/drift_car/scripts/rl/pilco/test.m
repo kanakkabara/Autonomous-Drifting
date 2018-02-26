@@ -1,3 +1,5 @@
+% https://www.mathworks.com/help/nnet/ref/newrb.html
+% https://www.mathworks.com/help/nnet/examples/radial-basis-approximation.html
 % P = [1 2 3];
 % T = [[2.0; 1] [4.1; 2] [5.9; 3]];
 % net = newrb(P,T);

@@ -75,11 +75,11 @@ if __name__=="__main__":
 		print e
 
 	finally:
-        	cmd = Float64()
-        	cmd.data = 0
-        	throtle1.publish(cmd)
+		cmd = Float64()
+		cmd.data = 0
+		throtle1.publish(cmd)
 		throtle2.publish(cmd)
 		steer1.publish(cmd)
 		steer2.publish(cmd)
 		
-  		termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
+		termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
