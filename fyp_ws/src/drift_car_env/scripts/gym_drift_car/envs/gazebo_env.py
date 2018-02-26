@@ -21,7 +21,7 @@ from os import path
 
 class GazeboEnv(gym.Env):
         metadata = {'render.modes': ['human']}
-        def __init__(self):
+        def __init__(self, continuous=False):
                 tmp = os.popen("ps -Af").read()
                 roscore_count = tmp.count('roscore')
                 if roscore_count == 0:
@@ -49,7 +49,16 @@ class GazeboEnv(gym.Env):
                 self.reset_proxy = rospy.ServiceProxy('/gazebo/reset_simulation', Empty)
                 
                 self.reward_range = (-np.inf, np.inf)
-                self.action_space = spaces.Discrete(7)
+
+                #Action related
+                self.continuous = continuous
+                if continuous:
+                        high = np.array([0.436])
+                        self.action_space = spaces.Box(-high, high)
+                else:
+                        self.degreeMappings = [65, 75, 85, 90, 95, 105, 115]
+                        self.radianMappings = [-0.436, -0.261799, -0.0872665, 0, 0.0872665, 0.261799, 0.436] 
+                        self.action_space = spaces.Discrete(len(self.degreeMappings))
                 
                 high = np.array([np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max])
                 self.observation_space = spaces.Box(-high, high)   
@@ -62,9 +71,7 @@ class GazeboEnv(gym.Env):
                   
                 # Learning Parameters
                 self.radius = 3
-                self.throttle = 450
-                self.degreeMappings = [65, 75, 85, 90, 95, 105, 115]
-                self.radianMappings = [-0.436, -0.261799, -0.0872665, 0, 0.0872665, 0.261799, 0.436]       
+                self.throttle = 400      
                 self.maxDeviationFromCenter = 4
                 
         def _seed(self, seed=None):
@@ -78,41 +85,46 @@ class GazeboEnv(gym.Env):
 
                 self.throtle1.publish(self.throttle)
 		self.throtle2.publish(self.throttle)
-                self.steer1.publish(self.radianMappings[action])
-	        self.steer2.publish(self.radianMappings[action])                
+                
+                if self.continuous:
+                        self.steer1.publish(action)
+                        self.steer2.publish(action)
+                else:
+                        self.steer1.publish(self.radianMappings[action])
+                        self.steer2.publish(self.radianMappings[action])                
 
                 posData = self.getPosData()
-                imuData = self.getIMUData()                
+                #imuData = self.getIMUData()                
 
                 self.pausePhysics()
                 
                 # state: (x, y, theta, xDot, yDot, thetaDot)
                 state = (posData.pose[1].position.x, posData.pose[1].position.y, posData.pose[1].orientation.w,  
-                    imuData.linear_acceleration.x,  imuData.linear_acceleration.y,  imuData.angular_velocity.x)
-                reward = self.getRewardExponentialCost(posData)
+                    posData.twist[1].linear.x,  posData.twist[1].linear.y,  posData.twist[1].angular.z)
+                reward = self.getRewardExponential(posData)
                 done = self.isDone(posData)
               
-                self.previous_imu = imuData
+                #self.previous_imu = imuData
                 self.previous_pos = posData     
                 self.previous_action = action
                 return np.array(state), reward, done, {}
                 
 
-        def getRewardExponentialCost(self, posData):
-            desiredSideVel = 4
-            desiredForwardVel = 4
-            desiredAngularVel = 4
+        def getRewardExponential(self, posData):
+                desiredSideVel = 4
+                desiredForwardVel = 4
+                desiredAngularVel = 8
 
-            carSideVel = posData.twist[1].linear.x
-            carForwardVel = posData.twist[1].linear.y
-            carAngularVel = posData.twist[1].angular.z
+                carSideVel = posData.twist[1].linear.x
+                carForwardVel = posData.twist[1].linear.y
+                carAngularVel = posData.twist[1].angular.z
 
-            sigma = 1
-            deviationMagnitude = (carSideVel - desiredSideVel)**2 + \
+                sigma = 0.5
+                deviationMagnitude = (carSideVel - desiredSideVel)**2 + \
                                 (carForwardVel - desiredForwardVel)**2 + \
                                 (carAngularVel - desiredAngularVel)**2
 
-            return math.exp(-deviationMagnitude/(2 * sigma**2)) - 1
+                return math.exp(-deviationMagnitude/(2 * sigma**2)) - 1
         
         def getRewardPotentialBased(self, action, posData):
                 reward = 0.0

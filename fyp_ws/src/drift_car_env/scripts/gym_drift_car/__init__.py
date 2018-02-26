@@ -7,6 +7,12 @@ register(
     id='DriftCarGazeboEnv-v0',
     entry_point='gym_drift_car.envs:GazeboEnv',
 )
+
+register(
+    id='DriftCarGazeboContinuous-v0',
+    entry_point='gym_drift_car.envs:GazeboEnv',
+    kwargs={'continuous' : True}
+)
 #register(
 #    id='DriftCarEnv-v0',
 #    entry_point='gym_foo.envs:DriftCarEnv',
