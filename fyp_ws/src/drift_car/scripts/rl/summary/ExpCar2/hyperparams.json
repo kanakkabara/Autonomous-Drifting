@@ -1,0 +1,25 @@
+{
+    "config": {
+        "batch_size": 64, 
+        "chart_refresh_interval": 100, 
+        "epsilon_decay_rate": 1e-05, 
+        "epsilon_update_interval": 100000.0, 
+        "gamma": 0.99, 
+        "h_size": 500, 
+        "learning_rate": 1e-10, 
+        "load_model": false, 
+        "max_episode_length": 300, 
+        "model_path": "models/ExpCar2", 
+        "pretrain_steps": 10000, 
+        "render_env": false, 
+        "save_model": true, 
+        "save_model_interval": 5, 
+        "summary_out_every": 200, 
+        "summary_path": "summary/ExpCar2", 
+        "tau": 0.999, 
+        "total_episodes": 1000000, 
+        "verbose": false
+    }, 
+    "explore_p": 0.010000000000868463, 
+    "total_step_count": 2776200
+}
