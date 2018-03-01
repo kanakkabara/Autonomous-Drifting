@@ -1,0 +1,5 @@
+syntax ="proto2";
+
+message SimpleMessage {
+	required int32 yaw = 1;
+}
