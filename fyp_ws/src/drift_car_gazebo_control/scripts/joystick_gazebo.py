@@ -92,9 +92,9 @@ if __name__=="__main__":
     subprocess.Popen(["rosrun", "joy", "joy_node"])
     subprocess.Popen(["gzclient"])
 
-    print("=================================")
-    print("Joystick Controller for Drift Car")
-    print("=================================\n")
+    print("========================================")
+    print("Joystick Controller for Gazebo Drift Car")
+    print("========================================\n")
     
     print("X for acceleration")
     print("Y to toggle constant speed")
