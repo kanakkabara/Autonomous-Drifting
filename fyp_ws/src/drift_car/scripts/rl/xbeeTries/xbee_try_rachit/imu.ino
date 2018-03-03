@@ -927,5 +927,11 @@ float getYaw(){
 float getGz(){
   return gz;
 }
+float getRoll(){
+  return roll;
+}
+float getPitch(){
+  return pitch;
+}
 
 
