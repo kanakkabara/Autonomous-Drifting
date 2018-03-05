@@ -111,9 +111,9 @@ class GazeboEnv(gym.Env):
                 
 
         def getRewardExponential(self, posData):
-                desiredSideVel = 4
-                desiredForwardVel = 4
-                desiredAngularVel = 8
+                desiredSideVel = 5
+                desiredForwardVel = -2
+                desiredAngularVel = 6
 
                 carSideVel = posData.twist[1].linear.x
                 carForwardVel = posData.twist[1].linear.y
