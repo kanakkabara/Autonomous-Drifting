@@ -11,10 +11,10 @@ from xbee import XBee
 import serial
 import struct
 
-global throtle, servo, drifting, pub
+global throtle, servo, drifting, pub, count
 throtle = 80.0
-driftThrotle = 400.0
-THROTLE_STEP = 2
+driftThrotle = 85.0
+THROTLE_STEP = 0.5
 
 servo = 0.0
 
@@ -22,44 +22,46 @@ drifting = False
 
 pub = None
 
+def translate(value, leftMin, leftMax, rightMin, rightMax):
+    leftSpan = leftMax - leftMin
+    rightSpan = rightMax - rightMin
+    valueScaled = float(value - leftMin) / float(leftSpan)
+    return rightMin + (valueScaled * rightSpan)
+
 def callback(data, args):
     # print(data)
     global throtle, servo, drifting
     servo = data.axes[0] * 0.46
-    
-    if data.buttons[2] == 1: #X Button for Accelerate
-        throtle = throtle + THROTLE_STEP
-        if throtle > 180:
-            throtle = 180.0
-    else:
-        throtle = throtle - THROTLE_STEP
-        if throtle < 80:
-            throtle = 80.0
+
+    throtle = translate(data.axes[2], -1.0, 1.0, 98, 80)
+
+    # if data.buttons[2] == 1: #X Button for Accelerate
+    #     throtle = throtle + THROTLE_STEP
+    #     if throtle > 179.0:
+    #         throtle = 179.0
+    # else:
+    #     throtle = throtle - THROTLE_STEP
+    #     if throtle < 80:
+    #         throtle = 80.0
 
     if data.buttons[1] == 1: #B Button for Reset
-        #TODO car reset
-        pass
+        throtle = 40.0
+        servo = 0.0
+        sendAction(throtle, servo)
+        return
 
     if data.buttons[3] == 1: #Y Button for toggle drift throttle state
         drifting = not drifting
     
     if drifting:
-        print((driftThrotle, servo))
+        sendAction(driftThrotle, servo)
     else:
-        print((throtle, servo))
+        sendAction(throtle, servo)
 
-    data = 0
-    if drifting:
-        data = driftThrotle
-    else:
-        data = throtle  
-
-    packed_data = struct.Struct('f f').pack(*(data, servo))
-    ba = bytearray(packed_data)  
-    xbee.send('tx', dest_addr=b'\x00\x00', data=ba, options=b'\x03')
+    # response = xbee.wait_read_frame()
+    # handleXbeeData(response)
 
 def handleXbeeData(response):
-    print(response)
     try:
         stateArray = Float64MultiArray()
         for i in range(0, len(response['rf_data']), 4):
@@ -71,15 +73,22 @@ def handleXbeeData(response):
     except Exception as e:
         print(e)
 
-def handleError(data):
-    print("Error: " + str(data))
+def sendAction(throtle, servo):
+    print((throtle, servo))
+    packed_data = struct.Struct('f f').pack(*(throtle, servo))
+    ba = bytearray(packed_data)  
+    xbee.send('tx', frame='A', dest_addr=b'\x00\x00', data=ba, options=b'\x04')
 
 if __name__=="__main__":
     PORT = "/dev/ttyUSB0"
     BAUD_RATE = 57600
 
     ser = serial.Serial(PORT, BAUD_RATE)
-    xbee = XBee(ser,escaped=True, callback=handleXbeeData, error_callback=handleError)
+    # Async
+    xbee = XBee(ser, escaped=True, callback=handleXbeeData)
+    
+    # Sync
+    # xbee = XBee(ser, escaped=True)
 
     time.sleep(7)
 
