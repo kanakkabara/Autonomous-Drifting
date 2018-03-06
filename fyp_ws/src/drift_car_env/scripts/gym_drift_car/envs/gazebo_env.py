@@ -60,7 +60,9 @@ class GazeboEnv(gym.Env):
                         self.radianMappings = [-0.436, -0.261799, -0.0872665, 0, 0.0872665, 0.261799, 0.436] 
                         self.action_space = spaces.Discrete(len(self.degreeMappings))
                 
-                high = np.array([np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max])
+                high = np.array([np.finfo(np.float32).max, np.finfo(np.float32).max, 
+                np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, 
+                np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max])
                 self.observation_space = spaces.Box(-high, high)   
                 
                 self._seed()
@@ -97,10 +99,10 @@ class GazeboEnv(gym.Env):
                 #imuData = self.getIMUData()                
 
                 self.pausePhysics()
-                
                 # state: (x, y, theta, xDot, yDot, thetaDot)
-                state = (posData.pose[1].position.x, posData.pose[1].position.y, posData.pose[1].orientation.w,  
-                    posData.twist[1].linear.x,  posData.twist[1].linear.y,  posData.twist[1].angular.z)
+                state = (posData.pose[1].position.x, posData.pose[1].position.y, 
+                        posData.pose[1].orientation.x, posData.pose[1].orientation.y, posData.pose[1].orientation.z, posData.pose[1].orientation.w,  
+                        posData.twist[1].linear.x,  posData.twist[1].linear.y,  posData.twist[1].angular.z)
                 reward = self.getRewardExponential(posData)
                 done = self.isDone(posData)
               

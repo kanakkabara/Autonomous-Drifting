@@ -11,7 +11,7 @@ from xbee import XBee
 import serial
 import struct
 
-global throtle, servo, drifting, pub, count
+global throtle, servo, drifting, pub
 throtle = 80.0
 driftThrotle = 85.0
 THROTLE_STEP = 0.5
@@ -80,7 +80,7 @@ def sendAction(throtle, servo):
     xbee.send('tx', frame='A', dest_addr=b'\x00\x00', data=ba, options=b'\x04')
 
 if __name__=="__main__":
-    PORT = "/dev/ttyUSB0"
+    PORT = "/dev/ttyUSB1"
     BAUD_RATE = 57600
 
     ser = serial.Serial(PORT, BAUD_RATE)
