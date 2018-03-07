@@ -13,6 +13,12 @@ register(
     entry_point='gym_drift_car.envs:GazeboEnv',
     kwargs={'continuous' : True}
 )
+
+register(
+    id='DriftCarGazeboContinuousPartial-v0',
+    entry_point='gym_drift_car.envs:GazeboEnv',
+    kwargs={'continuous' : True, 'partial': True}
+)
 #register(
 #    id='DriftCarEnv-v0',
 #    entry_point='gym_foo.envs:DriftCarEnv',

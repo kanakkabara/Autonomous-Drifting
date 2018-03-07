@@ -19,7 +19,6 @@ def callback(data, args):
     
     env = args[0]
     pub = args[1]
-    # xbee = args[2]
     
     if takenOn == 0: # Action to be taken on the Gazebo Sim
         if(action == -1000):
@@ -39,29 +38,14 @@ def callback(data, args):
         
         action = math.degrees(action)
 
-    # if done:
-    #     env.reset()
-
 if __name__ == '__main__':
-    #rospy.init_node('matlab_bridge', anonymous=True)
-    tmp = os.popen("ps -Af").read()
-    roscore_count = tmp.count('roscore')
-    if roscore_count == 0:
-        subprocess.Popen("roscore")
-        time.sleep(1)
-        print ("Roscore launched!")
+    # env = gym.make('DriftCarGazeboContinuous-v0')
+    env = gym.make('DriftCarGazeboContinuousPartial-v0')
 
-    env = gym.make('DriftCarGazeboContinuous-v0')
     pub = rospy.Publisher('matlab_bridge/state', Float64MultiArray, queue_size=1) 
-
-    # PORT = '/dev/ttyUSB0'
-    # BAUD_RATE = 9600
-    # # Open serial port
-    # ser = serial.Serial(PORT, BAUD_RATE)
-    # # Create API object
-    # xbee = XBee(ser)
-   
     rospy.Subscriber('matlab_bridge/action', Float64MultiArray, callback, (env, pub))
-    
+
     env.reset()
+    env.render()
+    
     rospy.spin()

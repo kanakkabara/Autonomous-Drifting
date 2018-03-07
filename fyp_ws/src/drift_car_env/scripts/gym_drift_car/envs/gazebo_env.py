@@ -21,7 +21,7 @@ from os import path
 
 class GazeboEnv(gym.Env):
         metadata = {'render.modes': ['human']}
-        def __init__(self, continuous=False):
+        def __init__(self, continuous=False, partial=False):
                 tmp = os.popen("ps -Af").read()
                 roscore_count = tmp.count('roscore')
                 if roscore_count == 0:
@@ -48,6 +48,7 @@ class GazeboEnv(gym.Env):
                 self.pause = rospy.ServiceProxy('/gazebo/pause_physics', Empty)
                 self.reset_proxy = rospy.ServiceProxy('/gazebo/reset_simulation', Empty)
                 
+                #Reward related
                 self.reward_range = (-np.inf, np.inf)
 
                 #Action related
@@ -60,9 +61,12 @@ class GazeboEnv(gym.Env):
                         self.radianMappings = [-0.436, -0.261799, -0.0872665, 0, 0.0872665, 0.261799, 0.436] 
                         self.action_space = spaces.Discrete(len(self.degreeMappings))
                 
-                high = np.array([np.finfo(np.float32).max, np.finfo(np.float32).max, 
-                np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, 
-                np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max])
+                #State related
+                self.partial = partial
+                if partial:
+                        high = np.array([np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max])
+                else:
+                        high = np.array([np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max])
                 self.observation_space = spaces.Box(-high, high)   
                 
                 self._seed()
@@ -99,10 +103,9 @@ class GazeboEnv(gym.Env):
                 #imuData = self.getIMUData()                
 
                 self.pausePhysics()
-                # state: (x, y, theta, xDot, yDot, thetaDot)
-                state = (posData.pose[1].position.x, posData.pose[1].position.y, 
-                        posData.pose[1].orientation.x, posData.pose[1].orientation.y, posData.pose[1].orientation.z, posData.pose[1].orientation.w,  
-                        posData.twist[1].linear.x,  posData.twist[1].linear.y,  posData.twist[1].angular.z)
+
+                state = self.getState(posData)
+        
                 reward = self.getRewardExponential(posData)
                 done = self.isDone(posData)
               
@@ -111,6 +114,23 @@ class GazeboEnv(gym.Env):
                 self.previous_action = action
                 return np.array(state), reward, done, {}
                 
+        def getState(self, posData):
+                velx = posData.twist[1].linear.x
+                vely = posData.twist[1].linear.y
+                carTangentialSpeed = math.sqrt(velx ** 2 + vely ** 2)
+                carAngularVel = posData.twist[1].angular.z
+
+                if self.partial:
+                        # state: (i, j, k, w, xDot, yDot, thetaDot, s)
+                        state = (posData.pose[1].orientation.x, posData.pose[1].orientation.y, posData.pose[1].orientation.z, posData.pose[1].orientation.w,  
+                                        velx, vely, carAngularVel, carTangentialSpeed)
+                else:
+                        # state: (x, y, i, j, k, w, xDot, yDot, thetaDot, s)
+                        state = (posData.pose[1].position.x, posData.pose[1].position.y, 
+                                        posData.pose[1].orientation.x, posData.pose[1].orientation.y, posData.pose[1].orientation.z, posData.pose[1].orientation.w,  
+                                        velx, vely, carAngularVel, carTangentialSpeed)
+                
+                return state
 
         def getRewardExponential(self, posData):
                 desiredTangentialSpeed = 5          # Tangential speed with respect to car body.
@@ -182,16 +202,14 @@ class GazeboEnv(gym.Env):
                 
                 self.unpausePhysics()
                 posData = self.getPosData()
-                imuData = self.getIMUData()
+                # imuData = self.getIMUData()
                 self.pausePhysics()
 
                 self.previous_action = -1
                 self.previous_imu = {}
                 self.previous_pos = posData
-                                        
-                # state: (x, y, theta, xDot, yDot, thetaDot)
-                state = (posData.pose[1].position.x, posData.pose[1].position.y, posData.pose[1].orientation.w, 
-                    imuData.linear_acceleration.x, imuData.linear_acceleration.y, imuData.angular_velocity.x)
+
+                state = self.getState(posData)
                 return np.array(state)
         
         def _render(self, mode='human', close=False):
@@ -312,4 +330,3 @@ class GazeboEnv(gym.Env):
 
                 if (gzclient_count or gzserver_count or roscore_count or rosmaster_count >0):
                     os.wait()
-
