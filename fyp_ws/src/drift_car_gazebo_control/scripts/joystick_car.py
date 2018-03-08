@@ -35,15 +35,6 @@ def callback(data, args):
 
     throtle = translate(data.axes[2], -1.0, 1.0, 98, 80)
 
-    # if data.buttons[2] == 1: #X Button for Accelerate
-    #     throtle = throtle + THROTLE_STEP
-    #     if throtle > 179.0:
-    #         throtle = 179.0
-    # else:
-    #     throtle = throtle - THROTLE_STEP
-    #     if throtle < 80:
-    #         throtle = 80.0
-
     if data.buttons[1] == 1: #B Button for Reset
         throtle = 40.0
         servo = 0.0
