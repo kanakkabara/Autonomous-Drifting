@@ -16,14 +16,14 @@
 
 % 1. Initialization
 clear all; close all;
-settings_drift_car;                      % load scenario-specific settings
-basename = 'driftCar_';           % filename used for saving data
+settings_drift_car;                     % load scenario-specific settings
+basename = 'driftCar_';                 % filename used for saving data
 
 % 2. Initial J random rollouts
 for jj = 1:J
   [xx, yy, realCost{jj}, latent{jj}] = ...
     rollout(gaussian(mu0, S0), struct('maxU',policy.maxU), H, plant, cost);
-  x = [x; xx]; y = [y; yy];       % augment training sets for dynamics model  
+  x = [x; xx]; y = [y; yy];             % augment training sets for dynamics model  
 end
 
 mu0Sim(odei,:) = mu0; S0Sim(odei,odei) = S0;
@@ -31,8 +31,8 @@ mu0Sim = mu0Sim(dyno); S0Sim = S0Sim(dyno,dyno);
 
 % 3. Controlled learning (N iterations)
 for j = 1:N
-  trainDynModel;   % train (GP) dynamics model
-  learnPolicy;     % learn policy
+  trainDynModel;                        % train (GP) dynamics model
+  learnPolicy;                          % learn policy
   applyController;
   disp(['controlled trial # ' num2str(j)]);
 end

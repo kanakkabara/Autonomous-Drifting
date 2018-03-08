@@ -60,18 +60,18 @@ def handleXbeeData(response):
         print(stateArray.data)
 
         global pub
-        pub.publish(stateArray)
+        #pub.publish(stateArray)
     except Exception as e:
         print(e)
 
 def sendAction(throtle, servo):
-    print((throtle, servo))
+    # print((throtle, servo))
     packed_data = struct.Struct('f f').pack(*(throtle, servo))
     ba = bytearray(packed_data)  
     xbee.send('tx', frame='A', dest_addr=b'\x00\x00', data=ba, options=b'\x04')
 
 if __name__=="__main__":
-    PORT = "/dev/ttyUSB1"
+    PORT = "/dev/ttyUSB0"
     BAUD_RATE = 57600
 
     ser = serial.Serial(PORT, BAUD_RATE)

@@ -48,14 +48,14 @@ if ~isfield(cost,'expl') || isempty(cost.expl); b = 0; else b =  cost.expl; end
 
 % 1. Some precomputations
 D0 = size(s,2);                           % state dimension
-D1 = D0 + 2; 
+D1 = D0 + 2*length(cost.angle); 
 
 M = zeros(D1,1); M(1:D0) = m; S = zeros(D1); S(1:D0,1:D0) = s;
 Mdm = [eye(D0); zeros(D1-D0,D0)]; Sdm = zeros(D1*D1,D0);
 Mds = zeros(D1,D0*D0); Sds = kron(Mdm,Mdm);
 
 % 2. Define static penalty as distance from target setpoint
-Q = zeros(D1); Q(4:6, 4:6) = eye(3); 
+Q = zeros(D1); Q(7,7) = 1; 
 
 % 3. Trigonometric augmentation
 if D1-D0 > 0
@@ -82,6 +82,8 @@ if D1-D0 > 0
   SS = kron(eye(length(k)),S(i,i)); CC = kron(C',eye(length(i)));
   Sdm(ik,:) = SS*dCdm + CC*Sdm(ii,:); Sdm(ki,:) = Sdm(ik,:);
   Sds(ik,:) = SS*dCds + CC*Sds(ii,:); Sds(ki,:) = Sds(ik,:);
+else
+  target = cost.target;
 end
 
 % 4. Calculate loss!
