@@ -89,8 +89,13 @@ class GazeboEnv(gym.Env):
                 
                 self.unpausePhysics()
 
-                self.throtle1.publish(self.throttle)
-		self.throtle2.publish(self.throttle)
+                if isinstance(action, tuple):
+                        self.throtle1.publish(action[0])
+		        self.throtle2.publish(action[0])
+                        action = action[1]
+                else:
+                        self.throtle1.publish(self.throttle)
+		        self.throtle2.publish(self.throttle)
                 
                 if self.continuous:
                         self.steer1.publish(action)
@@ -105,14 +110,13 @@ class GazeboEnv(gym.Env):
                 self.pausePhysics()
 
                 state = self.getState(posData)
-        
                 reward = self.getRewardExponential(posData)
                 done = self.isDone(posData)
               
                 #self.previous_imu = imuData
                 self.previous_pos = posData     
                 self.previous_action = action
-                return np.array(state), reward, done, {}
+                return state, reward, done, {}
                 
         def getState(self, posData):
                 velx = posData.twist[1].linear.x
@@ -130,7 +134,7 @@ class GazeboEnv(gym.Env):
                                         posData.pose[1].orientation.x, posData.pose[1].orientation.y, posData.pose[1].orientation.z, posData.pose[1].orientation.w,  
                                         velx, vely, carAngularVel, carTangentialSpeed)
                 
-                return state
+                return np.array(state)
 
         def getRewardExponential(self, posData):
                 desiredTangentialSpeed = 5          # Tangential speed with respect to car body.
@@ -209,8 +213,7 @@ class GazeboEnv(gym.Env):
                 self.previous_imu = {}
                 self.previous_pos = posData
 
-                state = self.getState(posData)
-                return np.array(state)
+                return self.getState(posData)
         
         def _render(self, mode='human', close=False):
                 if close:

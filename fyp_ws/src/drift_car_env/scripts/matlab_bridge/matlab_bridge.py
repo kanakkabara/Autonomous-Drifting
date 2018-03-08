@@ -2,11 +2,7 @@
 import rospy
 import gym
 import gym_drift_car
-from std_msgs.msg import Int8, Float64, Float64MultiArray
-import numpy 
-import os
-import subprocess
-import time
+from std_msgs.msg import Float64MultiArray
 import math
 
 from xbee.thread import XBee
