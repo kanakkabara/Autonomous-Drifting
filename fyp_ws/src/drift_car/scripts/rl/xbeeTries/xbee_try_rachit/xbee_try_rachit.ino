@@ -3,6 +3,7 @@
 #include <SPI.h>
 #include <Wire.h> 
 #include "Utils.h"
+#include "PX4Flow.h"
 //Setting up IMU 
 int x2 = 3;
 int x1 = 2;
@@ -42,6 +43,7 @@ void setup() {
   throttle = 0;
   steeringAngle = 90;
   issueCommands();
+  //calcNoise();
   //initPayload(numFloats * 4);
   
 }
@@ -55,12 +57,17 @@ float yaw_1=0;
 float gz_1=0;
 float roll_1=0;
 float pitch_1=0;
-int xPosition;
-int yPosition;
+float xPosition;
+float yPosition;
 float xVelocity;
 float yVelocity;
-
+long last_check = 0;
+int px = 0;
+int py = 0;
+float focal_length_px = (3.6) / (4.0f * 6.0f) * 1000.0f;
+PX4Flow sensor = PX4Flow(); 
 void loop() {
+
       if (xbee.readPacket(5000)) {
           // Got a rx packet.
           if (xbee.getResponse().getApiId() == RX_16_RESPONSE || xbee.getResponse().getApiId() == RX_64_RESPONSE) {
@@ -82,30 +89,76 @@ void loop() {
             throttle = constrain(throttle, 0, 120);
             steeringAngle = (steering*180/3.14)+90;
             steeringAngle = constrain(steeringAngle, 65,115);
-            issueCommands();
+//            issueCommands();
 
             free(convertedFloats);
           }
       }
-      imu();
-      yaw_1 = getYaw();
-      gz_1 = getGz();
-      roll_1 = getRoll();
-      pitch_1 = getPitch();
-      Px4Flow();
-      xPosition = getXPosition();
-      yPosition = getYPosition();
-      xVelocity = getXVelocity();
-      yVelocity = getYVelocity();
+      //Wire.beginTransmission(104);
+//      imu();
+//      yaw_1 = getYaw();
+//      gz_1 = getGz();
+//      roll_1 = getRoll();
+//      pitch_1 = getPitch();
+     // Wire.endTransmission();
+      //Wire.beginTransmission(66);
       
-      float toSend[] = {xPosition, yPosition, yaw_1, roll_1, pitch_1, gz_1, throttle, steering};
+//      Px4Flow();
+//      
+//      xPosition = getXPosition();
+//      yPosition = getYPosition();
+//      xVelocity = getXVelocity();
+//      yVelocity = getYVelocity();
+     // Wire.endTransmission();
+
+
+
+      long loop_start = millis();
+      if (loop_start - last_check > 100) {
+    // Fetch I2C data  
+        sensor.update_integral();
+        float x_rate = sensor.gyro_x_rate_integral() / 10.0f;       // mrad
+        float y_rate = sensor.gyro_y_rate_integral() / 10.0f;       // mrad
+        float flow_x = sensor.pixel_flow_x_integral() / 10.0f;      // mrad
+        float flow_y = sensor.pixel_flow_y_integral() / 10.0f;      // mrad  
+        int timespan = sensor.integration_timespan();               // microseconds
+        int ground_distance = sensor.ground_distance_integral();    // mm
+        int quality = sensor.quality_integral();
+        
+        if (quality > 100)
+        {
+          // Update flow rate with gyro rate
+          float pixel_x = flow_x + x_rate; // mrad
+          float pixel_y = flow_y + y_rate; // mrad
+          
+          // Scale based on ground distance and compute speed
+          // (flow/1000) * (ground_distance/1000) / (timespan/1000000)
+          float velocity_x = pixel_x * ground_distance / timespan;     // m/s
+          float velocity_y = pixel_y * ground_distance / timespan;     // m/s 
+          
+          // Integrate velocity to get pose estimate
+          px = px + velocity_x * 100;
+          py = py + velocity_y * 100;
+          xVelocity=  velocity_x;
+          yVelocity=  velocity_y;
+          xPosition = px;
+          yPosition = py;
+          // Output some data
+          //Serial.print(millis());Serial.print(",");  
+        }
+      
+      last_check = loop_start;
+      }
+      
+      float toSend[] = {xPosition, yPosition, yaw_1, xVelocity, yVelocity, gz_1, throttle, steering};
       uint8_t* payload = Utils::convert_to_bytes(toSend, 8);
       // Create TX packet.
       // Send TX Packet.
       Tx64Request tx = Tx64Request(addr64, payload, numFloats * 4);
       xbee.send(tx);
+      delay(100);
       free(payload);
-      //delay(100);
+      //s(100);
 }
 // union to convery float to byte string
 union floatContainer {
