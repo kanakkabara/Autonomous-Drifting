@@ -5,9 +5,11 @@ Autonomous Drifting using Reinforcement Learning
 1. sudo ./setup_env.sh
 2. cd fyp_ws
 3. catkin_make
-3. . devel/setup.bash (add this to the .bashrc file so that you dont have to run it everytime, [need to add full path to file])
+3. . devel/setup.bash (add ``` source [full path to setup.bash] ``` in your .bashrc)
 4. cd src/drift_car_env/scripts/
 5. sudo pip install -e .
+
+The first time you open Gazebo, it will download all models from the Gazebo servers, which may take some time. Run ``` rosrun gazebo_ros gazebo ``` to run Gazebo and install models.
 
 ## Commands
 To run | Command
@@ -15,7 +17,9 @@ To run | Command
 ROS Core | ``` roscore ```
 Gazebo Simulator | ``` roslaunch drift_car_gazebo drift_car.launch ```
 Controller | ``` roslaunch drift_car_gazebo_control drift_car_control.launch ```
-Keyboard Teleop | ``` rosrun drift_car teleop.py ```
+Keyboard Teleop | ``` rosrun drift_car_gazebo_control teleop.py ```
+Joystick Gazebo Controller | ``` rosrun drift_car_gazebo_control joystick_gazebo.py ```
+Joystick Car Controller | ``` rosrun drift_car_gazebo_control joystick_car.py ```
 Teleop Reward Tester | ``` rosrun drift_car teleopRewardTester.py ```
 Double Dueling Deep Q-Network | ```rosrun drift_car main.py```
 

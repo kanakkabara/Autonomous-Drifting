@@ -22,6 +22,7 @@ sudo apt-get -y install ros-kinetic-gazebo-ros
 sudo apt-get -y install ros-kinetic-gazebo-ros-pkgs ros-kinetic-gazebo-ros-control
 sudo apt-get -y install ros-kinetic-joint-state-controller
 sudo apt-get -y install ros-kinetic-effort-controllers
+sudo apt-get -y install ros-kinetic-joy
 
 # Install pip
 sudo apt-get -y install python-pip

@@ -13,7 +13,7 @@ def target_network_update_ops(tvars, tau):
         # The trainable variables for the target network is
         # in the second half of the list of tvars.
         updated_value = tvars[ix + num_variables //
-                              2].value() * (1 - tau) + var.value() * tau
+                              2].value() * tau + var.value() * (1 - tau)
         op_holder.append(tvars[ix + num_variables // 2].assign(updated_value))
     return op_holder
 

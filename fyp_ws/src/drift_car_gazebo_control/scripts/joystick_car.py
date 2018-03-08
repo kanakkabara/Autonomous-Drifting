@@ -11,7 +11,7 @@ from xbee import XBee
 import serial
 import struct
 
-global throtle, servo, drifting, pub, count
+global throtle, servo, drifting, pub
 throtle = 80.0
 driftThrotle = 85.0
 THROTLE_STEP = 0.5
@@ -34,15 +34,6 @@ def callback(data, args):
     servo = data.axes[0] * 0.46
 
     throtle = translate(data.axes[2], -1.0, 1.0, 98, 80)
-
-    # if data.buttons[2] == 1: #X Button for Accelerate
-    #     throtle = throtle + THROTLE_STEP
-    #     if throtle > 179.0:
-    #         throtle = 179.0
-    # else:
-    #     throtle = throtle - THROTLE_STEP
-    #     if throtle < 80:
-    #         throtle = 80.0
 
     if data.buttons[1] == 1: #B Button for Reset
         throtle = 40.0
@@ -69,12 +60,12 @@ def handleXbeeData(response):
         print(stateArray.data)
 
         global pub
-        pub.publish(stateArray)
+        #pub.publish(stateArray)
     except Exception as e:
         print(e)
 
 def sendAction(throtle, servo):
-    print((throtle, servo))
+    # print((throtle, servo))
     packed_data = struct.Struct('f f').pack(*(throtle, servo))
     ba = bytearray(packed_data)  
     xbee.send('tx', frame='A', dest_addr=b'\x00\x00', data=ba, options=b'\x04')
