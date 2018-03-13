@@ -716,5 +716,14 @@ float getRoll(){
 float getPitch(){
   return pitch;
 }
+float getVx(){
+  return vx;
+}
+float getVy(){
+  return vy;
+}
+float getVz(){
+  return vz;
+}
 
 

@@ -55,6 +55,9 @@ float yaw_1=0;
 float gz_1=0;
 float roll_1=0;
 float pitch_1=0;
+float xVelocityImu = 0;
+float yVelocityImu = 0;
+float zVelocityImu = 0;
 float xPosition;
 float yPosition;
 float xVelocity;
@@ -87,30 +90,24 @@ void loop() {
             throttle = constrain(throttle, 0, 120);
             steeringAngle = (steering*180/3.14)+90;
             steeringAngle = constrain(steeringAngle, 65,115);
-//            issueCommands();
+            issueCommands();
 
             free(convertedFloats);
           }
       }
-      //Wire.beginTransmission(104);
-//      imu();
-//      yaw_1 = getYaw();
-//      gz_1 = getGz();
-//      roll_1 = getRoll();
-//      pitch_1 = getPitch();
-     // Wire.endTransmission();
-      //Wire.beginTransmission(66);
-      
-//      Px4Flow();
-//      
-//      xPosition = getXPosition();
-//      yPosition = getYPosition();
-//      xVelocity = getXVelocity();
-//      yVelocity = getYVelocity();
-     // Wire.endTransmission();
-
-
-
+      //Serial Communication for IMU
+      Wire.beginTransmission(104);
+      imu();
+      yaw_1 = getYaw();
+      gz_1 = getGz();
+      roll_1 = getRoll();
+      pitch_1 = getPitch();
+      xVelocityImu = getVx();
+      yVelocityImu = getVy();
+      zVelocityImu = getVz();
+      Wire.endTransmission();
+      //Serial communication for Px4Flow
+      Wire.beginTransmission(66);
       long loop_start = millis();
       if (loop_start - last_check > 100) {
     // Fetch I2C data  
@@ -141,13 +138,12 @@ void loop() {
           yVelocity=  velocity_y;
           xPosition = px;
           yPosition = py;
-          // Output some data
-          //Serial.print(millis());Serial.print(",");  
         }
       
       last_check = loop_start;
       }
-      
+      Wire.endTransmission();
+      //change toSend to send the data you want to send. The IMU velocities are named xVelocityImu, yVelocityImu, zVelocityImu.
       float toSend[] = {xPosition, yPosition, yaw_1, xVelocity, yVelocity, gz_1, throttle, steering};
       uint8_t* payload = Utils::convert_to_bytes(toSend, 8);
       // Create TX packet.
