@@ -5,8 +5,6 @@
 #include "Utils.h"
 #include "PX4Flow.h"
 //Setting up IMU 
-int x2 = 3;
-int x1 = 2;
 volatile int x = 0;
 const int ESC_PIN = 9;
 const int STEERING_SERVO_PIN = 5;
@@ -158,7 +156,6 @@ void loop() {
       xbee.send(tx);
       delay(100);
       free(payload);
-      //s(100);
 }
 // union to convery float to byte string
 union floatContainer {
