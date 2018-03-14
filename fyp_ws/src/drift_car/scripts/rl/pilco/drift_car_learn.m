@@ -15,6 +15,8 @@
 %% Code
 
 % 1. Initialization
+rosshutdown;
+rosinit;
 clear all; close all;
 settings_drift_car;                     % load scenario-specific settings
 basename = 'driftCar_';                 % filename used for saving data
