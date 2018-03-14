@@ -42,6 +42,6 @@ if __name__ == '__main__':
     rospy.Subscriber('matlab_bridge/action', Float64MultiArray, callback, (env, pub))
 
     env.reset()
-    env.render()
+    #env.render()
     
     rospy.spin()

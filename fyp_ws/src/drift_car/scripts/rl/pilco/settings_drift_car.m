@@ -40,28 +40,28 @@ rand('seed',1); randn('seed',1); format short; format compact;
 % dyni  indicies for inputs to the dynamics model
 % poli  indicies for the inputs to the policy
 % difi  indicies for training targets that are differences (rather than values)
-odei = [1 2 3 4 5 6 7 8];
+odei = [1 2 3 4];
 augi = [];                          % variables to be augmented
-dyno = [1 2 3 4 5 6 7 8];      % variables to be predicted (and known to loss)
+dyno = [1 2 3 4];      % variables to be predicted (and known to loss)
 angi = [];                          % angle variables
-dyni = [1 2 3 4 5 6 7 8];      % variables that serve as inputs to the dynamics GP
-poli = [1 2 3 4 5 6 7 8];      % variables that serve as inputs to the policy
-difi = [1 2 3 4 5 6 7 8];      % variables that are learned via differences
+dyni = [1 2 3 4];      % variables that serve as inputs to the dynamics GP
+poli = [1 2 3 4];      % variables that serve as inputs to the policy
+difi = [1 2 3 4];      % variables that are learned via differences
 
 
 % 2. Set up the scenario
 dt = 0.10;                          % [s] sampling time
 T = 15.0;                           % [s] initial prediction horizon time
 H = ceil(T/dt);                     % prediction steps (optimization horizon)
-mu0 = [0 0 0 0 0 0 0 0]';               % initial state mean
-S0 = diag([0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1].^2);
+mu0 = [0 0 0 0]';               % initial state mean
+S0 = diag([0.1 0.1 0.1 0.1].^2);
 N = 15;                             % number controller optimizations
 J = 3;                              % initial J trajectories of length H
 K = 1;                              % no. of initial states for which we optimize
 nc = 10;                            % number of controller basis functions
 
 % 3. Plant structure
-plant.noise = diag(ones(1,8)*0.01.^2);              % measurement noise
+plant.noise = diag(ones(1,4)*0.01.^2);              % measurement noise
 plant.augi = augi;
 plant.angi = angi;
 plant.odei = odei;
@@ -85,7 +85,7 @@ cc = S0*cc;
 ss = [S0 cc; cc' ss];                                     % in complex plane     
 policy.p.inputs = gaussian(mm(poli), ss(poli,poli), nc)'; % init. location of basis functions
 policy.p.targets = 0.1*randn(nc, length(policy.maxU));    % init. policy targets (close to zero)
-policy.p.hyp = log([1 1 1 1 1 1 1 1 1 0.01])';          % initialize policy hyper-parameters
+policy.p.hyp = log([1 1 1 1 1 0.01])';          % initialize policy hyper-parameters
 
 % 5. Set up the cost structure
 cost.fcn = @loss_drift_car;                 % cost function
@@ -94,7 +94,7 @@ cost.p = 0.5;                               % length of pendulum
 cost.width = 5;                             % cost function width
 cost.expl =  0.0;                           % exploration parameter (UCB)
 cost.angle = plant.angi;                    % index of angle (for cost function)
-cost.target = [0 0 0 0 0 0 2.5 4]';     % target state
+cost.target = [0 0 2.5 4]';     % target state
 
 % 6. Dynamics model structure
 dynmodel.fcn = @gp1d;                % function for GP predictions

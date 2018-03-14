@@ -27,13 +27,6 @@ sudo apt-get -y install ros-kinetic-joy
 # Install pip
 sudo apt-get -y install python-pip
 
-# install CUDA Toolkit v8.0
-# instructions from https://developer.nvidia.com/cuda-downloads (linux -> x86_64 -> Ubuntu -> 16.04 -> deb (network))
-CUDA_REPO_PKG="cuda-repo-ubuntu1604_8.0.61-1_amd64.deb"
-wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/${CUDA_REPO_PKG}
-sudo dpkg -i ${CUDA_REPO_PKG}
-sudo apt-get update
-sudo apt-get -y install cuda-8-0
 
 # install cuDNN v6.0
 CUDNN_TAR_FILE="cudnn-8.0-linux-x64-v6.0.tgz"
@@ -44,8 +37,8 @@ sudo cp -P cuda/lib64/libcudnn* /usr/local/cuda-8.0/lib64/
 sudo chmod a+r /usr/local/cuda-8.0/lib64/libcudnn*
 
 # set environment variables
-echo 'export CUDA_HOME=/usr/local/cuda-8.0' >> ~/.bashrc
-echo 'export PATH=$CUDA_HOME/bin:${PATH}' >> ~/.bashrc
-echo 'export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64:${LD_LIBRARY_PATH}' >> ~/.bashrc
+echo 'export CUDA_HOME=/usr/local/cuda-8.0' >> ~/.path
+echo 'export PATH=$CUDA_HOME/bin:${PATH}' >> ~/.path
+echo 'export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64:${LD_LIBRARY_PATH}' >> ~/.path
 
 source ~/.bashrc
