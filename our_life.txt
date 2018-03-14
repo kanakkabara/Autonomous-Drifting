@@ -8,6 +8,9 @@ Position
 -> Mouse = Not fast enough, no quick changes
 -> PX4Flow = 
 
+Solution: Eliminate position entirely. State consisting of 
+velocities is markovian for the problem of drifting.
+
 XBee
 ----
 -> Memory overflow; memory usage fix
@@ -22,6 +25,10 @@ Car
 PILCO
 -----
 -> Random init led to Suboptimal policy
+-> The car decides to prioritize a straight path over a circular one after a while: 
+		Normalize the weights of the  cost matrix to equally prioritize both
+		components of the cost function (rephrase)
+
 
 DQN
 ---

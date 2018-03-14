@@ -21,7 +21,11 @@ from os import path
 
 class GazeboEnv(gym.Env):
         metadata = {'render.modes': ['human']}
-        def __init__(self, continuous=False, partial=False):
+        # Default state: x, y, i, j, k, w, xdot, ydot, thetadot, s. 
+        DEFAULT_STATE_INFO = {'state_size': 10, 'include_theta': True, 'include_position': True,
+                'include_tangential_speed': True}
+
+        def __init__(self, continuous=False, state_info=DEFAULT_STATE_INFO):
                 tmp = os.popen("ps -Af").read()
                 roscore_count = tmp.count('roscore')
                 if roscore_count == 0:
@@ -62,11 +66,8 @@ class GazeboEnv(gym.Env):
                         self.action_space = spaces.Discrete(len(self.degreeMappings))
                 
                 #State related
-                self.partial = partial
-                if partial:
-                        high = np.array([np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max])
-                else:
-                        high = np.array([np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max, np.finfo(np.float32).max])
+                self.state_info= state_info
+                high = np.ones(self.state_info['state_size']) * np.finfo(np.float32).max  
                 self.observation_space = spaces.Box(-high, high)   
                 
                 self._seed()
@@ -124,16 +125,22 @@ class GazeboEnv(gym.Env):
                 carTangentialSpeed = math.sqrt(velx ** 2 + vely ** 2)
                 carAngularVel = posData.twist[1].angular.z
 
-                if self.partial:
-                        # state: (i, j, k, w, xDot, yDot, thetaDot, s)
-                        state = (posData.pose[1].orientation.x, posData.pose[1].orientation.y, posData.pose[1].orientation.z, posData.pose[1].orientation.w,  
-                                        velx, vely, carAngularVel, carTangentialSpeed)
-                else:
-                        # state: (x, y, i, j, k, w, xDot, yDot, thetaDot, s)
-                        state = (posData.pose[1].position.x, posData.pose[1].position.y, 
-                                        posData.pose[1].orientation.x, posData.pose[1].orientation.y, posData.pose[1].orientation.z, posData.pose[1].orientation.w,  
-                                        velx, vely, carAngularVel, carTangentialSpeed)
-                
+                state = [velx, vely, carAngularVel]
+
+                if 'include_theta' in self.state_info and self.state_info['include_theta']:
+                    # i, j, k, w appended to state.
+                    theta_state = [posData.pose[1].orientation.x, posData.pose[1].orientation.y, 
+                            posData.pose[1].orientation.z, posData.pose[1].orientation.w]
+                    state = theta_state + state
+
+                if 'include_position' in self.state_info and self.state_info['include_position']:
+                    # x, y appended to state.
+                    pos_state = [posData.pose[1].position.x, posData.pose[1].position.y]
+                    state = pos_state + state
+
+                if 'include_tangential_speed' in self.state_info and self.state_info['include_tangential_speed']:
+                    state += [carTangentialSpeed]
+
                 return np.array(state)
 
         def getRewardExponential(self, posData):

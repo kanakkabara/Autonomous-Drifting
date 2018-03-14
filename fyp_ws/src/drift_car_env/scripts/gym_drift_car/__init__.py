@@ -11,7 +11,8 @@ register(
 register(
     id='DriftCarGazeboPartialEnv-v0',
     entry_point='gym_drift_car.envs:GazeboEnv',
-    kwargs={'partial': True}
+    # state: xdot, ydot, thetadot, s.
+    kwargs={'state_info': {'state_size': 4, 'include_tangential_speed': True}}
 )
 
 register(
@@ -23,7 +24,8 @@ register(
 register(
     id='DriftCarGazeboContinuousPartial-v0',
     entry_point='gym_drift_car.envs:GazeboEnv',
-    kwargs={'continuous' : True, 'partial': True}
+    # state: xdot, ydot, thetadot, s.
+    kwargs={'continuous' : True, 'state_info': {'state_size': 4, 'include_tangential_speed': True}}
 )
 #register(
 #    id='DriftCarEnv-v0',
