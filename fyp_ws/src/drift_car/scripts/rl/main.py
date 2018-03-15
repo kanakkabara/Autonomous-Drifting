@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import gym
-#import gym_drift_car
+import gym_drift_car
 import tensorflow as tf
 import numpy as np
 from utils import target_network_update_ops, target_network_update_apply, ExperienceReplayBuffer
