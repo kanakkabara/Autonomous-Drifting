@@ -234,6 +234,7 @@ void imu(){
   roll  *= 180.0f / PI;
 }
 void integrateAcceleration(float counter){
+  
   vx = vx + ax*counter*0.000001;
   vy = vy + ay*counter*0.000001;
   vz = vz + az*counter*0.000001;
@@ -828,7 +829,7 @@ float getAy(){
 void averageAccelerationX(){
   imu();
   ax_e=ax;
-  for(int i=1;i<2;i++){
+  for(int i=1;i<100;i++){
     imu();
     ax_e = (ax_e*(i-1)+ax)/i;
   } 
@@ -836,7 +837,7 @@ void averageAccelerationX(){
 float averageAccelerationY(){
   imu();
   ay_e=ay;
-  for(int i=1;i<2;i++){
+  for(int i=1;i<100;i++){
     imu();
     ay_e = (ay_e*(i-1)+ay)/i;
   } 
@@ -845,7 +846,7 @@ float averageAccelerationZ(){
   float az_e;
   imu();
   az_e=az;
-  for(int i=1;i<500;i++){
+  for(int i=1;i<100;i++){
     imu();
     az_e = (az_e*(i-1)+az)/i;
   } 
