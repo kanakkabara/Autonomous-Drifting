@@ -7,9 +7,9 @@ import rospy
 from std_msgs.msg import Int8, Float64, Float64MultiArray
 import numpy as np
 
-MODEL_PATH = "models/ExpCar5"
+MODEL_PATH = "models/ExpCar7"
 
-env = gym.make('DriftCarGazeboEnv-v0')
+env = gym.make('DriftCarGazeboPartialWithAnglesEnv-v0')
 pub = rospy.Publisher('matlab_bridge/state', Float64MultiArray, queue_size=1) 
 
 # Network parameters

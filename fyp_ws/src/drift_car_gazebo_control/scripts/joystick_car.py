@@ -33,12 +33,12 @@ def callback(data, args):
     global throtle, servo, drifting
     servo = data.axes[0] * 0.46
 
-    throtle = translate(data.axes[2], -1.0, 1.0, 98, 80)
+    #Convert to degrees 
+    servo = translate(servo, -0.436, 0.436, 65, 115)
+    throtle = translate(data.axes[2], -1.0, 1.0, 105, 80)
 
     if data.buttons[1] == 1: #B Button for Reset
-        throtle = 40.0
-        servo = 0.0
-        sendAction(throtle, servo)
+        sendAction(0.0, 90)
         return
 
     if data.buttons[3] == 1: #Y Button for toggle drift throttle state
@@ -60,12 +60,13 @@ def handleXbeeData(response):
         print(stateArray.data)
 
         global pub
-        #pub.publish(stateArray)
+        if pub is not None:
+            pub.publish(stateArray)
     except Exception as e:
         print(e)
 
 def sendAction(throtle, servo):
-    # print((throtle, servo))
+    print((throtle, servo))
     packed_data = struct.Struct('f f').pack(*(throtle, servo))
     ba = bytearray(packed_data)  
     xbee.send('tx', frame='A', dest_addr=b'\x00\x00', data=ba, options=b'\x04')
