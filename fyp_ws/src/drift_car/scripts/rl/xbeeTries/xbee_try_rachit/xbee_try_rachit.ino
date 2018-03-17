@@ -38,11 +38,11 @@ void setup() {
   esc.attach(ESC_PIN);
   steeringServo.attach(STEERING_SERVO_PIN);
   Serial.flush();
-  throttle = 0;
-  steeringAngle = 90;
+  throttle = 90;
+  steeringAngle = 100;
   issueCommands();
-  averageAccelerationX();
-  averageAccelerationY();
+//  averageAccelerationX();
+//  averageAccelerationY();
   //z_error = averageAccelerationZ();
   //calcNoise();
   //initPayload(numFloats * 4);
@@ -73,59 +73,64 @@ float focal_length_px = (3.6) / (4.0f * 6.0f) * 1000.0f;
 PX4Flow sensor = PX4Flow(); 
 int counter=0;
 void loop() {
-
-      if (xbee.readPacket(5000)) {
-          // Got a rx packet.
-          if (xbee.getResponse().getApiId() == RX_16_RESPONSE || xbee.getResponse().getApiId() == RX_64_RESPONSE) {
-            
-            if (xbee.getResponse().getApiId() == RX_16_RESPONSE) {
-              xbee.getResponse().getRx16Response(rx16);
-              option = rx16.getOption();
-              data = rx16.getData();
-            } else {
-              xbee.getResponse().getRx64Response(rx64);
-              option = rx64.getOption();
-              data = rx64.getData();
-            }
-            // Received RX packet.
-            float* convertedFloats = Utils::convert_to_floats(data, lengthOfRXPacket);
-            // Extract values 
-            throttle = convertedFloats[0];
-            steering = convertedFloats[1];
-            counter++;
-            Serial.print("counter:");
-            Serial.println(counter);
-            Serial.print("steering:");
-            Serial.println(steering);
-            throttle = constrain(throttle, 0, 120);
-            steeringAngle = (steering*180/3.14)+90;
-            steeringAngle = constrain(steeringAngle, 65,115);
-            issueCommands();
-
-            free(convertedFloats);
-          }
-      }
-      //Serial Communication for IMU
-      Wire.beginTransmission(104);
-      imu();
-      yaw_1 = getYaw();
-      gz_1 = getGz();
-      roll_1 = getRoll();
-      pitch_1 = getPitch();
-      xVelocityImu = getVx();
-      yVelocityImu = getVy();
-      zVelocityImu = getVz();
-      Wire.endTransmission();
-      //change toSend to send the data you want to send. The IMU velocities are named xVelocityImu, yVelocityImu, zVelocityImu.
-      
-      float toSend[] = {getAx(), getAx_e(), getAy(), getAy_e(), xVelocityImu, yVelocityImu, steering,steeringAngle };
-      uint8_t* payload = Utils::convert_to_bytes(toSend, 8);
-      // Create TX packet.
-      // Send TX Packet.
-      Tx64Request tx = Tx64Request(addr64, payload, numFloats * 4);
-      //xbee.send(tx);
-      delay(100);
-      free(payload);
+  throttle++;
+  Serial.print(throttle);
+  Serial.println("Issuing Commands");
+  issueCommands();
+  delay(1000);
+  
+//      if (xbee.readPacket(5000)) {
+//          // Got a rx packet.
+//          if (xbee.getResponse().getApiId() == RX_16_RESPONSE || xbee.getResponse().getApiId() == RX_64_RESPONSE) {
+//            
+//            if (xbee.getResponse().getApiId() == RX_16_RESPONSE) {
+//              xbee.getResponse().getRx16Response(rx16);
+//              option = rx16.getOption();
+//              data = rx16.getData();
+//            } else {
+//              xbee.getResponse().getRx64Response(rx64);
+//              option = rx64.getOption();
+//              data = rx64.getData();
+//            }
+//            // Received RX packet.
+//            float* convertedFloats = Utils::convert_to_floats(data, lengthOfRXPacket);
+//            // Extract values 
+//            throttle = convertedFloats[0];
+//            steering = convertedFloats[1];
+//            counter++;
+//            Serial.print("counter:");
+//            Serial.println(counter);
+//            Serial.print("steering:");
+//            Serial.println(steering);
+//            throttle = constrain(throttle, 0, 120);
+//            steeringAngle = (steering*180/3.14)+90;
+//            steeringAngle = constrain(steeringAngle, 65,115);
+//            issueCommands();
+//
+//            free(convertedFloats);
+//          }
+//      }
+//      //Serial Communication for IMU
+//      Wire.beginTransmission(104);
+//      imu();
+//      yaw_1 = getYaw();
+//      gz_1 = getGz();
+//      roll_1 = getRoll();
+//      pitch_1 = getPitch();
+//      xVelocityImu = getVx();
+//      yVelocityImu = getVy();
+//      zVelocityImu = getVz();
+//      Wire.endTransmission();
+//      //change toSend to send the data you want to send. The IMU velocities are named xVelocityImu, yVelocityImu, zVelocityImu.
+//      
+//      float toSend[] = {getAx(), getAx_e(), getAy(), getAy_e(), xVelocityImu, yVelocityImu, steering,steeringAngle };
+//      uint8_t* payload = Utils::convert_to_bytes(toSend, 8);
+//      // Create TX packet.
+//      // Send TX Packet.
+//      Tx64Request tx = Tx64Request(addr64, payload, numFloats * 4);
+//      xbee.send(tx);
+//      delay(100);
+//      free(payload);
 }
 
 // union to convery float to byte string
@@ -148,7 +153,7 @@ float* readFloat(uint8_t data[], int count){
 } 
 void issueCommands() {
   esc.write(throttle);
-  steeringServo.write(steering);
+  steeringServo.write(steeringAngle);
 }
 
 
