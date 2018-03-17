@@ -26,15 +26,14 @@ def callback(data, args):
     if takenOn == 0: # Action to be taken on the Car
         if(action == -1000):
             rospy.loginfo('Resetting Env . . . \n\n')
-            sendAction(30, 90)
+            sendAction(stopThrottle, 0)
             return
-        action = translate(action, -0.436, 0.436, 115, 65)
         sendAction(throttle, action)
 
 def sigStopHandler(signum, frame):
     global tempStop
     print("Ctrl+Z detected, stopping car . . . ")
-    sendAction(0, 90)
+    sendAction(stopThrottle, 0)
     tempStop = not tempStop
 
 def sendAction(throttle, servo):
@@ -69,7 +68,7 @@ def handleXbeeData(response):
         # Drop actions before publishing state
         # stateArray.data = stateArray.data[:-2]
 
-        # print(stateArray.data)
+        print(stateArray.data)
         latestState = stateArray.data
         
         pub.publish(stateArray)
@@ -83,26 +82,29 @@ def handleGetLatestState(req):
 
 def joystickCallback(data, args):
     servo = data.axes[0] * 0.46
-    #Convert to degrees 
-    servo = translate(servo, -0.436, 0.436, 115, 65)
-    throtleSend = translate(data.axes[2], -1.0, 1.0, throttle, 90)
+    throtleSend = translate(data.axes[5], -1.0, 1.0, throttle, 90)
 
-    if data.buttons[1] == 1: #B Button for Reset
-        sendAction(30.0, 90)
+    if data.buttons[1] == 1: # B Button for Reset
+        sendAction(stopThrottle, 0)
         return
 
     global drifting
-    if data.buttons[3] == 1: #Y Button for toggle drift throttle state
-        drifting = not drifting
+    if data.buttons[4] == 1: # LB Button to stop drift throttle
+        drifting = False
+    if data.buttons[5] == 1: # RB Button to start drift throttle
+        drifting = True
     
     if drifting:
         sendAction(throttle, servo)
     else:
         sendAction(throtleSend, servo)
 
+    time.sleep(0.05)
+
 if __name__=="__main__":  
-    global drifting, tempStop
+    global drifting, tempStop, stopThrottle
     throttle = 100
+    stopThrottle = 30.0
     latestState = None
     tempStop = False
     drifting = False
@@ -113,7 +115,7 @@ if __name__=="__main__":
     rospy.Service('drift_car/get_latest_state', GetLatestState, handleGetLatestState)
     rospy.Subscriber('/joy', Joy, joystickCallback, (pub), queue_size=1)
   
-    PORT = "/dev/ttyUSB0"
+    PORT = "/dev/ttyUSB1"
     BAUD_RATE = 57600
     ser = serial.Serial(PORT, BAUD_RATE)
     # Async
@@ -126,7 +128,7 @@ if __name__=="__main__":
     # Keep node running
     rospy.spin()
     # Reset car after program is killed
-    sendAction(0, 90)
+    sendAction(stopThrottle, 0)
     # Close Xbee/Serial connections
     xbee.halt()
     ser.close()

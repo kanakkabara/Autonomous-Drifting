@@ -31,7 +31,8 @@ for jj = 1:J
   x = [x; xx]; y = [y; yy];             % augment training sets for dynamics model  
 end
 
-filename = ['base_drift']; save(filename);
+filename = ['after_random_rollout']; save(filename);
+plant.randomRollout = 1;          
 
 mu0Sim(odei,:) = mu0; S0Sim(odei,odei) = S0;
 mu0Sim = mu0Sim(dyno); S0Sim = S0Sim(dyno,dyno);

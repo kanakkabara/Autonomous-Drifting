@@ -25,15 +25,17 @@ def callback(data, args):
     servo = data.axes[0] * 0.46
     #Convert to degrees 
     servo = translate(servo, -0.436, 0.436, 65, 115)
-    throtle = translate(data.axes[2], -1.0, 1.0, 98, 80)
+    throtle = translate(data.axes[5], -1.0, 1.0, 98, 80)
 
     if data.buttons[1] == 1: #B Button for Reset
         sendAction(30.0, 90)
         return
 
     global drifting
-    if data.buttons[3] == 1: #Y Button for toggle drift throttle state
-        drifting = not drifting
+    if data.buttons[4] == 1: # LB Button to stop drift throttle
+        drifting = False
+    if data.buttons[5] == 1: # RB Button to start drift throttle
+        drifting = True
     
     if drifting:
         sendAction(driftThrotle, servo)
@@ -94,14 +96,11 @@ if __name__=="__main__":
     print("Joystick Controller for Real Drift Car")
     print("======================================\n")
     
-    print("X for acceleration")
-    print("Y to toggle constant speed")
+    print("RT for acceleration")
+    print("LB/RB to toggle constant speed")
     print("B for hard reset")
 
     rospy.spin()
     
     xbee.halt()
     ser.close()
-
-    # Change back to me sending radian angle and convert on arduino
-    # Receive action taken in state back
