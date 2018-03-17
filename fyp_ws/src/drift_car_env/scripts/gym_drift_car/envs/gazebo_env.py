@@ -26,14 +26,7 @@ class GazeboEnv(gym.Env):
                 'include_tangential_speed': True}
 
         def __init__(self, continuous=False, state_info=DEFAULT_STATE_INFO):
-                tmp = os.popen("ps -Af").read()
-                roscore_count = tmp.count('roscore')
-                if roscore_count == 0:
-                    subprocess.Popen("roscore")
-                    time.sleep(1)
-                    print ("Roscore launched!")
-                
-                rospy.init_node('gym', anonymous=True)
+                rospy.init_node('gazebo_drift_car_gym', anonymous=True)
                 
                 self.gazeboProcess = subprocess.Popen(["roslaunch", "drift_car_gazebo", "drift_car.launch"])
                 time.sleep(10)
@@ -78,7 +71,7 @@ class GazeboEnv(gym.Env):
                   
                 # Learning Parameters
                 self.radius = 3
-                self.throttle = 400      
+                self.throttle = 415      
                 self.maxDeviationFromCenter = 4
                 
         def _seed(self, seed=None):
@@ -326,17 +319,14 @@ class GazeboEnv(gym.Env):
                 tmp = os.popen("ps -Af").read()
                 gzclient_count = tmp.count('gzclient')
                 gzserver_count = tmp.count('gzserver')
-                roscore_count = tmp.count('roscore')
-                rosmaster_count = tmp.count('rosmaster')
+                roslaunch_count = tmp.count('roslaunch')
 
                 if gzclient_count > 0:
                     os.system("killall -9 gzclient")
                 if gzserver_count > 0:
                     os.system("killall -9 gzserver")
-                if rosmaster_count > 0:
-                    os.system("killall -9 rosmaster")
-                if roscore_count > 0:
-                    os.system("killall -9 roscore")
+                if roslaunch_count > 0:
+                    os.system("killall -9 roslaunch")
 
-                if (gzclient_count or gzserver_count or roscore_count or rosmaster_count >0):
+                if (gzclient_count or gzserver_count or roslaunch_count):
                     os.wait()

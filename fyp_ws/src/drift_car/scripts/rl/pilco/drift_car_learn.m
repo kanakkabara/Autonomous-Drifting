@@ -17,6 +17,9 @@
 % 1. Initialization
 rosshutdown;
 rosinit;
+% plant.actionPub = rospublisher('/drift_car/action', 'std_msgs/Float64MultiArray');
+% plant.stateSub = rossubscriber('/drift_car/state');
+
 clear all; close all;
 settings_drift_car;                     % load scenario-specific settings
 basename = 'driftCar_';                 % filename used for saving data
@@ -27,6 +30,8 @@ for jj = 1:J
     rollout(gaussian(mu0, S0), struct('maxU',policy.maxU), H, plant, cost);
   x = [x; xx]; y = [y; yy];             % augment training sets for dynamics model  
 end
+
+filename = ['base_drift']; save(filename);
 
 mu0Sim(odei,:) = mu0; S0Sim(odei,odei) = S0;
 mu0Sim = mu0Sim(dyno); S0Sim = S0Sim(dyno,dyno);

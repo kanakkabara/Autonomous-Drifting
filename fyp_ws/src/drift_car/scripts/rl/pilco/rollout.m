@@ -80,13 +80,28 @@ for i = 1:H % --------------------------------------------- generate trajectory
 
   % 2. Simulate dynamics -------------------------------------------------------
   if isfield(plant, 'actionPub') && isfield(plant, 'stateSub')
-      actionMsg = rosmessage(plant.actionPub);
-      actionMsg.Data(1,:) = u(i,:);
-      actionMsg.Data(2,:) = plant.actOn;
-      send(plant.actionPub, actionMsg);
-      stateMsg = receive(plant.stateSub);
-      next(odei) = stateMsg.Data;
-      next(subi) = plant.subplant(state, u(i,:));
+      % Perform random rollout      
+      if plant.randomRollout == 1 
+        % Send Action
+        actionMsg = rosmessage(plant.actionPub);
+        actionMsg.Data(1,:) = u(i,:);
+        actionMsg.Data(2,:) = plant.actOn;
+        send(plant.actionPub, actionMsg);
+
+        % Get next state
+        stateMsg = receive(plant.stateSub);
+        next(odei) = stateMsg.Data;
+        next(subi) = plant.subplant(state, u(i,:));
+      else % Get expert demo data
+        % Get next state
+        stateMsg = receive(plant.stateSub);
+        data = stateMsg.Data;
+        % Extract action executed
+        u(i,:) = data(:,end);
+        % Extract resultant state
+        next(odei) = data(odei);
+        next(subi) = plant.subplant(state, u(i,:));
+      end
   else
       next(odei) = simulate(state(odei), u(i,:), plant);
       next(subi) = plant.subplant(state, u(i,:));
@@ -111,10 +126,14 @@ for i = 1:H % --------------------------------------------- generate trajectory
 end
 
 if isfield(plant, 'actionPub') && isfield(plant, 'stateSub')
+    if plant.randomRollout == 1
       actionMsg = rosmessage(plant.actionPub);
       actionMsg.Data(1,:) = -1000;
       actionMsg.Data(2,:) = plant.actOn;
       send(plant.actionPub, actionMsg);
+      disp('Waiting for key press to start next episode');
+%       waitforbuttonpress
+    end
 end
 
 y = x(2:H+1,1:nX); x = [x(1:H,:) u(1:H,:)]; 

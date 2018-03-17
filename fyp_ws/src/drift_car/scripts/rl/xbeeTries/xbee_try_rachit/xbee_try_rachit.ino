@@ -15,10 +15,11 @@ const int LENGTH_OF_RX_PACKET = 2;
 bool status;
 unsigned long start = millis();
 uint8_t* data;
-int numFloats=3;
+int numFloats = 3;
 float* floatValues;
 float x_error, y_error, z_error;
-
+float gyroBias1[3], accelBias1[3], magCalibration1[3]={0,0,0};
+float SelfTest1[6];
 Servo esc;
 Servo steeringServo;
 XBee xbee = XBee();
@@ -32,6 +33,14 @@ void setup() {
   esc.attach(ESC_PIN);
   steeringServo.attach(STEERING_SERVO_PIN);
   Serial.flush();
+
+  MPU9250SelfTest(SelfTest1);
+  calibrateMPU9250(gyroBias1, accelBias1);
+  initMPU9250();
+  initAK8963(magCalibration1);
+  
+
+  
   issueCommands(/*throttle=*/0, /*steeringAngle=*/90);
   averageAccelerationX();
   averageAccelerationY();
@@ -140,6 +149,8 @@ void communicateState() {
   xVelocityImu = getVx();
   yVelocityImu = getVy();
   zVelocityImu = getVz();
+  float ax = getAx();
+  float ay = getAy();
   Wire.endTransmission();
 
   // Create payload to send.
