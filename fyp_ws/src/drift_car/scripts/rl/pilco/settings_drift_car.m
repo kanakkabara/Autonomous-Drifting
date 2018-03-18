@@ -70,10 +70,11 @@ plant.dyno = dyno;
 plant.dyni = dyni;
 plant.difi = difi;
 plant.prop = @propagated;
-plant.actionPub = rospublisher('/matlab_bridge/action', 'std_msgs/Float64MultiArray');
-plant.stateSub = rossubscriber('/matlab_bridge/state');
+plant.actionPub = rospublisher('/drift_car/action', 'std_msgs/Float64MultiArray');
+plant.stateSub = rossubscriber('/drift_car/state');
 plant.actOn = 0;                                          % 0 for simulator, 1 for actual car
- 
+plant.randomRollout = 0;                                  % 1 to perform random rollout, 0 to use expert data instead of random rollouts       
+
 % 4. Policy structure
 policy.fcn = @(policy,m,s)conCat(@congp,@gSat,policy,m,s);% controller 
                                                           % representation

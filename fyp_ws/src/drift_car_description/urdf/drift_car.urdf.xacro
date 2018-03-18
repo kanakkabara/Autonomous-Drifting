@@ -47,7 +47,7 @@ limitations under the License.
   <xacro:property name="chassis_length" value="0.258"/>
   <xacro:property name="chassis_width" value="0.168"/>
   <xacro:property name="chassis_height" value="0.01"/>
-  <xacro:property name="chassis_mass" value="2.788"/>
+  <xacro:property name="chassis_mass" value="1.5"/>
 
   <!-- battery_dist is the distance between the inner edges of the
        batteries. battery_comp_depth is the battery compartment depth.
@@ -67,9 +67,9 @@ limitations under the License.
        inset from the outer edge of the tire. It is set so that each wheel
        is a "zero offset" wheel. hex_hub_depth = tire_width / 2 -
        axle_length. -->
-  <xacro:property name="hub_dia" value="0.09652"/>
-  <xacro:property name="tire_dia" value="0.14605"/>
-  <xacro:property name="tire_width" value="0.0889"/>
+  <xacro:property name="hub_dia" value="0.05"/>
+  <xacro:property name="tire_dia" value="0.065"/>
+  <xacro:property name="tire_width" value="0.025"/>
   <xacro:property name="hex_hub_depth" value="0.01445"/>
   <xacro:property name="wheel_mass" value="0.29"/>
 
@@ -77,17 +77,17 @@ limitations under the License.
        the shock absorbers are fully extended. axle_length is the distance
        from a U joint to the corresponding hex hub. wheel_travel is the
        vertical wheel travel. -->
-  <xacro:property name="wheelbase" value="0.335"/>
-  <xacro:property name="hex_hub_dist" value="0.365"/>
-  <xacro:property name="axle_length" value="0.03"/>
-  <xacro:property name="wheel_travel" value="0.084"/>
+  <xacro:property name="wheelbase" value="0.205"/>
+  <xacro:property name="hex_hub_dist" value="0.32"/>
+  <xacro:property name="axle_length" value="0.05"/>
+  <xacro:property name="wheel_travel" value="0.01"/>
   <xacro:property name="shock_z_offset" value="0.0655"/>
 
   <!-- shock_eff_limit is 2 * ((shock_stroke / 2) * shock_spring_constant) N.
        shock_stroke is 0.028575 meters. shock_spring_constant, an approximation
        of a Traxxas Ultra Shock shock absorber spring's constant, is
        437.817 N/m. -->
-  <xacro:property name="shock_eff_limit" value="12.5106"/>
+  <xacro:property name="shock_eff_limit" value="100"/>
   <xacro:property name="shock_vel_limit" value="1000"/>
 
   <!-- The specifications for a Titan(R) 550 motor could not be found, so the
@@ -104,7 +104,7 @@ limitations under the License.
        max_speed = 40 mph (30+ mph) = 17.8816 m/s
        axle_vel_limit = (2 * pi) * (max_speed / (pi * tire_dia)) =
          244.8696 rad/s -->
-  <xacro:property name="axle_eff_limit" value="5.12766"/>
+  <xacro:property name="axle_eff_limit" value="25"/>
   <xacro:property name="axle_vel_limit" value="244.8696"/>
 
   <!-- These constants are used to simulate a Traxxas 2056 servo operated at
@@ -168,54 +168,7 @@ limitations under the License.
     </inertial>
   </xacro:macro>
 
-  <!-- Battery -->
-  <xacro:macro name="battery" params="prefix reflect">
-    <joint name="chassis_to_${prefix}_battery" type="fixed">
-      <parent link="chassis"/>
-      <child link="${prefix}_battery_offset"/>
-      <origin xyz="${battery_x_offset - battery_length / 2}
-                   ${reflect * battery_dist / 2}
-                   0"
-              rpy="${reflect * battery_comp_angle} 0 0"/>
-    </joint>
 
-    <link name="${prefix}_battery_offset">
-      <xacro:null_inertial/>
-    </link>
-
-    <joint name="offset_to_${prefix}_battery" type="fixed">
-      <parent link="${prefix}_battery_offset"/>
-      <child link="${prefix}_battery"/>
-      <origin xyz="0
-                   ${reflect * battery_width / 2}
-                   ${(battery_height / 2) - battery_comp_depth}"/>
-    </joint>
-
-    <link name="${prefix}_battery">
-      <visual>
-        <geometry>
-          <box size="${battery_length} ${battery_width} ${battery_height}"/>
-        </geometry>
-        <material name="battery_mat"/>
-      </visual>
-
-      <collision>
-        <geometry>
-          <box size="${battery_length} ${battery_width} ${battery_height}"/>
-        </geometry>
-      </collision>
-
-      <xacro:solid_cuboid_inertial
-         width="${battery_length}" depth="${battery_width}"
-         height="${battery_height}" mass="${battery_mass}">
-        <origin/>
-      </xacro:solid_cuboid_inertial>
-    </link>
-
-    <gazebo reference="${prefix}_battery">
-      <material>Gazebo/Blue</material>
-    </gazebo>
-  </xacro:macro>
 
   <!-- Shock absorber -->
   <xacro:macro name="shock"
@@ -426,9 +379,6 @@ limitations under the License.
     <child link="chassis"/>
   </joint>
 
-  <!-- Batteries -->
-  <xacro:battery prefix="left" reflect="1"/>
-  <xacro:battery prefix="right" reflect="-1"/>
 
   <!-- Wheels -->
   <xacro:front_wheel lr_prefix="left" fr_prefix="front"

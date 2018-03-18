@@ -38,8 +38,8 @@ if __name__ == '__main__':
     # env = gym.make('DriftCarGazeboContinuous-v0')
     env = gym.make('DriftCarGazeboContinuousPartial-v0')
 
-    pub = rospy.Publisher('matlab_bridge/state', Float64MultiArray, queue_size=1) 
-    rospy.Subscriber('matlab_bridge/action', Float64MultiArray, callback, (env, pub))
+    pub = rospy.Publisher('drift_car/state', Float64MultiArray, queue_size=1) 
+    rospy.Subscriber('drift_car/action', Float64MultiArray, callback, (env, pub))
 
     env.reset()
     #env.render()

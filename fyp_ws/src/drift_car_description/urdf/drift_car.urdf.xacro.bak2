@@ -46,7 +46,7 @@ limitations under the License.
        along the y axis, and chassis_height along the z axis. -->
   <xacro:property name="chassis_length" value="0.26"/>
   <xacro:property name="chassis_width" value="0.17"/>
-  <xacro:property name="chassis_height" value="0.03"/>
+  <xacro:property name="chassis_height" value="0.01"/>
   <xacro:property name="chassis_mass" value="1.5"/>
 
   <!-- battery_dist is the distance between the inner edges of the
@@ -68,20 +68,32 @@ limitations under the License.
        is a "zero offset" wheel. hex_hub_depth = tire_width / 2 -
        axle_length. -->
   <xacro:property name="hub_dia" value="0.01"/>
-  <xacro:property name="tire_dia" value="0.064"/>
-  <xacro:property name="tire_width" value="0.025"/>
-  <xacro:property name="hex_hub_depth" value="0.01"/>
-  <xacro:property name="wheel_mass" value="0.15"/>
+  <xacro:property name="tire_dia" value="0.07"/>
+  <!-- <xacro:property name="tire_width" value="0.025"/> -->
+  <!-- <xacro:property name="hex_hub_depth" value="0.01"/> -->
+  <!-- <xacro:property name="wheel_mass" value="0.15"/> -->
+  
+  <!-- <xacro:property name="hub_dia" value="0.09652"/> -->
+  <!-- <xacro:property name="tire_dia" value="0.14605"/> -->
+  <xacro:property name="tire_width" value="0.0889"/>
+  <xacro:property name="hex_hub_depth" value="0.01445"/>
+  <xacro:property name="wheel_mass" value="0.29"/>
 
   <!-- hex_hub_dist is the distance between left and right hex hubs when
        the shock absorbers are fully extended. axle_length is the distance
        from a U joint to the corresponding hex hub. wheel_travel is the
        vertical wheel travel. -->
-  <xacro:property name="wheelbase" value="0.26"/>
+  <!-- <xacro:property name="wheelbase" value="0.26"/>
   <xacro:property name="hex_hub_dist" value="0.17"/>
   <xacro:property name="axle_length" value="0.23"/>
   <xacro:property name="wheel_travel" value="0.01"/>
-  <xacro:property name="shock_z_offset" value="0.0011"/>
+  <xacro:property name="shock_z_offset" value="0.0011"/> -->
+
+    <xacro:property name="wheelbase" value="0.335"/>
+  <xacro:property name="hex_hub_dist" value="0.365"/>
+  <xacro:property name="axle_length" value="0.03"/>
+  <xacro:property name="wheel_travel" value="0.084"/>
+  <xacro:property name="shock_z_offset" value="0.0655"/>
 
   <!-- shock_eff_limit is 2 * ((shock_stroke / 2) * shock_spring_constant) N.
        shock_stroke is 0.028575 meters. shock_spring_constant, an approximation

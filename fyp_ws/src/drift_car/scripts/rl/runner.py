@@ -10,7 +10,7 @@ import numpy as np
 MODEL_PATH = "models/ExpCar7"
 
 env = gym.make('DriftCarGazeboPartialWithAnglesEnv-v0')
-pub = rospy.Publisher('matlab_bridge/state', Float64MultiArray, queue_size=1) 
+pub = rospy.Publisher('drift_car/state', Float64MultiArray, queue_size=1) 
 
 # Network parameters
 tf.reset_default_graph()

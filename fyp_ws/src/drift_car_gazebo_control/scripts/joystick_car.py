@@ -1,25 +1,17 @@
 #!/usr/bin/env python
-import rospy
-import os
-import signal
 import subprocess
-import time
+import struct
+
+import rospy
 from sensor_msgs.msg import Joy
 from std_msgs.msg import Int8, Float64, Float64MultiArray
 
 from xbee import XBee
 import serial
-import struct
 
-global throtle, servo, drifting, pub
-throtle = 80.0
+global drifting, pub
 driftThrotle = 85.0
-THROTLE_STEP = 0.5
-
-servo = 0.0
-
 drifting = False
-
 pub = None
 
 def translate(value, leftMin, leftMax, rightMin, rightMax):
@@ -30,19 +22,20 @@ def translate(value, leftMin, leftMax, rightMin, rightMax):
 
 def callback(data, args):
     # print(data)
-    global throtle, servo, drifting
     servo = data.axes[0] * 0.46
-
     #Convert to degrees 
     servo = translate(servo, -0.436, 0.436, 65, 115)
-    throtle = translate(data.axes[2], -1.0, 1.0, 105, 80)
+    throtle = translate(data.axes[5], -1.0, 1.0, 98, 80)
 
     if data.buttons[1] == 1: #B Button for Reset
-        sendAction(0.0, 90)
+        sendAction(30.0, 90)
         return
 
-    if data.buttons[3] == 1: #Y Button for toggle drift throttle state
-        drifting = not drifting
+    global drifting
+    if data.buttons[4] == 1: # LB Button to stop drift throttle
+        drifting = False
+    if data.buttons[5] == 1: # RB Button to start drift throttle
+        drifting = True
     
     if drifting:
         sendAction(driftThrotle, servo)
@@ -55,12 +48,22 @@ def callback(data, args):
 def handleXbeeData(response):
     try:
         stateArray = Float64MultiArray()
+        # Expected State = xDot (m/s), yDot (m/s), thetaDot (degrees/s), throttle, servo
         for i in range(0, len(response['rf_data']), 4):
             stateArray.data.append(struct.unpack('f',response['rf_data'][i:i+4])[0])
-        print(stateArray.data)
-
+        # Convert to rads/s
+        stateArray.data[2] = stateArray.data[2]/180
+        
+        # Add tangential speed to state
+        velx = stateArray.data[0]
+        vely = stateArray.data[1]
+        carTangentialSpeed = math.sqrt(velx ** 2 + vely ** 2)
+        stateArray.data.insert(3, carTangentialSpeed)
+        
         global pub
         if pub is not None:
+            # Expected State = xDot (m/s), yDot (m/s), thetaDot (rads/s), tangentialSpeed, throttle, servo
+            print(stateArray.data)
             pub.publish(stateArray)
     except Exception as e:
         print(e)
@@ -82,15 +85,6 @@ if __name__=="__main__":
     # Sync
     # xbee = XBee(ser, escaped=True)
 
-    time.sleep(7)
-
-    tmp = os.popen("ps -Af").read()
-    roscore_count = tmp.count('roscore')
-    if roscore_count == 0:
-        subprocess.Popen("roscore")
-        time.sleep(1)
-        print ("Roscore launched!")
-
     rospy.init_node('drift_car_teleop_joystick')
     subprocess.Popen(["rosrun", "joy", "joy_node"])
     
@@ -102,8 +96,8 @@ if __name__=="__main__":
     print("Joystick Controller for Real Drift Car")
     print("======================================\n")
     
-    print("X for acceleration")
-    print("Y to toggle constant speed")
+    print("RT for acceleration")
+    print("LB/RB to toggle constant speed")
     print("B for hard reset")
 
     rospy.spin()
