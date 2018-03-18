@@ -36,6 +36,7 @@ void setup() {
   Serial.flush();
 
   MPU9250SelfTest(SelfTest1);
+  
   calibrateMPU9250(gyroBias1, accelBias1);
   initMPU9250();
   initAK8963(magCalibration1);
