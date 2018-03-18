@@ -15,7 +15,7 @@ const int LENGTH_OF_RX_PACKET = 2;
 bool status;
 unsigned long start = millis();
 uint8_t* data;
-int numFloats = 3;
+int numFloats = 5;
 float* floatValues;
 float x_error, y_error, z_error;
 float gyroBias1[3], accelBias1[3], magCalibration1[3]={0,0,0};
@@ -25,7 +25,8 @@ Servo steeringServo;
 XBee xbee = XBee();
 XBeeAddress64 addr64 = XBeeAddress64(0x0013a200, 0x4108214A);
 TxStatusResponse txStatus = TxStatusResponse();
-
+float gThrottle=0;
+float gSteering=0;
 void setup() {
   Wire.begin();
   Serial.begin(57600);
@@ -38,9 +39,7 @@ void setup() {
   calibrateMPU9250(gyroBias1, accelBias1);
   initMPU9250();
   initAK8963(magCalibration1);
-  
-
-  
+ 
   issueCommands(/*throttle=*/0, /*steeringAngle=*/90);
   averageAccelerationX();
   averageAccelerationY();
@@ -60,15 +59,11 @@ float pitch_1=0;
 float xVelocityImu = 0;
 float yVelocityImu = 0;
 float zVelocityImu = 0;
-float xPosition;
-float yPosition;
 float xVelocity;
 float yVelocity;
 long last_check = 0;
 int px = 0;
 int py = 0;
-float focal_length_px = (3.6) / (4.0f * 6.0f) * 1000.0f;
-PX4Flow sensor = PX4Flow(); 
 void loop() {
     if (xbee.readPacket(200)) {
       // Got a rx packet.
@@ -122,18 +117,21 @@ void parseAndExecuteActions(uint8_t* arr, int num_floats) {
   // Extract values 
   float throttle = convertedFloats[0];
   float steeringAngle = convertedFloats[1];
+  gSteering = steeringAngle;
+  gThrottle = throttle;
   throttle = constrain(throttle, 0, 120);
-  steeringAngle = constrain(steeringAngle, 65,115);
+  float steeringDegrees = 90+(steeringAngle*180)/3.1428;
+  steeringDegrees = constrain(steeringDegrees, 65, 115);
 
   // Execute the actions and free space.
-  issueCommands(throttle, steeringAngle);
+  issueCommands(throttle, steeringDegrees);
   free(convertedFloats);
 }
 
 
-void issueCommands(float throttle, float steeringAngle) {
+void issueCommands(float throttle, float steeringDegrees) {
   esc.write(throttle);
-  steeringServo.write(steeringAngle);
+  steeringServo.write(steeringDegrees);
 }
 
 // Communicates the state of the car via XBee.
@@ -154,7 +152,7 @@ void communicateState() {
   Wire.endTransmission();
 
   // Create payload to send.
-  float toSend[] = {xVelocityImu, yVelocityImu, gz_1};
+  float toSend[] = {xVelocityImu, yVelocityImu, gz_1, gThrottle, gSteering};
   uint8_t* payload = Utils::convert_to_bytes(toSend, 8);
   
   // Send TX packet and free space.

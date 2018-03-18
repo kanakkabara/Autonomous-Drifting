@@ -187,7 +187,7 @@ float q[4] = {1.0f, 0.0f, 0.0f, 0.0f};    // vector to hold quaternion
 float eInt[3] = {0.0f, 0.0f, 0.0f}; 
 float startTime;
 float endTime;
-float vx=0, vy=0, vz=0, ax_e, ay_e;
+float vx=0, vy=0, vz=0, ax_e=0, ay_e=0;
 void imu(){
   
 	if (readByte(MPU9250_ADDRESS, INT_STATUS) & 0x01) {  // On interrupt, check if data ready interrupt
