@@ -44,10 +44,10 @@ limitations under the License.
 
   <!-- chassis_length is measured along the x axis, chassis_width
        along the y axis, and chassis_height along the z axis. -->
-  <xacro:property name="chassis_length" value="0.258"/>
-  <xacro:property name="chassis_width" value="0.168"/>
+  <xacro:property name="chassis_length" value="0.32"/>
+  <xacro:property name="chassis_width" value="0.09"/>
   <xacro:property name="chassis_height" value="0.01"/>
-  <xacro:property name="chassis_mass" value="1.5"/>
+  <xacro:property name="chassis_mass" value="2"/>
 
   <!-- battery_dist is the distance between the inner edges of the
        batteries. battery_comp_depth is the battery compartment depth.
@@ -70,16 +70,16 @@ limitations under the License.
   <xacro:property name="hub_dia" value="0.05"/>
   <xacro:property name="tire_dia" value="0.065"/>
   <xacro:property name="tire_width" value="0.025"/>
-  <xacro:property name="hex_hub_depth" value="0.01445"/>
-  <xacro:property name="wheel_mass" value="0.29"/>
+  <xacro:property name="hex_hub_depth" value="0.012"/>
+  <xacro:property name="wheel_mass" value="0.3"/>
 
   <!-- hex_hub_dist is the distance between left and right hex hubs when
        the shock absorbers are fully extended. axle_length is the distance
        from a U joint to the corresponding hex hub. wheel_travel is the
        vertical wheel travel. -->
-  <xacro:property name="wheelbase" value="0.205"/>
-  <xacro:property name="hex_hub_dist" value="0.32"/>
-  <xacro:property name="axle_length" value="0.05"/>
+  <xacro:property name="wheelbase" value="0.26"/>
+  <xacro:property name="hex_hub_dist" value="0.23"/>
+  <xacro:property name="axle_length" value="0.01"/>
   <xacro:property name="wheel_travel" value="0.01"/>
   <xacro:property name="shock_z_offset" value="0.0655"/>
 
@@ -93,25 +93,25 @@ limitations under the License.
   <!-- The specifications for a Titan(R) 550 motor could not be found, so the
        stall torque of a Mabuchi Motor(R) RS-550VC-7525 motor was used instead.
 
-       num_spur_gear_teeth = 68
-       num_pinion_gear_teeth = 19
+       num_spur_gear_teeth = 98
+       num_pinion_gear_teeth = 32
        final_gear_ratio = (num_spur_gear_teeth / num_pinion_gear_teeth) *
-         5.22 = 18.68
-       stall_torque = 0.549 N m
+         5.22 = 15.98625
+       stall_torque = 0.  549 N m
        axle_eff_limit = ((2 * stall_torque) * final_gear_ratio) / 4 =
-         5.12766 N m
+         4.388225625 N m
 
-       max_speed = 40 mph (30+ mph) = 17.8816 m/s
+       max_speed = 17.8816 m/s
        axle_vel_limit = (2 * pi) * (max_speed / (pi * tire_dia)) =
-         244.8696 rad/s -->
-  <xacro:property name="axle_eff_limit" value="25"/>
-  <xacro:property name="axle_vel_limit" value="244.8696"/>
+         550.203076923 rad/s -->
+  <xacro:property name="axle_eff_limit" value="4.388225625"/>
+  <xacro:property name="axle_vel_limit" value="550.203076923"/>
 
   <!-- These constants are used to simulate a Traxxas 2056 servo operated at
        6 V. servo_stall_torque is measured in N m. servo_no_load_speed is
        measured in rad/s. -->
-  <xacro:property name="servo_stall_torque" value="0.5649"/>
-  <xacro:property name="servo_no_load_speed" value="4.553"/>
+  <xacro:property name="servo_stall_torque" value="0.874854"/>
+  <xacro:property name="servo_no_load_speed" value="11.63553"/>
 
   <!-- ctrl_period is gazebo_ros_control's control period. Unit: hertz. -->
   <xacro:property name="ctrl_period" value="0.01"/>
@@ -173,18 +173,20 @@ limitations under the License.
   <!-- Shock absorber -->
   <xacro:macro name="shock"
                params="lr_prefix fr_prefix lr_reflect fr_reflect child">
-    <joint name="${lr_prefix}_${fr_prefix}_shock" type="prismatic">
+    <joint name="${lr_prefix}_${fr_prefix}_shock" type="revolute">
       <parent link="chassis"/>
       <child link="${child}"/>
 
       <origin xyz="${fr_reflect * wheelbase / 2}
                    ${lr_reflect * ((hex_hub_dist / 2) - axle_length)}
-                   ${(wheel_travel / 2) - shock_z_offset}"/>
+                   0.01"/>
       <axis xyz="0 0 -1"/>
-      <limit lower="${-wheel_travel / 2}" upper="${wheel_travel / 2}"
-             effort="${shock_eff_limit}" velocity="${shock_vel_limit}"/>
+      <limit lower="0" upper="0"
+             effort="0" velocity="${shock_vel_limit}"/>
+      <!-- <limit lower="${-wheel_travel / 2}" upper="${wheel_travel / 2}"
+             effort="${shock_eff_limit}" velocity="${shock_vel_limit}"/> -->
     </joint>
-    <transmission name="${lr_prefix}_${fr_prefix}_shock_trans">
+    <!-- <transmission name="${lr_prefix}_${fr_prefix}_shock_trans">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="${lr_prefix}_${fr_prefix}_shock">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
@@ -193,7 +195,7 @@ limitations under the License.
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         <mechanicalReduction>1</mechanicalReduction>
       </actuator>
-    </transmission>
+    </transmission> -->
   </xacro:macro>
 
   <!-- The "wheel" macro defines an axle carrier, axle, and wheel. -->
@@ -223,21 +225,19 @@ limitations under the License.
     </transmission>
 
     <link name="${lr_prefix}_${fr_prefix}_wheel">
-      <visual>
-        <origin xyz="0
-                     ${lr_reflect * (axle_length - (tire_width / 
-                     2 - hex_hub_depth))}
-                     0"/>
-        <geometry>
-          <cylinder radius="${tire_dia / 2}" length="${tire_width}"/>
-        </geometry>
-        <material name="tire_mat"/>
-      </visual>
+        <visual>
+          <origin xyz="0
+                      0
+                      0"/>
+          <geometry>
+            <cylinder radius="${tire_dia / 2}" length="${tire_width}"/>
+          </geometry>
+          <material name="tire_mat"/>
+        </visual>
 
       <collision>
         <origin xyz="0
-                     ${lr_reflect * (axle_length - (tire_width / 
-                     2 - hex_hub_depth))}
+                     0
                      0"/>
         <geometry>
           <cylinder radius="${tire_dia / 2}" length="${tire_width}"/>
@@ -246,8 +246,8 @@ limitations under the License.
           <!-- Low friction tires -->
           <friction>
             <ode>
-              <mu>0</mu>
-              <mu2>0</mu2>
+              <mu>1</mu>
+              <mu2>1</mu2>
             </ode>
           </friction>
         </surface>

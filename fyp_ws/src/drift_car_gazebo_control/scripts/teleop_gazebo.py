@@ -14,7 +14,7 @@ a       s       d
 CTRL-C to quit
 """
 
-THROTTLE_STEP = 10
+THROTTLE_STEP = 100
 STEER_STEP = 0.1
 throttle = 300
 servo = 0

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import subprocess
 import struct
+import math
 
 import rospy
 from sensor_msgs.msg import Joy
@@ -10,7 +11,7 @@ from xbee import XBee
 import serial
 
 global drifting, pub
-driftThrotle = 85.0
+driftThrotle = 100.0
 drifting = False
 pub = None
 
@@ -22,13 +23,13 @@ def translate(value, leftMin, leftMax, rightMin, rightMax):
 
 def callback(data, args):
     # print(data)
-    servo = data.axes[0] * 0.46
+    servo = data.axes[3] * 0.46
     #Convert to degrees 
     servo = translate(servo, -0.436, 0.436, 65, 115)
-    throtle = translate(data.axes[5], -1.0, 1.0, 98, 80)
+    throtle = translate(data.axes[2], -1.0, 1.0, 98, 80)
 
     if data.buttons[1] == 1: #B Button for Reset
-        sendAction(30.0, 90)
+        sendAction(30.0, 0)
         return
 
     global drifting

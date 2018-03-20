@@ -41,7 +41,7 @@ def sendAction(throttle, servo):
     # if tempStop:        
     #     return
 
-    rospy.loginfo(rospy.get_caller_id() + 'Action: %s , %s', throttle, servo)            
+    # rospy.loginfo(rospy.get_caller_id() + 'Action: %s , %s', throttle, servo)            
     packed_data = struct.Struct('f f').pack(*(throttle, servo))
     ba = bytearray(packed_data)  
     xbee.send('tx', frame='A', dest_addr=b'\x00\x00', data=ba, options=b'\x04')
@@ -81,8 +81,8 @@ def handleGetLatestState(req):
     return GetLatestStateResponse(latestState)
 
 def joystickCallback(data, args):
-    servo = data.axes[0] * 0.46
-    throtleSend = translate(data.axes[5], -1.0, 1.0, throttle, 90)
+    servo = data.axes[3] * 0.46
+    throtleSend = translate(data.axes[2], -1.0, 1.0, throttle, 90)
 
     if data.buttons[1] == 1: # B Button for Reset
         sendAction(stopThrottle, 0)
@@ -103,7 +103,7 @@ def joystickCallback(data, args):
 
 if __name__=="__main__":  
     global drifting, tempStop, stopThrottle
-    throttle = 100
+    throttle = 102
     stopThrottle = 30.0
     latestState = None
     tempStop = False
@@ -115,7 +115,7 @@ if __name__=="__main__":
     rospy.Service('drift_car/get_latest_state', GetLatestState, handleGetLatestState)
     rospy.Subscriber('/joy', Joy, joystickCallback, (pub), queue_size=1)
   
-    PORT = "/dev/ttyUSB1"
+    PORT = "/dev/ttyUSB0"
     BAUD_RATE = 57600
     ser = serial.Serial(PORT, BAUD_RATE)
     # Async
