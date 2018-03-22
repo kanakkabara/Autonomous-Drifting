@@ -7,7 +7,7 @@ import subprocess
 
 global throtle, servo, drifting, env
 throtle = 250
-driftThrotle = 400
+driftThrotle = 1720
 THROTLE_STEP = 2
 servo = 0
 drifting = False
@@ -25,12 +25,14 @@ def callback(data):
         env.reset()
         return
         
-    global throtle, servo, drifting
-    servo = data.axes[0] * 0.46
-    throtle = translate(data.axes[2], -1.0, 1.0, 500, 250)
+    global throtle, servo, drifting, driftThrotle
+    servo = data.axes[3] * 0.46
+    throtle = translate(data.axes[2], -1.0, 1.0, driftThrotle, 1650)
 
-    if data.buttons[3] == 1: #Y Button for toggle drift throttle state
-        drifting = not drifting
+    if data.buttons[4] == 1: # LB Button to stop drift throttle
+        drifting = False
+    if data.buttons[5] == 1: # RB Button to start drift throttle
+        drifting = True
     
     if drifting:
         env.step((driftThrotle, servo))

@@ -90,7 +90,7 @@ for i = 1:H % --------------------------------------------- generate trajectory
 
         % Get next state
         stateMsg = receive(plant.stateSub);
-        data = stateMsg.Data
+        data = stateMsg.Data;
         next(odei) = data(odei);
         next(subi) = plant.subplant(state, u(i,:));
       else % Get expert demo data

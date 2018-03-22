@@ -15,8 +15,6 @@
 %% Code
 
 % 1. Initialization
-rosshutdown;
-rosinit;
 % plant.actionPub = rospublisher('/drift_car/action', 'std_msgs/Float64MultiArray');
 % plant.stateSub = rossubscriber('/drift_car/state');
 

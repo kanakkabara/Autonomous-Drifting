@@ -51,12 +51,12 @@ difi = [1 2 3 4];      % variables that are learned via differences
 
 % 2. Set up the scenario
 dt = 0.10;                          % [s] sampling time
-T = 15.0;                           % [s] initial prediction horizon time
+T = 10.0;                           % [s] initial prediction horizon time
 H = ceil(T/dt);                     % prediction steps (optimization horizon)
 mu0 = [0 0 0 0]';               % initial state mean
 S0 = diag([0.1 0.1 0.1 0.1].^2);
 N = 15;                             % number controller optimizations
-J = 3;                              % initial J trajectories of length H
+J = 7;                              % initial J trajectories of length H
 K = 1;                              % no. of initial states for which we optimize
 nc = 10;                            % number of controller basis functions
 
@@ -73,7 +73,7 @@ plant.prop = @propagated;
 plant.actionPub = rospublisher('/drift_car/action', 'std_msgs/Float64MultiArray');
 plant.stateSub = rossubscriber('/drift_car/state');
 plant.actOn = 0;                                          % 0 for simulator, 1 for actual car
-plant.randomRollout = 0;                                  % 1 to perform random rollout, 0 to use expert data instead of random rollouts       
+plant.randomRollout = 1;                                  % 1 to perform random rollout, 0 to use expert data instead of random rollouts       
 
 % 4. Policy structure
 policy.fcn = @(policy,m,s)conCat(@congp,@gSat,policy,m,s);% controller 
