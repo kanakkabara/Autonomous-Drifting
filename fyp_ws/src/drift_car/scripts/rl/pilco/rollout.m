@@ -132,8 +132,8 @@ if isfield(plant, 'actionPub') && isfield(plant, 'stateSub')
       actionMsg.Data(1,:) = -1000;
       actionMsg.Data(2,:) = plant.actOn;
       send(plant.actionPub, actionMsg);
-      disp('Waiting for key press to start next episode');
-      waitforbuttonpress
+      %disp('Waiting for key press to start next episode');
+      %%waitforbuttonpress
     end
 end
 
