@@ -16,23 +16,15 @@ def callback(data, args):
     env = args[0]
     pub = args[1]
     
-    if takenOn == 0: # Action to be taken on the Gazebo Sim
-        if(action == -1000):
-            rospy.loginfo('Resetting Env . . . \n\n')
-            env.reset()
-            return
-    
-        state, reward, done, _ = env.step(action)
-        stateArray = Float64MultiArray()
-        stateArray.data = state.tolist()
-        pub.publish(stateArray)
-    else: # Action to be taken on the actual car
-        if(action == -1000):
-            rospy.loginfo('Resetting Env . . . \n\n')
-            #TODO figure out reset of car
-            return
-        
-        action = math.degrees(action)
+    if(action == -1000):
+        rospy.loginfo('Resetting Env . . . \n\n')
+        env.reset()
+        return
+
+    state, reward, done, _ = env.step(action)
+    stateArray = Float64MultiArray()
+    stateArray.data = state.tolist()
+    pub.publish(stateArray)
 
 if __name__ == '__main__':
     # env = gym.make('DriftCarGazeboContinuous-v0')

@@ -173,29 +173,16 @@ limitations under the License.
   <!-- Shock absorber -->
   <xacro:macro name="shock"
                params="lr_prefix fr_prefix lr_reflect fr_reflect child">
-    <joint name="${lr_prefix}_${fr_prefix}_shock" type="revolute">
+    <joint name="${lr_prefix}_${fr_prefix}_shock" type="fixed">
       <parent link="chassis"/>
       <child link="${child}"/>
-
       <origin xyz="${fr_reflect * wheelbase / 2}
                    ${lr_reflect * ((hex_hub_dist / 2) - axle_length)}
                    0.01"/>
       <axis xyz="0 0 -1"/>
       <limit lower="0" upper="0"
              effort="0" velocity="${shock_vel_limit}"/>
-      <!-- <limit lower="${-wheel_travel / 2}" upper="${wheel_travel / 2}"
-             effort="${shock_eff_limit}" velocity="${shock_vel_limit}"/> -->
     </joint>
-    <!-- <transmission name="${lr_prefix}_${fr_prefix}_shock_trans">
-      <type>transmission_interface/SimpleTransmission</type>
-      <joint name="${lr_prefix}_${fr_prefix}_shock">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-      </joint>
-      <actuator name="${lr_prefix}_${fr_prefix}_shock_act">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        <mechanicalReduction>1</mechanicalReduction>
-      </actuator>
-    </transmission> -->
   </xacro:macro>
 
   <!-- The "wheel" macro defines an axle carrier, axle, and wheel. -->
@@ -407,8 +394,21 @@ limitations under the License.
         <bodyName>imu_link</bodyName>
         <topicName>/drift_car/imu_data</topicName>
         <serviceName>/drift_car/imu_service</serviceName>
-        <gaussianNoise>0.0</gaussianNoise>
+        <gaussianNoise>0.01</gaussianNoise>
         <updateRate>60.0</updateRate> 
+    </plugin>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="p3d_base_controller" filename="libgazebo_ros_p3d.so">
+      <alwaysOn>true</alwaysOn>
+      <updateRate>10000.0</updateRate>
+      <bodyName>base_link</bodyName>
+      <topicName>/drift_car/odom</topicName>
+      <gaussianNoise>0.01</gaussianNoise>
+      <frameName>world</frameName>
+      <xyzOffsets>0 0 0</xyzOffsets>
+      <rpyOffsets>0 0 0</rpyOffsets>
     </plugin>
   </gazebo>
 </robot>
