@@ -4,11 +4,14 @@ from gym import error, spaces, utils
 from gym.utils import seeding
 
 import rospy
+import tf
 from std_msgs.msg import Float64
 from std_srvs.srv import Empty
 from sensor_msgs.msg import Imu
 from gazebo_msgs.msg import ModelStates, ModelState
 from gazebo_msgs.srv import SetModelState
+from nav_msgs.msg import Odometry
+from geometry_msgs.msg import Vector3Stamped 
 
 import numpy as np
 
@@ -30,6 +33,7 @@ class GazeboEnv(gym.Env):
                 
                 self.gazeboProcess = subprocess.Popen(["roslaunch", "drift_car_gazebo", "drift_car.launch"])
                 time.sleep(10)
+                # self.estimateProcess = subprocess.Popen(["roslaunch", "drift_car_gazebo", "state_estimate.launch"])
                 self.controlProcess = subprocess.Popen(["roslaunch", "drift_car_gazebo_control", "drift_car_control.launch"])
                 time.sleep(5)
                                 
@@ -41,6 +45,10 @@ class GazeboEnv(gym.Env):
                 self.steer1 = rospy.Publisher('/drift_car/joint3_position_controller/command', Float64, queue_size = 1)
                 self.steer2 = rospy.Publisher('/drift_car/joint4_position_controller/command', Float64, queue_size = 1)
         
+                rospy.Subscriber('/drift_car/odom', Odometry, self.tfPublisher)
+                self.tl = tf.TransformListener()
+                self.tb = tf.TransformBroadcaster()
+                
                 self.unpause = rospy.ServiceProxy('/gazebo/unpause_physics', Empty)
                 self.pause = rospy.ServiceProxy('/gazebo/pause_physics', Empty)
                 self.reset_proxy = rospy.ServiceProxy('/gazebo/reset_simulation', Empty)
@@ -113,8 +121,25 @@ class GazeboEnv(gym.Env):
                 return state, reward, done, {}
                 
         def getState(self, posData):
+                # odomEstimate = self.getOdomEstimate()
+                # velxEstimate = odomEstimate.twist.twist.linear.x
+                # velyEstimate = odomEstimate.twist.twist.linear.y
+
                 velx = posData.twist[1].linear.x
                 vely = posData.twist[1].linear.y
+                velz = posData.twist[1].linear.z
+
+                # Transform to body frame velocities
+                velVector = Vector3Stamped()
+                velVector.vector.x = velx
+                velVector.vector.y = vely
+                velVector.vector.z = velz
+                velVector.header.frame_id = "world"
+                velVectorTransformed = self.tl.transformVector3("base_link", velVector)
+                velx = velVectorTransformed.vector.x
+                vely = velVectorTransformed.vector.y
+                velz = velVectorTransformed.vector.z
+
                 carTangentialSpeed = math.sqrt(velx ** 2 + vely ** 2)
                 carAngularVel = posData.twist[1].angular.z
 
@@ -278,7 +303,6 @@ class GazeboEnv(gym.Env):
                 while posData is None:
                         try:
                                 posData = rospy.wait_for_message('/gazebo/model_states', ModelStates, timeout=1)
-                                posData.pose[1].orientation.w = abs(posData.pose[1].orientation.w)
                         except Exception as e:
                                 failureCount += 1
                                 if failureCount % 10 == 0:
@@ -287,7 +311,34 @@ class GazeboEnv(gym.Env):
                                 pass
                 #print("Fetched Pos Data")
                 return posData
-    
+        
+        def getOdomEstimate(self):
+                #print("Fetching Pos Data")
+                failureCount = 0
+                odomData = None        
+                while odomData is None:
+                        try:
+                                odomData = rospy.wait_for_message('/odometry/filtered', Odometry, timeout=1)
+                        except Exception as e:
+                                failureCount += 1
+                                if failureCount % 10 == 0:
+                                        self.handleGazeboFailure()          
+                                print(e)
+                                pass
+                #print("Fetched Pos Data")
+                return odomData
+
+        def tfPublisher(self, data):
+                pose = data.pose.pose
+                position = pose.position
+                orientation = pose.orientation
+
+                self.tb.sendTransform((position.x, position.y, position.z), 
+                                        (orientation.x, orientation.y, orientation.z, orientation.w), 
+                                        rospy.Time.now(), 
+                                        "base_link", 
+                                        "world")
+
         def pausePhysics(self): 
                 #print("Pause called")                        
                 rospy.wait_for_service('/gazebo/pause_physics')

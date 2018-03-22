@@ -41,7 +41,3 @@ register(
     # state: xdot, ydot, thetadot, s.
     kwargs={'continuous' : True, 'state_info': {'state_size': 8, 'include_tangential_speed': True, 'include_theta': True}}
 )
-#register(
-#    id='DriftCarEnv-v0',
-#    entry_point='gym_foo.envs:DriftCarEnv',
-#)
