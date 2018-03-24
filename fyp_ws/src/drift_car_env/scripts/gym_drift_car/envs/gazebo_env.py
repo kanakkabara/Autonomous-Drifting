@@ -11,7 +11,7 @@ from sensor_msgs.msg import Imu
 from gazebo_msgs.msg import ModelStates, ModelState
 from gazebo_msgs.srv import SetModelState
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Vector3Stamped 
+from geometry_msgs.msg import Vector3Stamped, TransformStamped
 
 import numpy as np
 
@@ -29,11 +29,11 @@ class GazeboEnv(gym.Env):
                 'include_tangential_speed': True}
 
         def __init__(self, continuous=False, state_info=DEFAULT_STATE_INFO):
-                rospy.init_node('gazebo_drift_car_gym', anonymous=True)
+                rospy.init_node('gazebo_drift_car_gym')
                 
                 self.gazeboProcess = subprocess.Popen(["roslaunch", "drift_car_gazebo", "drift_car.launch"])
                 time.sleep(10)
-                # self.estimateProcess = subprocess.Popen(["roslaunch", "drift_car_gazebo", "state_estimate.launch"])
+                # self.estimateProcess = subprocess.Popen(["roslaunch", "drift_car_gazebo", "gazebo_ekf.launch"])
                 self.controlProcess = subprocess.Popen(["roslaunch", "drift_car_gazebo_control", "drift_car_control.launch"])
                 time.sleep(5)
                                 
@@ -45,9 +45,9 @@ class GazeboEnv(gym.Env):
                 self.steer1 = rospy.Publisher('/drift_car/joint3_position_controller/command', Float64, queue_size = 1)
                 self.steer2 = rospy.Publisher('/drift_car/joint4_position_controller/command', Float64, queue_size = 1)
         
-                rospy.Subscriber('/drift_car/odom', Odometry, self.tfPublisher)
-                self.tl = tf.TransformListener()
-                self.tb = tf.TransformBroadcaster()
+                # rospy.Subscriber('/drift_car/odom', Odometry, self.tfPublisher)
+                # self.tl = tf.TransformListener()
+                # self.tb = tf.TransformBroadcaster()
                 
                 self.unpause = rospy.ServiceProxy('/gazebo/unpause_physics', Empty)
                 self.pause = rospy.ServiceProxy('/gazebo/pause_physics', Empty)
@@ -79,7 +79,7 @@ class GazeboEnv(gym.Env):
                   
                 # Learning Parameters
                 self.radius = 3
-                self.throttle = 1730      
+                self.throttle = 1750      
                 self.maxDeviationFromCenter = 4
                 
         def _seed(self, seed=None):
@@ -125,6 +125,23 @@ class GazeboEnv(gym.Env):
                 # velxEstimate = odomEstimate.twist.twist.linear.x
                 # velyEstimate = odomEstimate.twist.twist.linear.y
 
+                pose = posData.pose[1]
+                position = pose.position
+                orientation = pose.orientation
+
+                t = tf.TransformerROS(True, rospy.Duration(10.0))
+                m = geometry_msgs.msg.TransformStamped()
+                m.header.frame_id = 'world'
+                m.child_frame_id = 'base_link'
+                m.transform.translation.x = position.x
+                m.transform.translation.y = position.y
+                m.transform.translation.z = position.z
+                m.transform.rotation.x = orientation.x
+                m.transform.rotation.y = orientation.y
+                m.transform.rotation.z = orientation.z
+                m.transform.rotation.w = orientation.w
+                t.setTransform(m)
+
                 velx = posData.twist[1].linear.x
                 vely = posData.twist[1].linear.y
                 velz = posData.twist[1].linear.z
@@ -135,7 +152,8 @@ class GazeboEnv(gym.Env):
                 velVector.vector.y = vely
                 velVector.vector.z = velz
                 velVector.header.frame_id = "world"
-                velVectorTransformed = self.tl.transformVector3("base_link", velVector)
+                # velVectorTransformed = self.tl.transformVector3("base_link", velVector)
+                velVectorTransformed = t.transformVector3("base_link", velVector)
                 velx = velVectorTransformed.vector.x
                 vely = velVectorTransformed.vector.y
                 velz = velVectorTransformed.vector.z
@@ -223,7 +241,7 @@ class GazeboEnv(gym.Env):
                     nullPosition.model_name = "drift_car"
                     nullPosition.pose.position.x = 0
                     nullPosition.pose.position.y = 0
-                    nullPosition.pose.position.z = 0.1
+                    nullPosition.pose.position.z = 0.03
                     reset_pose(nullPosition)
                 except (rospy.ServiceException) as e:
                     print ("/gazebo/set_model_state service call failed")
