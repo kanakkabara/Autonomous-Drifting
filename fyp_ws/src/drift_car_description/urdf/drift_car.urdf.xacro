@@ -186,7 +186,7 @@ limitations under the License.
   </xacro:macro>
 
   <!-- The "wheel" macro defines an axle carrier, axle, and wheel. -->
-  <xacro:macro name="wheel" params="lr_prefix fr_prefix lr_reflect">
+  <xacro:macro name="wheel" params="lr_prefix fr_prefix lr_reflect mu1 mu2">
     <link name="${lr_prefix}_${fr_prefix}_axle_carrier">
       <xacro:null_inertial/>
     </link>
@@ -229,15 +229,6 @@ limitations under the License.
         <geometry>
           <cylinder radius="${tire_dia / 2}" length="${tire_width}"/>
         </geometry>
-        <surface>
-          <!-- Low friction tires -->
-          <friction>
-            <ode>
-              <mu>1</mu>
-              <mu2>1</mu2>
-            </ode>
-          </friction>
-        </surface>
       </collision>
 
       <xacro:thick_walled_tube_inertial
@@ -246,6 +237,10 @@ limitations under the License.
     </link>
 
     <gazebo reference="${lr_prefix}_${fr_prefix}_wheel">
+       <mu1 value="${mu1}"/>
+       <mu2 value="${mu2}"/>
+       <kp value="10000000.0" />
+       <kd value="1.0" />
       <material>Gazebo/Black</material>
     </gazebo>
   </xacro:macro>
@@ -280,7 +275,7 @@ limitations under the License.
     </transmission>
 
     <xacro:wheel lr_prefix="${lr_prefix}" fr_prefix="${fr_prefix}"
-                 lr_reflect="${lr_reflect}"/>
+                 lr_reflect="${lr_reflect}" mu1="0.9" mu2="0.9"/>
   </xacro:macro>
 
   <!-- Rear wheel -->
@@ -290,7 +285,7 @@ limitations under the License.
                  lr_reflect="${lr_reflect}" fr_reflect="${fr_reflect}"
                  child="${lr_prefix}_${fr_prefix}_axle_carrier"/>
     <xacro:wheel lr_prefix="${lr_prefix}" fr_prefix="${fr_prefix}"
-                 lr_reflect="${lr_reflect}"/>
+                 lr_reflect="${lr_reflect}" mu1="1" mu2="1"/>
   </xacro:macro>
 
   <!-- base_link must have geometry so that its axes can be displayed in
