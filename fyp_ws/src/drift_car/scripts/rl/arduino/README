@@ -1,0 +1,8 @@
+# Install python-xbee
+pip install xbee
+
+# Add xbee library to arduino
+Download zip: https://github.com/andrewrapp/xbee-arduino
+Add to library path.
+
+# Update USB port for coordinator in python script. 

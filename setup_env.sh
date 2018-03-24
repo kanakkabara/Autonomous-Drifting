@@ -23,6 +23,7 @@ sudo apt-get -y install ros-kinetic-gazebo-ros-pkgs ros-kinetic-gazebo-ros-contr
 sudo apt-get -y install ros-kinetic-joint-state-controller
 sudo apt-get -y install ros-kinetic-effort-controllers
 sudo apt-get -y install ros-kinetic-joy
+sudo apt-get -y install ros-kinetic-robot-localization
 
 # Install pip
 sudo apt-get -y install python-pip
@@ -37,8 +38,9 @@ sudo cp -P cuda/lib64/libcudnn* /usr/local/cuda-8.0/lib64/
 sudo chmod a+r /usr/local/cuda-8.0/lib64/libcudnn*
 
 # set environment variables
-echo 'export CUDA_HOME=/usr/local/cuda-8.0' >> ~/.path
-echo 'export PATH=$CUDA_HOME/bin:${PATH}' >> ~/.path
-echo 'export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64:${LD_LIBRARY_PATH}' >> ~/.path
+echo 'export CUDA_HOME=/usr/local/cuda-8.0' >> ~/.bashrc
+echo 'export PATH=$CUDA_HOME/bin:${PATH}' >> ~/.bashrc
+echo 'export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64:${LD_LIBRARY_PATH}' >> ~/.bashrc
+echo 'alias kd="killall -9 python || killall -9 roslaunch || killall -9 gzserver || killall -9 gzclient"' >> ~/.bashrc
 
 source ~/.bashrc
