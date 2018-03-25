@@ -25,6 +25,10 @@ if plotting.verbosity > 0
   xlabel('Time Steps');
   ylabel('Cost');
   drawnow;
+  disp(sprintf("Max cost: %.3f", max(realCost{J+j})));
+  disp(sprintf("Min cost: %.3f", min(realCost{J+j})));
+  disp(sprintf("Average cost: %.3f", mean(realCost{J+j})));
+  disp(sprintf("Stddev cost: %.3f", std(realCost{J+j})));
 end
 
 % 2. Make many rollouts to test the controller quality

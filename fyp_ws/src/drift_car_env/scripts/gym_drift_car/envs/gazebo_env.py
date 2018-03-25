@@ -130,7 +130,7 @@ class GazeboEnv(gym.Env):
                 orientation = pose.orientation
 
                 t = tf.TransformerROS(True, rospy.Duration(10.0))
-                m = geometry_msgs.msg.TransformStamped()
+                m = TransformStamped()
                 m.header.frame_id = 'world'
                 m.child_frame_id = 'base_link'
                 m.transform.translation.x = position.x

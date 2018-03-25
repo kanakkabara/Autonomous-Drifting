@@ -181,7 +181,7 @@ limitations under the License.
   </xacro:macro>
 
   <!-- Battery -->
-  <!-- <xacro:macro name="battery" params="prefix reflect">
+  <xacro:macro name="battery" params="prefix reflect">
     <joint name="chassis_to_${prefix}_battery" type="fixed">
       <parent link="chassis"/>
       <child link="${prefix}_battery_offset"/>
@@ -227,7 +227,7 @@ limitations under the License.
     <gazebo reference="${prefix}_battery">
       <material>Gazebo/Blue</material>
     </gazebo>
-  </xacro:macro> -->
+  </xacro:macro>
 
   <!-- Shock absorber -->
   <xacro:macro name="shock"
@@ -439,8 +439,8 @@ limitations under the License.
   </joint>
 
   <!-- Batteries -->
-  <!-- <xacro:battery prefix="left" reflect="1"/>
-  <xacro:battery prefix="right" reflect="-1"/> -->
+  <xacro:battery prefix="left" reflect="1"/>
+  <xacro:battery prefix="right" reflect="-1"/>
 
   <!-- Wheels -->
   <xacro:front_wheel lr_prefix="left" fr_prefix="front"
