@@ -95,7 +95,8 @@ cost.p = 0.5;                               % length of pendulum
 cost.width = 5;                             % cost function width
 cost.expl =  0.0;                           % exploration parameter (UCB)
 cost.angle = plant.angi;                    % index of angle (for cost function)
-cost.target = [0.7 -1.5 4 0]';     % target state
+cost.target = [0.7 -1.5 4 0]';
+% cost.target = [2 -2.5 5 0]';     % target state
 
 % 6. Dynamics model structure
 dynmodel.fcn = @gp1d;                % function for GP predictions
@@ -118,7 +119,8 @@ opt.verbosity = 3;                       % verbosity: specifies how much
 plotting.verbosity = 2;            % 0: no plots
                                    % 1: some plots
                                    % 2: all plots
-
+graphDynamicsYLabel = ["X Velocity (m/s)" "Y Velocity (m/s)" "Angular Velocity (rads/s)" "Speed (m/s)"];
+                                   
 % 9. Some initializations
 x = []; y = [];
 fantasy.mean = cell(1,N); fantasy.std = cell(1,N);

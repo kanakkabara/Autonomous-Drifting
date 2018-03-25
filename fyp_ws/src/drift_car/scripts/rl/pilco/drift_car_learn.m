@@ -17,8 +17,8 @@
 % 1. Initialization
 rosshutdown;
 rosinit;
-plant.actionPub = rospublisher('/drift_car/action', 'std_msgs/Float64MultiArray');
-plant.stateSub = rossubscriber('/drift_car/state');
+% plant.actionPub = rospublisher('/drift_car/action', 'std_msgs/Float64MultiArray');
+% plant.stateSub = rossubscriber('/drift_car/state');
 
 clear all; close all;
 settings_drift_car;                     % load scenario-specific settings
