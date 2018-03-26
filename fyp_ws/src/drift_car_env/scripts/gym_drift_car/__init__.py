@@ -25,7 +25,15 @@ register(
 register(
     id='DriftCarGazeboContinuous-v0',
     entry_point='gym_drift_car.envs:GazeboEnv',
+    # state: x, y, i, j, k, w, xDotWorldFrame, yDotWorldFrame, thetaDot, s, xDotBodyFrame, yDotBodyFrame
     kwargs={'continuous' : True}
+)
+
+register(
+    id='DriftCarGazeboContinuous4WD-v0',
+    entry_point='gym_drift_car.envs:GazeboEnv',
+    # state: x, y, i, j, k, w, xDotWorldFrame, yDotWorldFrame, thetaDot, s, xDotBodyFrame, yDotBodyFrame
+    kwargs={'continuous' : True, 'four_wheel_drive': True}
 )
 
 register(

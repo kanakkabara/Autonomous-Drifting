@@ -1,6 +1,12 @@
 <launch>
         <rosparam file="$(find drift_car_gazebo_control)/config/drift_car_control.yaml" command="load"/>
-        <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="/drift_car" args="joint1_position_controller joint2_position_controller joint3_position_controller joint4_position_controller joint_state_controller"/>
+        <node name="controller_spawner" pkg="controller_manager"
+            type="spawner" respawn="false"
+            output="screen" ns="/drift_car"
+            args="left_rear_axle_controller right_rear_axle_controller
+                  left_front_axle_controller right_front_axle_controller
+                  left_steering_joint_controller right_steering_joint_controller
+                  joint_state_controller"/>
         <!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
               <remap from="/joint_states" to="/drift_car/joint_states" />
         </node> -->

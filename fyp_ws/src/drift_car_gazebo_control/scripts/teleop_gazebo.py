@@ -14,9 +14,9 @@ a       s       d
 CTRL-C to quit
 """
 
-THROTTLE_STEP = 100
+THROTTLE_STEP = 10
 STEER_STEP = 0.1
-throttle = 300
+throttle = 1650
 servo = 0
 
 def getKey():
@@ -28,7 +28,7 @@ def getKey():
 
 if __name__=="__main__":
     	settings = termios.tcgetattr(sys.stdin)
-	env = gym.make('DriftCarGazeboContinuousPartial-v0') 
+	env = gym.make('DriftCarGazeboContinuous4WD-v0') 
 	env.reset()
 	env.render()
 
@@ -51,13 +51,14 @@ if __name__=="__main__":
                                                 servo = 0.785
 			elif (key == 'r'):
 				env.reset()
+				servo = 0
 				continue
 			elif (key == '\x03'):
 				break
 			print(throttle, servo)
 			state, reward, done, _ = env.step((throttle, servo))
 			print(state)
-	except:
+	except Exception as e:
 		print e
 
 	finally:

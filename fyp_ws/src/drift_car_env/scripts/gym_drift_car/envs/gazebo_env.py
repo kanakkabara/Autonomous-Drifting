@@ -24,11 +24,11 @@ from os import path
 
 class GazeboEnv(gym.Env):
         metadata = {'render.modes': ['human']}
-        # Default state: x, y, i, j, k, w, xdot, ydot, thetadot, s. 
-        DEFAULT_STATE_INFO = {'state_size': 10, 'include_theta': True, 'include_position': True,
-                'include_tangential_speed': True}
+        # Default state: x, y, i, j, k, w, xdot, ydot, thetadot, s, xdotbodyframe, ydotbodyframe. 
+        DEFAULT_STATE_INFO = {'state_size': 12, 'include_theta': True, 'include_position': True,
+                'include_tangential_speed': True, 'include_body_frame_velocity': True}
 
-        def __init__(self, continuous=False, state_info=DEFAULT_STATE_INFO):
+        def __init__(self, continuous=False, state_info=DEFAULT_STATE_INFO, four_wheel_drive=False):
                 rospy.init_node('gazebo_drift_car_gym')
                 
                 self.gazeboProcess = subprocess.Popen(["roslaunch", "drift_car_gazebo", "drift_car.launch"])
@@ -40,10 +40,16 @@ class GazeboEnv(gym.Env):
                 print ("Gazebo launched!")      
                 
                 self.gzclient_pid = 0
-                self.throtle1 = rospy.Publisher('/drift_car/joint1_position_controller/command', Float64, queue_size = 1)
-                self.throtle2 = rospy.Publisher('/drift_car/joint2_position_controller/command', Float64, queue_size = 1)
-                self.steer1 = rospy.Publisher('/drift_car/joint3_position_controller/command', Float64, queue_size = 1)
-                self.steer2 = rospy.Publisher('/drift_car/joint4_position_controller/command', Float64, queue_size = 1)
+                self.throtle1 = rospy.Publisher('/drift_car/left_rear_axle_controller/command', Float64, queue_size = 1)
+                self.throtle2 = rospy.Publisher('/drift_car/right_rear_axle_controller/command', Float64, queue_size = 1)
+                if four_wheel_drive:
+                        self.four_wheel_drive = True
+                        self.throtle3 = rospy.Publisher('/drift_car/left_front_axle_controller/command', Float64, queue_size = 1)
+                        self.throtle4 = rospy.Publisher('/drift_car/right_front_axle_controller/command', Float64, queue_size = 1)
+                else:
+                        self.four_wheel_drive = False
+                self.steer1 = rospy.Publisher('/drift_car/left_steering_joint_controller/command', Float64, queue_size = 1)
+                self.steer2 = rospy.Publisher('/drift_car/right_steering_joint_controller/command', Float64, queue_size = 1)
         
                 # rospy.Subscriber('/drift_car/odom', Odometry, self.tfPublisher)
                 # self.tl = tf.TransformListener()
@@ -79,32 +85,39 @@ class GazeboEnv(gym.Env):
                   
                 # Learning Parameters
                 self.radius = 3
-                self.throttle = 1750      
+                self.throttle = 1730      
                 self.maxDeviationFromCenter = 4
                 
         def _seed(self, seed=None):
                 self.np_random, seed = seeding.np_random(seed)
                 return [seed] 
-                
+        
+        def applyThrottle(self, throtle):
+                self.throtle1.publish(throtle)
+                self.throtle2.publish(throtle)
+                if self.four_wheel_drive:
+                        self.throtle3.publish(throtle)
+                        self.throtle4.publish(throtle)
+
+        def applySteering(self, steering):
+                self.steer1.publish(steering)
+                self.steer2.publish(steering)
+
         def _step(self, action):
                 #TODO can look into mirroring joints to make sure the wheels spin and turn tgt                
                 
                 self.unpausePhysics()
 
                 if isinstance(action, tuple):
-                        self.throtle1.publish(action[0])
-		        self.throtle2.publish(action[0])
+                        self.applyThrottle(action[0])
                         action = action[1]
                 else:
-                        self.throtle1.publish(self.throttle)
-		        self.throtle2.publish(self.throttle)
+                        self.applyThrottle(self.throttle)
                 
                 if self.continuous:
-                        self.steer1.publish(action)
-                        self.steer2.publish(action)
+                        self.applySteering(action)
                 else:
-                        self.steer1.publish(self.radianMappings[action])
-                        self.steer2.publish(self.radianMappings[action])                
+                        self.applySteering(self.radianMappings[action])
 
                 posData = self.getPosData()
                 #imuData = self.getIMUData()                
@@ -119,7 +132,7 @@ class GazeboEnv(gym.Env):
                 self.previous_pos = posData     
                 self.previous_action = action
                 return state, reward, done, {}
-                
+
         def getState(self, posData):
                 # odomEstimate = self.getOdomEstimate()
                 # velxEstimate = odomEstimate.twist.twist.linear.x
@@ -154,9 +167,9 @@ class GazeboEnv(gym.Env):
                 velVector.header.frame_id = "world"
                 # velVectorTransformed = self.tl.transformVector3("base_link", velVector)
                 velVectorTransformed = t.transformVector3("base_link", velVector)
-                velx = velVectorTransformed.vector.x
-                vely = velVectorTransformed.vector.y
-                velz = velVectorTransformed.vector.z
+                velxBody = velVectorTransformed.vector.x
+                velyBody = velVectorTransformed.vector.y
+                velzBody = velVectorTransformed.vector.z
 
                 carTangentialSpeed = math.sqrt(velx ** 2 + vely ** 2)
                 carAngularVel = posData.twist[1].angular.z
@@ -176,6 +189,9 @@ class GazeboEnv(gym.Env):
 
                 if 'include_tangential_speed' in self.state_info and self.state_info['include_tangential_speed']:
                     state += [carTangentialSpeed]
+
+                if 'include_body_frame_velocity' in self.state_info and self.state_info['include_body_frame_velocity']:
+                    state += [velxBody, velyBody]
 
                 return np.array(state)
 
