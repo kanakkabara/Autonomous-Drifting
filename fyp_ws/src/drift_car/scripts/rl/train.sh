@@ -1,2 +1,2 @@
 #!/bin/sh
-python main.py -sm --summary_path 'summary/ExpCar5' --model_path 'models/ExpCar5'
+python main.py -sm --summary_path 'summary/ExpCar8-BodyVels' --model_path 'models/ExpCar8-BodyVels' --env 'DriftCarGazeboPartialEnv-v0'
