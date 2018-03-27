@@ -27,8 +27,8 @@ def callback(data, args):
     pub.publish(stateArray)
 
 if __name__ == '__main__':
-    # env = gym.make('DriftCarGazeboContinuous-v0')
-    env = gym.make('DriftCarGazeboContinuousPartial-v0')
+    env = gym.make('DriftCarGazeboContinuous4WD-v0')
+    # env = gym.make('DriftCarGazeboContinuousPartial-v0')
 
     pub = rospy.Publisher('drift_car/state', Float64MultiArray, queue_size=1) 
     rospy.Subscriber('drift_car/action', Float64MultiArray, callback, (env, pub))

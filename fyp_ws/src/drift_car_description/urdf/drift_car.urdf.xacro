@@ -38,6 +38,7 @@ limitations under the License.
 
 <robot name="em_3905" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <!-- Degree-to-radian conversions -->
+  <xacro:property name="degrees_15" value="0.261799"/>
   <xacro:property name="degrees_25" value="0.436332"/> 
   <xacro:property name="degrees_45" value="0.785398163"/>
   <xacro:property name="degrees_90" value="1.57079633"/>
@@ -260,7 +261,7 @@ limitations under the License.
       <parent link="${lr_prefix}_steering_link"/>
       <child link="${lr_prefix}_${fr_prefix}_axle_carrier"/>
       <axis xyz="0 0 1"/>
-      <limit lower="${-degrees_25}" upper="${degrees_25}"
+      <limit lower="${-degrees_45}" upper="${degrees_45}"
              effort="${servo_stall_torque}" velocity="${servo_no_load_speed}"/>
     </joint>
     <transmission name="${lr_prefix}_steering_trans">
@@ -275,7 +276,7 @@ limitations under the License.
     </transmission>
 
     <xacro:wheel lr_prefix="${lr_prefix}" fr_prefix="${fr_prefix}"
-                 lr_reflect="${lr_reflect}" mu1="1" mu2="0.9"/>
+                 lr_reflect="${lr_reflect}" mu1="0.5" mu2="0.5"/>
   </xacro:macro>
 
   <!-- Rear wheel -->
@@ -285,7 +286,7 @@ limitations under the License.
                  lr_reflect="${lr_reflect}" fr_reflect="${fr_reflect}"
                  child="${lr_prefix}_${fr_prefix}_axle_carrier"/>
     <xacro:wheel lr_prefix="${lr_prefix}" fr_prefix="${fr_prefix}"
-                 lr_reflect="${lr_reflect}" mu1="0.9" mu2="0.9"/>
+                 lr_reflect="${lr_reflect}" mu1="0.5" mu2="0.5"/>
   </xacro:macro>
 
   <!-- base_link must have geometry so that its axes can be displayed in

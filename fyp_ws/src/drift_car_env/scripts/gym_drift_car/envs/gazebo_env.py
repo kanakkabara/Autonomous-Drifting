@@ -85,7 +85,7 @@ class GazeboEnv(gym.Env):
                   
                 # Learning Parameters
                 self.radius = 3
-                self.throttle = 1730      
+                self.throttle = 1770      
                 self.maxDeviationFromCenter = 4
                 
         def _seed(self, seed=None):

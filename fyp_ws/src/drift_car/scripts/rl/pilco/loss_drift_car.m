@@ -55,7 +55,7 @@ Mdm = [eye(D0); zeros(D1-D0,D0)]; Sdm = zeros(D1*D1,D0);
 Mds = zeros(D1,D0*D0); Sds = kron(Mdm,Mdm);
 
 % 2. Define static penalty as distance from target setpoint
-Q = zeros(D1); Q(1:3, 1:3) = eye(3);  
+Q = cost.weights;
 
 % 3. Trigonometric augmentation
 if D1-D0 > 0
