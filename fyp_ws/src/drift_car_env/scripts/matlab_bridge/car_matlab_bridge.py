@@ -5,9 +5,13 @@ import struct
 import signal
 
 import rospy
-from sensor_msgs.msg import Joy
-from std_msgs.msg import Int8, Float64, Float64MultiArray, MultiArrayLayout
+from sensor_msgs.msg import Joy, Imu
+from nav_msgs.msg import Odometry
+from std_msgs.msg import Float64MultiArray, Header
+from geometry_msgs.msg import Vector3
 from drift_car.srv import GetLatestState, GetLatestStateResponse
+
+from imu_merger import ImuMerger
 
 from xbee import XBee
 import serial
@@ -18,17 +22,16 @@ def translate(value, leftMin, leftMax, rightMin, rightMax):
     valueScaled = float(value - leftMin) / float(leftSpan)
     return rightMin + (valueScaled * rightSpan)
 
-def callback(data, args):
+def actionCallback(data, args):
     time.sleep(0.05)
     action = data.data[0]
     takenOn = data.data[1]
 
-    if takenOn == 0: # Action to be taken on the Car
-        if(action == -1000):
-            rospy.loginfo('Resetting Env . . . \n\n')
-            sendAction(stopThrottle, 0)
-            return
-        sendAction(throttle, action)
+    if(action == -1000):
+        rospy.loginfo('Resetting Env . . . \n\n')
+        sendAction(stopThrottle, 0)
+        return
+    sendAction(throttle, action)
 
 def sigStopHandler(signum, frame):
     global tempStop
@@ -52,27 +55,39 @@ def handleXbeeData(response):
         # rate.sleep() 
         # return
     try:
-        stateArray = Float64MultiArray()
+        data = []
         # Expected State = xDot (m/s), yDot (m/s), thetaDot (degrees/s), throttle, servo
         for i in range(0, len(response['rf_data']), 4):
-            stateArray.data.append(struct.unpack('f',response['rf_data'][i:i+4])[0])
-        #Convert to rads/s
-        stateArray.data[2] = stateArray.data[2]/180
+            data.append(struct.unpack('f',response['rf_data'][i:i+4])[0])
+        EPOCH_BASE = 1520000000  
+        TIME_OFFSET = 30659 + 3924   
 
-        # Add tangential speed to state
-        velx = stateArray.data[0]
-        vely = stateArray.data[1]
+        imu = Imu()
+        imu.linear_acceleration = Vector3(data[0], data[1], data[2])
+        imu.angular_velocity = Vector3(data[3], data[4], data[5])
+        imu.header = Header()
+        imu.header.stamp = rospy.Time(EPOCH_BASE + int(data[6] + TIME_OFFSET), int(data[7] * 1000))
+        imuPub.publish(imu)
+
+        odomData = rospy.wait_for_message('/odometry/filtered', Odometry, timeout=1)
+        twist = odomData.twist.twist      
+        velx = twist.linear.x
+        vely = twist.linear.y
         carTangentialSpeed = math.sqrt(velx ** 2 + vely ** 2)
-        stateArray.data.insert(3, carTangentialSpeed)
 
-        # Drop actions before publishing state
-        # stateArray.data = stateArray.data[:-2]
+        stateArray = Float64MultiArray()
+        stateArray.data.append(velx)
+        stateArray.data.append(vely)
+        stateArray.data.append(carTangentialSpeed)        
+        stateArray.data.append(twist.angular.z)
+
+        # latestState = stateArray.data
+        # # Add actions before publishing state
+        # # stateArray.data.extend(data[-2:])
 
         print(stateArray.data)
-        latestState = stateArray.data
-        
-        pub.publish(stateArray)
-        rate.sleep()        
+        # pub.publish(stateArray)
+        # rate.sleep()        
     except Exception as e:
         print(e)
 
@@ -102,19 +117,22 @@ def joystickCallback(data, args):
     time.sleep(0.05)
 
 if __name__=="__main__":  
-    global drifting, tempStop, stopThrottle
     throttle = 102
     stopThrottle = 30.0
     latestState = None
     tempStop = False
     drifting = False
 
+    # rospy.set_param('use_sim_time', 'false')
     rospy.init_node('drift_car_matlab_bridge')
     pub = rospy.Publisher('drift_car/state', Float64MultiArray, queue_size=1) 
-    rospy.Subscriber('drift_car/action', Float64MultiArray, callback, (pub))
-    rospy.Service('drift_car/get_latest_state', GetLatestState, handleGetLatestState)
+    imuPub = rospy.Publisher('drift_car/imu_data_actual', Imu, queue_size=100000) 
+    # rospy.Subscriber('drift_car/action', Float64MultiArray, actionCallback, (pub))
     rospy.Subscriber('/joy', Joy, joystickCallback, (pub), queue_size=1)
-  
+    rospy.Service('drift_car/get_latest_state', GetLatestState, handleGetLatestState)
+
+    imu_merger = ImuMerger('imu', '/drift_car/imu_data_actual')
+
     PORT = "/dev/ttyUSB0"
     BAUD_RATE = 57600
     ser = serial.Serial(PORT, BAUD_RATE)
@@ -122,6 +140,11 @@ if __name__=="__main__":
     xbee = XBee(ser, escaped=True, callback=handleXbeeData)
     # Sync
     # xbee = XBee(ser, escaped=True)
+
+    print("Handshake . . " + str(time.time() % 10000000))
+    packed_data = struct.Struct('f f').pack(*(time.time() % 10000000, 0))
+    ba = bytearray(packed_data)  
+    xbee.send('tx', frame='A', dest_addr=b'\x00\x00', data=ba, options=b'\x04')
 
     # To stop car on SIGSTOP signal
     signal.signal(signal.SIGTSTP, sigStopHandler)

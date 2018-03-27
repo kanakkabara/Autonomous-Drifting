@@ -10,7 +10,7 @@
     <param name="base_link_frame" value="base_link"/>
     <param name="world_frame" value="odom"/>
     
-    <param name="imu0" value="/drift_car/imu_data/sync"/>
+    <param name="imu0" value="/drift_car/imu_data_actual/sync"/>
     <rosparam param="imu0_config">[false, false, false,
                                 false, false, false,
                                 false, false, false,
