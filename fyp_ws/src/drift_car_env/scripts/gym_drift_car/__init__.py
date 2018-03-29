@@ -46,6 +46,6 @@ register(
 register(
     id='DriftCarGazeboContinuousPartialWithAngles-v0',
     entry_point='gym_drift_car.envs:GazeboEnv',
-    # state: xdot, ydot, thetadot, s.
+    # state: i, j, k, w, xdot, ydot, thetadot, s.
     kwargs={'continuous' : True, 'state_info': {'state_size': 8, 'include_tangential_speed': True, 'include_theta': True}}
 )

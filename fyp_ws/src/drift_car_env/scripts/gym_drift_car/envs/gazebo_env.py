@@ -51,9 +51,9 @@ class GazeboEnv(gym.Env):
                 self.steer1 = rospy.Publisher('/drift_car/left_steering_joint_controller/command', Float64, queue_size = 1)
                 self.steer2 = rospy.Publisher('/drift_car/right_steering_joint_controller/command', Float64, queue_size = 1)
         
-                # rospy.Subscriber('/drift_car/odom', Odometry, self.tfPublisher)
+                rospy.Subscriber('/drift_car/odom', Odometry, self.tfPublisher)
                 # self.tl = tf.TransformListener()
-                # self.tb = tf.TransformBroadcaster()
+                self.tb = tf.TransformBroadcaster()
                 
                 self.unpause = rospy.ServiceProxy('/gazebo/unpause_physics', Empty)
                 self.pause = rospy.ServiceProxy('/gazebo/pause_physics', Empty)
