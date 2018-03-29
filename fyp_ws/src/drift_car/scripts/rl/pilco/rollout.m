@@ -85,7 +85,7 @@ for i = 1:H % --------------------------------------------- generate trajectory
         % Send Action
         actionMsg = rosmessage(plant.actionPub);
         actionMsg.Data(1,:) = u(i,:);
-        actionMsg.Data(2,:) = plant.actOn;
+        actionMsg.Data(2,:) = plant.car.throttle;
         send(plant.actionPub, actionMsg);
 
         % Get next state
@@ -130,7 +130,7 @@ if isfield(plant, 'actionPub') && isfield(plant, 'stateSub')
     if plant.randomRollout == 1
       actionMsg = rosmessage(plant.actionPub);
       actionMsg.Data(1,:) = -1000;
-      actionMsg.Data(2,:) = plant.actOn;
+      actionMsg.Data(2,:) = 0;
       send(plant.actionPub, actionMsg);
       %disp('Waiting for key press to start next episode');
       %%waitforbuttonpress

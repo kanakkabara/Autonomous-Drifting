@@ -41,7 +41,7 @@ rand('seed',1); randn('seed',1); format short; format compact;
 % poli  indicies for the inputs to the policy
 % difi  indicies for training targets that are differences (rather than values)
 
-full = [1 2 3 4 5 6 7 8 9 10 11 12];
+full = [1 2];  % Thetadot, speed
 % Default state: x, y, i, j, k, w, xdot, ydot, thetadot, s, xdotbodyframe, ydotbodyframe. 
 
 odei = full;      
@@ -51,11 +51,17 @@ angi = [];                                % angle variables
 dyni = full;      % variables that serve as inputs to the dynamics GP
 poli = full;      % variables that serve as inputs to the policy
 difi = full;      % variables that are learned via differences
-stateSize = 12;
+stateSize = 2;
+
+% Define the car's params to keep track of Gazebo Env
+plant.car.throttle = 1750;
+car.transmission = "2WD";
+car.degs = 25;
+car.friction = 0.8;
 
 % 2. Set up the scenario
 dt = 0.10;                          % [s] sampling time
-T = 10.0;                           % [s] initial prediction horizon time
+T = 15.0;                           % [s] initial prediction horizon time
 H = ceil(T/dt);                     % prediction steps (optimization horizon)
 mu0 = zeros(1, stateSize)';               % initial state mean
 S0 = diag(ones(1, stateSize)*0.1.^2);
@@ -80,17 +86,15 @@ plant.actOn = 0;                                          % 0 for simulator, 1 f
 plant.randomRollout = 1;                                  % 1 to perform random rollout, 0 to use expert data instead of random rollouts       
 
 % 4. Policy structure
-policy.fcn = @(policy,m,s)conCat(@congp,@gSat,policy,m,s);% controller 
-                                                          % representation
-policy.maxU = 0.785398;                                      % max. amplitude of 
-                                                          % control
+policy.fcn = @(policy,m,s)conCat(@congp,@gSat,policy,m,s); % controller representation
+policy.maxU = deg2rad(car.degs);                          % max. amplitude of control
 [mm ss cc] = gTrig(mu0, S0, plant.angi);                  % represent angles 
 mm = [mu0; mm]; 
 cc = S0*cc; 
 ss = [S0 cc; cc' ss];                                     % in complex plane     
 policy.p.inputs = gaussian(mm(poli), ss(poli,poli), nc)'; % init. location of basis functions
 policy.p.targets = 0.1*randn(nc, length(policy.maxU));    % init. policy targets (close to zero)
-policy.p.hyp = log([ones(1, stateSize) 1 0.01])';          % initialize policy hyper-parameters
+policy.p.hyp = log([ones(1, stateSize) 1 0.01])';         % initialize policy hyper-parameters
 
 % 5. Set up the cost structure
 cost.fcn = @loss_drift_car;                 % cost function
@@ -99,11 +103,20 @@ cost.p = 0.5;                               % length of pendulum
 cost.width = 5;                             % cost function width
 cost.expl =  0.0;                           % exploration parameter (UCB)
 cost.angle = plant.angi;                    % index of angle (for cost function)
-cost.target = [zeros(1, 8) 2.5 0 2.5 -1]';
-% cost.target = [2 -2.5 5 0]';     % target state
-cost.weights = zeros(stateSize); 
-cost.weights(end-3:end, end-3:end) = eye(4); 
-cost.weights(10,10) = 0;
+
+% Full State Cost Definition
+% cost.target = [zeros(1, 8) 2.5 0 2.5 -1]';
+% cost.weights = zeros(stateSize); 
+% cost.weights(end-3:end, end-3:end) = eye(4); 
+% cost.weights(10,10) = 0;
+
+% [thetaDot s] Cost Definition
+cost.target = [2.5 4]';  
+cost.weights = [0 0; 0 1];
+
+% [thetaDot xDotBodyFrame yDotBodyFrame] 4WD Cost Definition
+% cost.target = [-3.5 0.5 2]
+% cost.weights = eye(3);
 
 % 6. Dynamics model structure
 dynmodel.fcn = @gp1d;                % function for GP predictions

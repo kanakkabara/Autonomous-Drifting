@@ -24,6 +24,13 @@ clear all; close all;
 settings_drift_car;                     % load scenario-specific settings
 basename = 'driftCar_';                 % filename used for saving data
 
+disp("Starting Drift Car with the following Params: ");
+disp("Throttle - " + plant.car.throttle);
+disp("Turn angle (degrees) - " + car.degs);
+disp("Friction - " + car.friction);
+disp("Transmission - " + car.transmission);
+disp("Update friction/transmission if not matching with URDF and bridge env!");
+
 % 2. Initial J random rollouts
 for jj = 1:J
   [xx, yy, realCost{jj}, latent{jj}] = ...
