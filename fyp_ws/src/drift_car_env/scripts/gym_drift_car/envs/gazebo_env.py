@@ -123,7 +123,7 @@ class GazeboEnv(gym.Env):
                 self.pausePhysics()
 
                 state = self.getState(posData)
-                reward = self.getRewardExponential(posData)
+                reward = self.getRewardExponential(state)
                 done = self.isDone(posData)
               
                 #self.previous_imu = imuData
@@ -193,23 +193,28 @@ class GazeboEnv(gym.Env):
 
                 return np.array(state)
 
-        def getRewardExponential(self, posData):
-                desiredTangentialSpeed = 5          # Tangential speed with respect to car body.
+        def getRewardExponential(self, state):
+                # desiredTangentialSpeed = 5          # Tangential speed with respect to car body.
                 # desiredNormalSpeed  = 0           # Perfect circular motion
+		desiredForwardVel = 0.7		
+		desiredSideVel = -1.5 
                 desiredAngularVel = 4 
 
-                velx = posData.twist[1].linear.x
-                vely = posData.twist[1].linear.y
-                carTangentialSpeed = math.sqrt(velx ** 2 + vely ** 2)
-                carAngularVel = posData.twist[1].angular.z
+                # velx = posData.twist[1].linear.x
+                # vely = posData.twist[1].linear.y
+                # carTangentialSpeed = math.sqrt(velx ** 2 + vely ** 2)
+                # carAngularVel = posData.twist[1].angular.z
+		carForwardVel = state[0]
+		carSideVel = state[1]
+		carAngularVel = state[2]
 
                 sigma = 0.5
-                #deviationMagnitude = (carSideVel - desiredSideVel)**2 + \
-                #                (carForwardVel - desiredForwardVel)**2 + \
-                #                (carAngularVel - desiredAngularVel)**2
-                
-                deviationMagnitude = (desiredTangentialSpeed - carTangentialSpeed)**2 + \
+                deviationMagnitude = (carSideVel - desiredSideVel)**2 + \
+                                (carForwardVel - desiredForwardVel)**2 + \
                                 (carAngularVel - desiredAngularVel)**2
+                
+                #deviationMagnitude = (desiredTangentialSpeed - carTangentialSpeed)**2 + \
+                #                (carAngularVel - desiredAngularVel)**2
 
 
                 return math.exp(-deviationMagnitude/(2 * sigma**2)) - 1
