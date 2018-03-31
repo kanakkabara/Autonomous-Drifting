@@ -123,7 +123,7 @@ class GazeboEnv(gym.Env):
                 self.pausePhysics()
 
                 state = self.getState(posData)
-                reward = self.getRewardExponential(state)
+                reward = self.getRewardExponential(state[-4:])
                 done = self.isDone(posData)
               
                 #self.previous_imu = imuData
@@ -196,19 +196,19 @@ class GazeboEnv(gym.Env):
         def getRewardExponential(self, state):
                 # desiredTangentialSpeed = 5          # Tangential speed with respect to car body.
                 # desiredNormalSpeed  = 0           # Perfect circular motion
-		desiredForwardVel = 0.7		
-		desiredSideVel = -1.5 
-                desiredAngularVel = 4 
+                desiredAngularVel = -3.5
+		desiredForwardVel = 0.5		
+		desiredSideVel = 2 
 
                 # velx = posData.twist[1].linear.x
                 # vely = posData.twist[1].linear.y
                 # carTangentialSpeed = math.sqrt(velx ** 2 + vely ** 2)
                 # carAngularVel = posData.twist[1].angular.z
-		carForwardVel = state[0]
-		carSideVel = state[1]
-		carAngularVel = state[2]
+		carAngularVel = state[0]
+		carForwardVel = state[2]
+		carSideVel = state[3]
 
-                sigma = 0.5
+                sigma = 5
                 deviationMagnitude = (carSideVel - desiredSideVel)**2 + \
                                 (carForwardVel - desiredForwardVel)**2 + \
                                 (carAngularVel - desiredAngularVel)**2
@@ -216,8 +216,7 @@ class GazeboEnv(gym.Env):
                 #deviationMagnitude = (desiredTangentialSpeed - carTangentialSpeed)**2 + \
                 #                (carAngularVel - desiredAngularVel)**2
 
-
-                return math.exp(-deviationMagnitude/(2 * sigma**2)) - 1
+                return 1 - math.exp(-deviationMagnitude/(2 * sigma**2))
         
         def getRewardPotentialBased(self, action, posData):
                 reward = 0.0

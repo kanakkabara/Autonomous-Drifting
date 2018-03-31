@@ -20,7 +20,7 @@ def parse_args():
   default_mode = 'train'
   default_save_model_interval = 5
   default_summary_out_interval = 200
-  default_summary_path = './summary' + str(datetime.datetime.now())
+  default_summary_path = './summary/' + str(datetime.datetime.now())
   default_model_path = './models/' + str(datetime.datetime.now())
 
 
