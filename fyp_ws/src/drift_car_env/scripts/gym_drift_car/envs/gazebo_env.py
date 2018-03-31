@@ -40,14 +40,12 @@ class GazeboEnv(gym.Env):
                 print ("Gazebo launched!")      
                 
                 self.gzclient_pid = 0
+                self.four_wheel_drive = four_wheel_drive
                 self.throtle1 = rospy.Publisher('/drift_car/left_rear_axle_controller/command', Float64, queue_size = 1)
                 self.throtle2 = rospy.Publisher('/drift_car/right_rear_axle_controller/command', Float64, queue_size = 1)
                 if four_wheel_drive:
-                        self.four_wheel_drive = True
                         self.throtle3 = rospy.Publisher('/drift_car/left_front_axle_controller/command', Float64, queue_size = 1)
                         self.throtle4 = rospy.Publisher('/drift_car/right_front_axle_controller/command', Float64, queue_size = 1)
-                else:
-                        self.four_wheel_drive = False
                 self.steer1 = rospy.Publisher('/drift_car/left_steering_joint_controller/command', Float64, queue_size = 1)
                 self.steer2 = rospy.Publisher('/drift_car/right_steering_joint_controller/command', Float64, queue_size = 1)
         

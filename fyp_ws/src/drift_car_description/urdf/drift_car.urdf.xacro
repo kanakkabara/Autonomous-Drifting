@@ -36,7 +36,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<robot name="em_3905" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="rc_car" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <!-- Degree-to-radian conversions -->
   <xacro:property name="degrees_15" value="0.261799"/>
   <xacro:property name="degrees_25" value="0.436332"/> 
@@ -49,19 +49,6 @@ limitations under the License.
   <xacro:property name="chassis_width" value="0.09"/>
   <xacro:property name="chassis_height" value="0.01"/>
   <xacro:property name="chassis_mass" value="2"/>
-
-  <!-- battery_dist is the distance between the inner edges of the
-       batteries. battery_comp_depth is the battery compartment depth.
-       battery_length is measured along the x axis, battery_width
-       along the y axis, and battery_height along the z axis. -->
-  <xacro:property name="battery_x_offset" value="0.055"/>
-  <xacro:property name="battery_dist" value="0.065"/>
-  <xacro:property name="battery_comp_depth" value="0.02"/>
-  <xacro:property name="battery_comp_angle" value="0.34906585"/>
-  <xacro:property name="battery_length" value="0.16"/>
-  <xacro:property name="battery_width" value="0.047"/>
-  <xacro:property name="battery_height" value="0.024"/>
-  <xacro:property name="battery_mass" value="0.5025"/>
 
   <!-- hub_dia and tire_dia are the diameters of the hub and tire,
        respectively. hex_hub_depth is the distance that the hex hub is
@@ -83,13 +70,6 @@ limitations under the License.
   <xacro:property name="axle_length" value="0.01"/>
   <xacro:property name="wheel_travel" value="0.01"/>
   <xacro:property name="shock_z_offset" value="0.0655"/>
-
-  <!-- shock_eff_limit is 2 * ((shock_stroke / 2) * shock_spring_constant) N.
-       shock_stroke is 0.028575 meters. shock_spring_constant, an approximation
-       of a Traxxas Ultra Shock shock absorber spring's constant, is
-       437.817 N/m. -->
-  <xacro:property name="shock_eff_limit" value="100"/>
-  <xacro:property name="shock_vel_limit" value="1000"/>
 
   <!-- The specifications for a Titan(R) 550 motor could not be found, so the
        stall torque of a Mabuchi Motor(R) RS-550VC-7525 motor was used instead.
@@ -117,9 +97,6 @@ limitations under the License.
   <!-- ctrl_period is gazebo_ros_control's control period. Unit: hertz. -->
   <xacro:property name="ctrl_period" value="0.01"/>
 
-  <material name="battery_mat">
-    <color rgba="0 0 1 1"/>
-  </material>
   <material name="chassis_mat">
     <color rgba="0.5 0.5 0.5 1"/>
   </material>
@@ -169,20 +146,17 @@ limitations under the License.
     </inertial>
   </xacro:macro>
 
-
-
   <!-- Shock absorber -->
   <xacro:macro name="shock"
                params="lr_prefix fr_prefix lr_reflect fr_reflect child">
-    <joint name="${lr_prefix}_${fr_prefix}_shock" type="fixed">
+    <joint name="chassis_to_${lr_prefix}_${fr_prefix}_wheel" type="fixed">
       <parent link="chassis"/>
       <child link="${child}"/>
       <origin xyz="${fr_reflect * wheelbase / 2}
                    ${lr_reflect * ((hex_hub_dist / 2) - axle_length)}
                    0.01"/>
       <axis xyz="0 0 -1"/>
-      <limit lower="0" upper="0"
-             effort="0" velocity="${shock_vel_limit}"/>
+      <limit lower="0" upper="0" effort="0" velocity="1000"/>
     </joint>
   </xacro:macro>
 
@@ -214,9 +188,7 @@ limitations under the License.
 
     <link name="${lr_prefix}_${fr_prefix}_wheel">
         <visual>
-          <origin xyz="0
-                      0
-                      0"/>
+          <origin xyz="0 0 0"/>
           <geometry>
             <cylinder radius="${tire_dia / 2}" length="${tire_width}"/>
           </geometry>
@@ -224,9 +196,7 @@ limitations under the License.
         </visual>
 
       <collision>
-        <origin xyz="0
-                     0
-                     0"/>
+        <origin xyz="0 0 0"/>
         <geometry>
           <cylinder radius="${tire_dia / 2}" length="${tire_width}"/>
         </geometry>
@@ -252,11 +222,9 @@ limitations under the License.
     <xacro:shock lr_prefix="${lr_prefix}" fr_prefix="${fr_prefix}"
                  lr_reflect="${lr_reflect}" fr_reflect="${fr_reflect}"
                  child="${lr_prefix}_steering_link"/>
-
     <link name="${lr_prefix}_steering_link">
       <xacro:null_inertial/>
     </link>
-
     <joint name="${lr_prefix}_steering_joint" type="revolute">
       <parent link="${lr_prefix}_steering_link"/>
       <child link="${lr_prefix}_${fr_prefix}_axle_carrier"/>
@@ -276,7 +244,7 @@ limitations under the License.
     </transmission>
 
     <xacro:wheel lr_prefix="${lr_prefix}" fr_prefix="${fr_prefix}"
-                 lr_reflect="${lr_reflect}" mu1="0.5" mu2="0.5"/>
+                 lr_reflect="${lr_reflect}" mu1="0.8" mu2="0.8"/>
   </xacro:macro>
 
   <!-- Rear wheel -->
@@ -286,7 +254,7 @@ limitations under the License.
                  lr_reflect="${lr_reflect}" fr_reflect="${fr_reflect}"
                  child="${lr_prefix}_${fr_prefix}_axle_carrier"/>
     <xacro:wheel lr_prefix="${lr_prefix}" fr_prefix="${fr_prefix}"
-                 lr_reflect="${lr_reflect}" mu1="0.5" mu2="0.5"/>
+                 lr_reflect="${lr_reflect}" mu1="0.8" mu2="0.8"/>
   </xacro:macro>
 
   <!-- base_link must have geometry so that its axes can be displayed in
@@ -308,8 +276,7 @@ limitations under the License.
 		<origin xyz="0 0 0.19"/>
 		<parent link="base_link"/>
 		<child link="imu_link"/>
-	</joint>
-
+  </joint>
 	<link name="imu_link">
 	  <inertial>
 	    <mass value="0.001"/>
@@ -375,16 +342,10 @@ limitations under the License.
 
   <gazebo>
     <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-      <!-- As of 10/7/13, setting controlPeriod to a value greater than
-           Gazebo's simulation period prevents the shock absorbers from
-           working.
-      <controlPeriod>${ctrl_period}</controlPeriod>
-      -->
       <robotNamespace>/drift_car</robotNamespace>
     </plugin>
-  </gazebo>
-  
-  <gazebo>    
+    
+    <!-- IMU data for simulating EKF on actual drift car -->
     <plugin name="imu_plugin" filename="libgazebo_ros_imu.so">
         <alwaysOn>true</alwaysOn>       
         <bodyName>imu_link</bodyName>
@@ -393,9 +354,8 @@ limitations under the License.
         <gaussianNoise>0.01</gaussianNoise>
         <updateRate>60.0</updateRate> 
     </plugin>
-  </gazebo>
-
-  <gazebo>
+    
+    <!-- Actual Odometry data for RViz -->
     <plugin name="p3d_base_controller" filename="libgazebo_ros_p3d.so">
       <alwaysOn>true</alwaysOn>
       <updateRate>400.0</updateRate>
