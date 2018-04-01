@@ -2,7 +2,9 @@
 import rospy
 import gym
 import gym_drift_car
+from math import asin, acos, cos, sin
 
+from tf.transformations import euler_from_quaternion
 import matplotlib.pyplot as plt
 from matplotlib import style
 
@@ -65,7 +67,21 @@ if __name__=="__main__":
 			else:
 		                next_state, reward, done, _ = env.step(action)
                                 runningReward.append(runningReward[-1] + reward)
-                                
+
+                        print("x: " + str(next_state[0]))
+                        print("y: " + str(next_state[1]))
+                        print("theta: " + str(next_state[2]))
+                        # data = next_state[2]
+                        # euler = euler_from_quaternion((data.x, data.y, data.z, data.w))
+                        # angle = euler[2]
+                        # print("sin: " + str(sin(angle)))   
+                        # print("cos: " + str(cos(angle)))   
+                        
+                        print("xDot: " + str(next_state[3]))
+                        print("yDot: " + str(next_state[4]))
+                        print("thetaDot: " + str(next_state[5]))
+                        print("\n")
+
                         ax1.clear()
                         ax1.plot(runningReward)
                         fig.canvas.draw()

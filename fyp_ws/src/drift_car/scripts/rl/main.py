@@ -5,12 +5,15 @@ import tensorflow as tf
 import numpy as np
 from utils import target_network_update_ops, target_network_update_apply, ExperienceReplayBuffer
 from network_models import DQN
-import argparse
-import datetime
 import json
 import os
+import params
 
-def train(config, env):
+def train(config):
+    # Create environment
+    env = gym.make(config.env)
+
+
     train_episodes = config.total_episodes          # max number of episodes to learn from
     max_steps = config.max_episode_length           # max steps in an episode
     gamma = config.gamma                            # future reward discount
@@ -190,119 +193,5 @@ def train(config, env):
                 saver.save(sess, config.model_path +'/model' + str(ep) + '.ckpt', total_step_count)
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    # Integer hyperparams.
-    parser.add_argument(
-        '-bs',
-        "--batch_size",
-        help='The batch size for training',
-        type=int,
-        default=64)
-    parser.add_argument(
-        '-te',
-        '--total_episodes',
-        help='Total number of episodes to run algorithm (Default: 1m)',
-        type=int,
-        default=1000000)
-    parser.add_argument(
-        '--pretrain_steps',
-        help='Number of steps to run algorithm without updating networks',
-        type=int,
-        default=10000)
-    parser.add_argument(
-        '--max_episode_length',
-        help='Length of each episode',
-        type=int,
-        default=300)
-    parser.add_argument(
-        '-re',
-        '--render_env',
-        help='Render learning environment',
-        action='store_true')
-
-    # Float hyperparameters.
-    parser.add_argument(
-        '-g',
-        '--gamma',
-        help='Discount factor',
-        type=float,
-        default=0.99)
-    parser.add_argument(
-        '--tau',
-        help='Controls update rate of target network',                        
-        type=float,
-        default=0.999)
-    parser.add_argument(
-        '-lr',
-        '--learning_rate',
-        help='Learning rate of algorithm',
-        type=float,
-        default=1e-10)
-	#default=1e-4)
-    parser.add_argument(
-        '-edr',
-        '--epsilon_decay_rate',
-        help='Rate of epsilon decay',
-        type=float,
-        default=1e-5)
-        #default=0.0001)
-
-
-    # Intervals.
-    parser.add_argument(
-        '--save_model_interval',
-        help='How often to save model. (Default: 5 ep)',
-        type=int,
-        default=5)
-    parser.add_argument(
-        '-eui',
-        '--epsilon_update_interval',
-        help='How often to update epsilon (Default: 10k steps)',
-        type=int,
-        default=1e5)
-    parser.add_argument(
-        '-soe',
-        '--summary_out_every',
-        help='How often to print out summaries (Default: 200 steps)',
-        type=int,
-        default=200)
-    parser.add_argument(
-        '--chart_refresh_interval',
-        help='Number of episodes between chart updates (Default: 100 ep)',
-        type=int,
-        default=100)
-
-    # Model load/save and path.
-    parser.add_argument(
-        '-lm',
-        '--load_model',
-        help='Load saved model parameters',
-        action='store_true')
-    parser.add_argument(
-        '-sm',
-        '--save_model',
-        help='Periodically save model parameters',
-        action='store_true')
-    parser.add_argument(
-        '--model_path',
-        help='Path of saved model parameters',                        
-        default='./models/'+str(datetime.datetime.now()))
-    parser.add_argument(
-        '--summary_path',
-        help='Path of training summary',
-        default='./summary/'+str(datetime.datetime.now()))
-    parser.add_argument(
-        '--verbose',
-        help='Verbose output',
-        action='store_true')
-    
-    config = parser.parse_args()
-
-    # env = gym.make('CartPole-v0')
-    env = gym.make('DriftCarGazeboEnv-v0')
-    # env = gym.make('MountainCar-v0')
-    
-    # Additional network params.
-    vars(config)['h_size'] = 500
-    # Train the network.
-    train(config, env)
+    config = params.parse_args()
+    train(config)

@@ -3,22 +3,32 @@ drift_car:
     type: joint_state_controller/JointStateController
     publish_rate: 50  
 
-  joint1_position_controller:
+  left_rear_axle_controller:
     type: effort_controllers/JointVelocityController
     joint: left_rear_axle
     pid: {p: 100.0, i: 0.01, d: 10.0}
   
-  joint2_position_controller:
+  right_rear_axle_controller:
     type: effort_controllers/JointVelocityController
     joint: right_rear_axle
     pid: {p: 100.0, i: 0.01, d: 10.0}
 
-  joint3_position_controller:
+  left_front_axle_controller:
+    type: effort_controllers/JointVelocityController
+    joint: left_front_axle
+    pid: {p: 100.0, i: 0.01, d: 10.0}
+  
+  right_front_axle_controller:
+    type: effort_controllers/JointVelocityController
+    joint: right_front_axle
+    pid: {p: 100.0, i: 0.01, d: 10.0}
+
+  left_steering_joint_controller:
     type: effort_controllers/JointPositionController
     joint: left_steering_joint
     pid: {p: 100.0, i: 0.01, d: 10.0}
   
-  joint4_position_controller:
+  right_steering_joint_controller:
     type: effort_controllers/JointPositionController
     joint: right_steering_joint
     pid: {p: 100.0, i: 0.01, d: 10.0}

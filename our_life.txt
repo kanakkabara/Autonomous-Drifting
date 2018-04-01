@@ -1,0 +1,41 @@
+eval usage of camera and mouse to compare and to ensure that it works; needs to be done scientifically
+compare using a CV method as a baseline, then maybe add some noise to see how well the algorithm adjusts to that
+
+
+Position
+---------
+-> IMU = Drift Problem
+-> Mouse = Not fast enough, no quick changes
+-> PX4Flow = 
+
+Solution: Eliminate position entirely. State consisting of 
+velocities is markovian for the problem of drifting.
+
+XBee
+----
+-> Memory overflow; memory usage fix
+-> Sync vs. Async
+
+Car
+---
+-> Voltage surge
+-> BEC screw up
+->
+
+PILCO
+-----
+-> Random init led to Suboptimal policy
+-> The car decides to prioritize a straight path over a circular one after a while: 
+		Normalize the weights of the  cost matrix to equally prioritize both
+		components of the cost function (rephrase)
+
+
+DQN
+---
+-> Discrete actions
+
+
+-------------------------------------------------------------
+
+-> Used DQN for init
+-> Tried to make car standalone instead of using motion capture
