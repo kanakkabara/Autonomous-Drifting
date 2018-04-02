@@ -66,8 +66,10 @@ class GazeboEnv(gym.Env):
                         high = np.array([0.436])
                         self.action_space = spaces.Box(-high, high)
                 else:
-                        self.degreeMappings = [65, 75, 85, 90, 95, 105, 115]
-                        self.radianMappings = [-0.436, -0.261799, -0.0872665, 0, 0.0872665, 0.261799, 0.436] 
+                        minDegrees = 45
+                        maxDegrees = 135
+                        self.degreeMappings = range(minDegrees, maxDegrees+1, 10)
+                        self.radianMappings = [math.radians(x-90) for x in self.degreeMappings]
                         self.action_space = spaces.Discrete(len(self.degreeMappings))
                 
                 #State related
@@ -123,6 +125,7 @@ class GazeboEnv(gym.Env):
                 self.pausePhysics()
 
                 state = self.getState(posData)
+                state = [state[2], state[3], state[4]]
                 reward = self.getRewardExponential(state[-4:])
                 done = self.isDone(posData)
               

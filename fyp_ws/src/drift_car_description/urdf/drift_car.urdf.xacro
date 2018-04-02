@@ -244,7 +244,7 @@ limitations under the License.
     </transmission>
 
     <xacro:wheel lr_prefix="${lr_prefix}" fr_prefix="${fr_prefix}"
-                 lr_reflect="${lr_reflect}" mu1="0.8" mu2="0.8"/>
+                 lr_reflect="${lr_reflect}" mu1="0.5" mu2="0.5"/>
   </xacro:macro>
 
   <!-- Rear wheel -->
@@ -254,7 +254,7 @@ limitations under the License.
                  lr_reflect="${lr_reflect}" fr_reflect="${fr_reflect}"
                  child="${lr_prefix}_${fr_prefix}_axle_carrier"/>
     <xacro:wheel lr_prefix="${lr_prefix}" fr_prefix="${fr_prefix}"
-                 lr_reflect="${lr_reflect}" mu1="0.8" mu2="0.8"/>
+                 lr_reflect="${lr_reflect}" mu1="0.5" mu2="0.5"/>
   </xacro:macro>
 
   <!-- base_link must have geometry so that its axes can be displayed in
