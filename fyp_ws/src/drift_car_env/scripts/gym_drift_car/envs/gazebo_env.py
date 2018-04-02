@@ -125,7 +125,7 @@ class GazeboEnv(gym.Env):
                 self.pausePhysics()
 
                 state = self.getState(posData)
-                state = [state[2], state[3], state[4]]
+                state = np.array([state[2], state[3], state[4]])
                 reward = self.getRewardExponential(state[-4:])
                 done = self.isDone(posData)
               
@@ -208,8 +208,8 @@ class GazeboEnv(gym.Env):
                 # carTangentialSpeed = math.sqrt(velx ** 2 + vely ** 2)
                 # carAngularVel = posData.twist[1].angular.z
 		carAngularVel = state[0]
-		carForwardVel = state[2]
-		carSideVel = state[3]
+		carForwardVel = state[1]
+		carSideVel = state[2]
 
                 sigma = 5
                 deviationMagnitude = (carSideVel - desiredSideVel)**2 + \

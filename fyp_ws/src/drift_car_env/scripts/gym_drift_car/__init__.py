@@ -25,8 +25,8 @@ register(
 register(
     id='DriftCarGazeboPartialBodyFrame-v0',
     entry_point='gym_drift_car.envs:GazeboEnv',
-    # state: xdot, ydot, thetadot, xDotBody, yDotBody.
-    kwargs={'state_info': {'state_size': 5, 'include_body_frame_velocity': True}}
+    # state: thetadot, xDotBody, yDotBody.
+    kwargs={'state_info': {'state_size': 3, 'include_body_frame_velocity': True}}
 )
 
 register(
