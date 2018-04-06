@@ -1,0 +1,6 @@
+model_checkpoint_path: "model865.ckpt-163678"
+all_model_checkpoint_paths: "model845.ckpt-158732"
+all_model_checkpoint_paths: "model850.ckpt-159864"
+all_model_checkpoint_paths: "model855.ckpt-161080"
+all_model_checkpoint_paths: "model860.ckpt-162381"
+all_model_checkpoint_paths: "model865.ckpt-163678"
