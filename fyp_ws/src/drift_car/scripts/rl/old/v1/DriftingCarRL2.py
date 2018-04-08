@@ -11,7 +11,7 @@ import tensorflow.contrib.slim as slim
 import time
 style.use('fivethirtyeight')
 
-env = gym.make('DriftCarGazeboEnv-v0')
+env = gym.make('DriftCarGazebo-v0')
 
 m = 100
 n = 100

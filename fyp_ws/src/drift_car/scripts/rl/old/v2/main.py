@@ -214,7 +214,7 @@ if __name__ == '__main__':
 
     #env = gym.make('MountainCar-v0')   
     env = gym.make('CartPole-v0')
-    #env = gym.make('DriftCarGazeboEnv-v0')
+    #env = gym.make('DriftCarGazebo-v0')
     
     # Additional network params.
     vars(config)['a_size'] = env.action_space.n

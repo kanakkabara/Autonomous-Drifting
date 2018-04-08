@@ -4,29 +4,27 @@ from gym.envs.registration import register
 logger = logging.getLogger(__name__)
 
 register(
-    id='DriftCarGazeboEnv-v0',
+    id='DriftCarGazebo-v0',
     entry_point='gym_drift_car.envs:GazeboEnv',
 )
 
 register(
-    id='DriftCarGazeboPartialEnv-v0',
+    id='DriftCarGazeboPartial-v0',
     entry_point='gym_drift_car.envs:GazeboEnv',
-    # state: xdot, ydot, thetadot, s.
-    kwargs={'state_info': {'state_size': 4, 'include_tangential_speed': True}}
+    kwargs={'state_info': ["xdot", "ydot", "thetadot", "s"]}
 )
 
 register(
-    id='DriftCarGazeboPartialWithAnglesEnv-v0',
+    id='DriftCarGazeboPartialWithAngles-v0',
     entry_point='gym_drift_car.envs:GazeboEnv',
-    # state: i, j, k, w, xdot, ydot, thetadot, s.
-    kwargs={'state_info': {'state_size': 8, 'include_tangential_speed': True, 'include_theta': True}}
+    kwargs={'state_info': ["i", "j", "k", "w", "xdot", "ydot", "thetadot", "s"]}
 )
 
 register(
     id='DriftCarGazeboPartialBodyFrame-v0',
     entry_point='gym_drift_car.envs:GazeboEnv',
     # state: thetadot, xDotBody, yDotBody.
-    kwargs={'four_wheel_drive': True, 'state_info': {'state_size': 3, 'include_body_frame_velocity': True}}
+    kwargs={'four_wheel_drive': True, 'state_info': ["thetadot", "xdotbodyframe", "ydotbodyframe"]}
 )
 
 register(
@@ -47,12 +45,12 @@ register(
     id='DriftCarGazeboContinuousPartial-v0',
     entry_point='gym_drift_car.envs:GazeboEnv',
     # state: xdot, ydot, thetadot, s.
-    kwargs={'continuous' : True, 'state_info': {'state_size': 4, 'include_tangential_speed': True}}
+    kwargs={'continuous' : True, 'state_info': ["xdot", "ydot", "thetadot", "s"]}
 )
 
 register(
     id='DriftCarGazeboContinuousPartialWithAngles-v0',
     entry_point='gym_drift_car.envs:GazeboEnv',
     # state: i, j, k, w, xdot, ydot, thetadot, s.
-    kwargs={'continuous' : True, 'state_info': {'state_size': 8, 'include_tangential_speed': True, 'include_theta': True}}
+    kwargs={'continuous' : True, 'state_info': ["i", "j", "k", "w", "xdot", "ydot", "thetadot", "s"]}
 )

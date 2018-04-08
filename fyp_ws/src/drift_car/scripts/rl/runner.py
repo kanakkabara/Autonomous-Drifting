@@ -25,6 +25,7 @@ targetQN = DQN(name='target', state_size=state_size, action_size=action_size, hi
 
 fig = plt.figure(figsize=(10, 10))
 ax1 = fig.add_subplot(211)
+ax1.set_title('DQN Cost')
 ax1.set_xlabel('Number of steps')
 ax1.set_ylabel('Reward')
 plt.ion()
@@ -52,6 +53,9 @@ with tf.Session() as sess:
         state, reward, done, _ = env.step(action)
         runningReward.append(reward)
         ax1.clear()
+        ax1.set_title('DQN Cost')
+        ax1.set_xlabel('Number of steps')
+        ax1.set_ylabel('Reward')
         ax1.plot(runningReward)
         fig.canvas.draw()
         
