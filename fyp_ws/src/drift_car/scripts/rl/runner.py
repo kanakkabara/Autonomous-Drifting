@@ -27,12 +27,11 @@ fig = plt.figure(figsize=(10, 10))
 ax1 = fig.add_subplot(211)
 ax1.set_title('DQN Cost')
 ax1.set_xlabel('Number of steps')
-ax1.set_ylabel('Reward')
+ax1.set_ylabel('Cost')
 plt.ion()
 fig.show()
 fig.canvas.draw()
 
-runningReward = []
 with tf.Session() as sess: 
     saver = tf.train.Saver()
     print('Loading latest saved model...')
@@ -41,10 +40,9 @@ with tf.Session() as sess:
 
     env.render() 
     env.reset()
-    # Take one random step to get the pole and cart moving
     state, reward, done, _ = env.step(env.action_space.sample())
 
-    runningReward.append(reward)
+    runningReward = []
     while True:
         feed = {mainQN.inputs_: [state]}
         Qs = sess.run(mainQN.output, feed_dict=feed)
@@ -55,11 +53,12 @@ with tf.Session() as sess:
         ax1.clear()
         ax1.set_title('DQN Cost')
         ax1.set_xlabel('Number of steps')
-        ax1.set_ylabel('Reward')
+        ax1.set_ylabel('Cost')
         ax1.plot(runningReward)
         fig.canvas.draw()
         
-        if done:
+        if done or len(runningReward) == 150:
             env.reset()
             state, reward, done, _ = env.step(env.action_space.sample())
             runningReward = []
+            steps = 0
