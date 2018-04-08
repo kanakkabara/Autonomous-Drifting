@@ -6,10 +6,12 @@ from network_models import DQN
 import rospy
 from std_msgs.msg import Int8, Float64, Float64MultiArray
 import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib import style
 
-MODEL_PATH = "models/ExpCar7"
+MODEL_PATH = "models/DQN-Result (4WD, 0.5fr, 1770thr, 45degs)"
 
-env = gym.make('DriftCarGazeboPartialWithAnglesEnv-v0')
+env = gym.make('DriftCarGazeboPartialBodyFrame-v0')
 pub = rospy.Publisher('drift_car/state', Float64MultiArray, queue_size=1) 
 
 # Network parameters
@@ -21,8 +23,15 @@ action_size = env.action_space.n
 mainQN = DQN(name='main', state_size=state_size, action_size=action_size, hidden_size=hidden_size, learning_rate=learning_rate)
 targetQN = DQN(name='target', state_size=state_size, action_size=action_size, hidden_size=hidden_size, learning_rate=learning_rate)
 
-radianMappings = [-0.436, -0.261799, -0.0872665, 0, 0.0872665, 0.261799, 0.436] 
+fig = plt.figure(figsize=(10, 10))
+ax1 = fig.add_subplot(211)
+ax1.set_xlabel('Number of steps')
+ax1.set_ylabel('Reward')
+plt.ion()
+fig.show()
+fig.canvas.draw()
 
+runningReward = []
 with tf.Session() as sess: 
     saver = tf.train.Saver()
     print('Loading latest saved model...')
@@ -34,20 +43,19 @@ with tf.Session() as sess:
     # Take one random step to get the pole and cart moving
     state, reward, done, _ = env.step(env.action_space.sample())
 
-
+    runningReward.append(reward)
     while True:
         feed = {mainQN.inputs_: [state]}
         Qs = sess.run(mainQN.output, feed_dict=feed)
         action = np.argmax(Qs)
 
-        stateArray = Float64MultiArray()
-        stateArray.data = state.tolist()
-        stateArray.data.append(400)
-        stateArray.data.append(radianMappings[action])
-        print(stateArray.data)
-        pub.publish(stateArray)
-
         state, reward, done, _ = env.step(action)
+        runningReward.append(reward)
+        ax1.clear()
+        ax1.plot(runningReward)
+        fig.canvas.draw()
+        
         if done:
             env.reset()
             state, reward, done, _ = env.step(env.action_space.sample())
+            runningReward = []
