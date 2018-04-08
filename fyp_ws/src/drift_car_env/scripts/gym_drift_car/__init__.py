@@ -9,19 +9,26 @@ register(
 )
 
 register(
-    id='DriftCarGazeboPartial-v0',
-    entry_point='gym_drift_car.envs:GazeboEnv',
-    kwargs={'state_info': ["xdot", "ydot", "thetadot", "s"]}
-)
-
-register(
     id='DriftCarGazeboPartialWithAngles-v0',
     entry_point='gym_drift_car.envs:GazeboEnv',
     kwargs={'state_info': ["i", "j", "k", "w", "xdot", "ydot", "thetadot", "s"]}
 )
 
 register(
+    id='DriftCarGazeboPartial-v0',
+    entry_point='gym_drift_car.envs:GazeboEnv',
+    kwargs={'state_info': ["xdot", "ydot", "thetadot", "s"]}
+)
+
+register(
     id='DriftCarGazeboPartialBodyFrame-v0',
+    entry_point='gym_drift_car.envs:GazeboEnv',
+    # state: thetadot, xDotBody, yDotBody.
+    kwargs={'state_info': ["thetadot", "xdotbodyframe", "ydotbodyframe"]}
+)
+
+register(
+    id='DriftCarGazeboPartialBodyFrame4WD-v0',
     entry_point='gym_drift_car.envs:GazeboEnv',
     # state: thetadot, xDotBody, yDotBody.
     kwargs={'four_wheel_drive': True, 'state_info': ["thetadot", "xdotbodyframe", "ydotbodyframe"]}
@@ -35,10 +42,10 @@ register(
 )
 
 register(
-    id='DriftCarGazeboContinuous4WD-v0',
+    id='DriftCarGazeboContinuousPartialWithAngles-v0',
     entry_point='gym_drift_car.envs:GazeboEnv',
-    # state: x, y, i, j, k, w, xDotWorldFrame, yDotWorldFrame, thetaDot, s, xDotBodyFrame, yDotBodyFrame
-    kwargs={'continuous' : True, 'four_wheel_drive': True}
+    # state: i, j, k, w, xdot, ydot, thetadot, s.
+    kwargs={'continuous' : True, 'state_info': ["i", "j", "k", "w", "xdot", "ydot", "thetadot", "s"]}
 )
 
 register(
@@ -49,8 +56,22 @@ register(
 )
 
 register(
-    id='DriftCarGazeboContinuousPartialWithAngles-v0',
+    id='DriftCarGazeboContinuousSpeedCost-v0',
     entry_point='gym_drift_car.envs:GazeboEnv',
-    # state: i, j, k, w, xdot, ydot, thetadot, s.
-    kwargs={'continuous' : True, 'state_info': ["i", "j", "k", "w", "xdot", "ydot", "thetadot", "s"]}
+    # state: xdot, ydot, thetadot, s.
+    kwargs={'continuous' : True, 'state_info': ["thetadot", "s"]}
+)
+
+register(
+    id='DriftCarGazeboContinuousBodyFrame-v0',
+    entry_point='gym_drift_car.envs:GazeboEnv',
+    # state: thetaDot, xDotBodyFrame, yDotBodyFrame
+    kwargs={'continuous' : True, 'state_info': ["thetadot", "xdotbodyframe", "ydotbodyframe"]}
+)
+
+register(
+    id='DriftCarGazeboContinuousBodyFrame4WD-v0',
+    entry_point='gym_drift_car.envs:GazeboEnv',
+    # state: thetaDot, xDotBodyFrame, yDotBodyFrame
+    kwargs={'continuous' : True, 'four_wheel_drive': True, 'state_info': ["thetadot", "xdotbodyframe", "ydotbodyframe"]}
 )
