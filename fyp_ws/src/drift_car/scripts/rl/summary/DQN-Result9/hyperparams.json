@@ -1,0 +1,25 @@
+{
+    "config": {
+        "batch_size": 64, 
+        "env": "DriftCarGazeboPartialBodyFrame-v0", 
+        "epsilon_decay_rate": 1e-05, 
+        "gamma": 0.99, 
+        "h_size": 500, 
+        "learning_rate": 1e-05, 
+        "load_model": false, 
+        "max_episode_length": 300, 
+        "mode": "train", 
+        "model_path": "models/DQN-Result (2WD, 0.5fr, 1750thr, 45degs)", 
+        "pretrain_steps": 10000, 
+        "render_env": false, 
+        "save_model": true, 
+        "save_model_interval": 5, 
+        "summary_out_every": 200, 
+        "summary_path": "summary/DQN-Result9", 
+        "tau": 0.98, 
+        "total_episodes": 1000000, 
+        "verbose": false
+    }, 
+    "explore_p": 0.010000000000584482, 
+    "total_step_count": 2815800
+}
