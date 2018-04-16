@@ -25,8 +25,7 @@ from os import path
 class GazeboEnv(gym.Env):
         metadata = {'render.modes': ['human']}
         # Default state: x, y, i, j, k, w, xdot, ydot, thetadot, s, xdotbodyframe, ydotbodyframe. 
-        DEFAULT_STATE_INFO = {'state_size': 12, 'include_theta': True, 'include_position': True,
-                'include_tangential_speed': True, 'include_body_frame_velocity': True}
+        DEFAULT_STATE_INFO = ["x", "y", "i", "j", "k", "w", "xdot", "ydot", "thetadot", "s", "xdotbodyframe", "ydotbodyframe"]
 
         def __init__(self, continuous=False, state_info=DEFAULT_STATE_INFO, four_wheel_drive=False):
                 rospy.init_node('gazebo_drift_car_gym')
@@ -73,8 +72,8 @@ class GazeboEnv(gym.Env):
                         self.action_space = spaces.Discrete(len(self.degreeMappings))
                 
                 #State related
-                self.state_info= state_info
-                high = np.ones(self.state_info['state_size']) * np.finfo(np.float32).max  
+                self.state_info = state_info
+                high = np.ones(len(self.state_info)) * np.finfo(np.float32).max  
                 self.observation_space = spaces.Box(-high, high)   
                 
                 self._seed()
@@ -85,7 +84,7 @@ class GazeboEnv(gym.Env):
                   
                 # Learning Parameters
                 self.radius = 3
-                self.throttle = 1770      
+                self.throttle = 1750      
                 self.maxDeviationFromCenter = 4
                 
         def _seed(self, seed=None):
@@ -124,9 +123,8 @@ class GazeboEnv(gym.Env):
 
                 self.pausePhysics()
 
-                state = self.getState(posData)
-                state = np.array([state[2], state[3], state[4]])
-                reward = self.getRewardExponential(state[-4:])
+                state, rewardState = self.getState(posData)
+                reward = self.getRewardExponential(rewardState)
                 done = self.isDone(posData)
               
                 #self.previous_imu = imuData
@@ -175,26 +173,23 @@ class GazeboEnv(gym.Env):
                 carTangentialSpeed = math.sqrt(velx ** 2 + vely ** 2)
                 carAngularVel = posData.twist[1].angular.z
 
-                state = [velx, vely, carAngularVel]
+                stateInfo = {
+                        "x": position.x, "y": position.y,
+                        "i": orientation.x, "j": orientation.y,
+                        "k": orientation.z, "w": orientation.w,
+                        "xdot": velx, "ydot": vely,
+                        "thetadot": carAngularVel,
+                        "s": carTangentialSpeed,
+                        "xdotbodyframe": velxBody, "ydotbodyframe": velyBody
+                }
 
-                if 'include_theta' in self.state_info and self.state_info['include_theta']:
-                    # i, j, k, w appended to state.
-                    theta_state = [posData.pose[1].orientation.x, posData.pose[1].orientation.y, 
-                            posData.pose[1].orientation.z, posData.pose[1].orientation.w]
-                    state = theta_state + state
+                state = []
+                for key in self.state_info:
+                       state.append(stateInfo[key]) 
+                
+                rewardState = [stateInfo["thetadot"], stateInfo["xdotbodyframe"], stateInfo["ydotbodyframe"]]
 
-                if 'include_position' in self.state_info and self.state_info['include_position']:
-                    # x, y appended to state.
-                    pos_state = [posData.pose[1].position.x, posData.pose[1].position.y]
-                    state = pos_state + state
-
-                if 'include_tangential_speed' in self.state_info and self.state_info['include_tangential_speed']:
-                    state += [carTangentialSpeed]
-
-                if 'include_body_frame_velocity' in self.state_info and self.state_info['include_body_frame_velocity']:
-                    state += [velxBody, velyBody]
-
-                return np.array(state)
+                return np.array(state), rewardState
 
         def getRewardExponential(self, state):
                 # desiredTangentialSpeed = 5          # Tangential speed with respect to car body.
@@ -219,6 +214,8 @@ class GazeboEnv(gym.Env):
                 #deviationMagnitude = (desiredTangentialSpeed - carTangentialSpeed)**2 + \
                 #                (carAngularVel - desiredAngularVel)**2
 
+                # 1 - exp for Cost
+                # exp - 1 for reward
                 return 1 - math.exp(-deviationMagnitude/(2 * sigma**2))
         
         def getRewardPotentialBased(self, action, posData):

@@ -27,8 +27,7 @@ def callback(data, args):
 
     state, reward, done, _ = env.step((throttle, servo))
     stateArray = Float64MultiArray()
-    stateArray.data = state[-4:-2].tolist()
-    # stateArray.data = [state[8], state[10], state[11]]
+    stateArray.data = state.tolist()
     pub.publish(stateArray)
     allRewards.append(reward)
 
@@ -40,7 +39,6 @@ def calc(rewards):
     print(np.std(r))
 
 if __name__ == '__main__':
-    # Default state: x, y, i, j, k, w, xdot, ydot, thetadot, s, xdotbodyframe, ydotbodyframe. 
     env = gym.make('DriftCarGazeboContinuous4WD-v0')
     # env = gym.make('DriftCarGazeboContinuousPartial-v0')
     allRewards = []

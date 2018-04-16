@@ -1,5 +1,0 @@
-gym==0.9.4
-matplotlib==2.1.0
-numpy==1.13.3
-tensorflow-gpu==1.4.0
-tensorflow-tensorboard==0.4.0rc3

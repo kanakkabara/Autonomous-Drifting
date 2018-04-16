@@ -20,7 +20,7 @@ a       s       d
 CTRL-C to quit
 """
 
-env = gym.make('DriftCarGazeboEnv-v0')
+env = gym.make('DriftCarGazebo-v0')
 
 def getKey():
 	tty.setraw(sys.stdin.fileno())
