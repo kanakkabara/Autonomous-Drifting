@@ -12,7 +12,7 @@ def parse_args():
   default_batch_size = 64
   default_total_episodes = 1000000
   default_pretrain_steps = 10000
-  default_hidden_layer_size = 500
+  default_hidden_layer_size = 512
   default_max_episode_length = 300
   default_discount_factor = 0.99
   default_target_network_update_rate = 0.98    # Change this.

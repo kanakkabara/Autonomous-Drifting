@@ -62,8 +62,9 @@ class CollisionEnv(gym.Env):
                 self.bridge = CvBridge()
 
                 #State related
-                high = np.ones(16384) * 255
-                self.observation_space = spaces.Box(np.zeros(1024), high)   
+                self.image_size = 84 * 84 * 3
+                high = np.ones(self.image_size) * 255
+                self.observation_space = spaces.Box(np.zeros(self.image_size), high)   
                 
                 self._seed()
                   
@@ -259,10 +260,10 @@ class CollisionEnv(gym.Env):
                             pass
             #print("Fetched Pos Data")
             try:
-                cv_image = self.bridge.imgmsg_to_cv2(imageData, "mono8")
+                cv_image = self.bridge.imgmsg_to_cv2(imageData, "rgb8")
             except CvBridgeError as e:
                 print(e)
-            return cv_image.flatten()
+            return np.reshape(cv_image,[self.image_size])
 
         def pausePhysics(self): 
                 #print("Pause called")                        
