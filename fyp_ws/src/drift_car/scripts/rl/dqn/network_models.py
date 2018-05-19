@@ -10,15 +10,21 @@ class DQN:
       with tf.name_scope("Prediction"):
         self.inputs_ = tf.placeholder(dtype=tf.float32, shape=[None, state_size], name='inputs')
         # ReLU hidden layers
-        self.fc1 = self._linear(self.inputs_, hidden_size, scope='layer1')
-        self.fc2 = self._linear(self.fc1, hidden_size, scope='layer2')
-        self.fc3 = self._linear(self.fc2, hidden_size, scope='layer3')
+        self.conv1 = slim.conv2d(inputs=self.inputs_,num_outputs=32,kernel_size=[8,8],stride=[4,4],padding='VALID', biases_initializer=None)
+        self.conv2 = slim.conv2d(inputs=self.conv1,num_outputs=64,kernel_size=[4,4],stride=[2,2],padding='VALID', biases_initializer=None)
+        self.conv3 = slim.conv2d(inputs=self.conv2,num_outputs=64,kernel_size=[3,3],stride=[1,1],padding='VALID', biases_initializer=None)
+        self.conv4 = slim.conv2d(inputs=self.conv3,num_outputs=hidden_size,kernel_size=[7,7],stride=[1,1],padding='VALID', biases_initializer=None)
 
-        value_stream_hid = self._linear(self.fc3, hidden_size//2, scope='value_hid')
-        value_stream = self._linear(value_stream_hid, 1, activation_fn=None, scope='value_stream')
+        advantage_stream_hid, value_stream_hid = tf.split(self.conv4, 2, 3)
+        advantage_stream = slim.flatten(advantage_stream_hid)
+        value_stream = slim.flatten(value_stream_hid)
+        xavier_init = tf.contrib.layers.xavier_initializer()
+        a_weights = tf.Variable(xavier_init([hidden_size//2, action_size]))
+        v_weights = tf.Variable(xavier_init([hidden_size//2, 1]))
+        
+        advantage_stream = tf.matmul(advantage_stream, a_weights)
+        value_stream = tf.matmul(value_stream, v_weights)
 
-        advantage_stream_hid = self._linear(self.fc3, hidden_size//2, scope='adv_hid')
-        advantage_stream = self._linear(advantage_stream_hid, action_size, activation_fn=None, scope='adv_stream')
         # Linear output layer
         self.output = value_stream + tf.subtract(advantage_stream, tf.reduce_mean(advantage_stream, axis=1, keep_dims=True))    
 
@@ -34,14 +40,6 @@ class DQN:
         
         self.loss = tf.reduce_mean(tf.square(self.targetQs_ - self.Q))
         self.opt = tf.train.AdamOptimizer(learning_rate).minimize(self.loss)
-
-  def _linear(self, x, o_size, activation_fn=tf.nn.relu, scope="linear"):
-      return slim.fully_connected(x, o_size,
-        biases_initializer=tf.constant_initializer(0.02),
-        weights_initializer=tf.truncated_normal_initializer(0, 0.02),
-        activation_fn=activation_fn,
-        scope=scope)
-
 
 def variable_summaries(var):
   """Attach a lot of summaries to a Tensor (for TensorBoard visualization)."""

@@ -62,7 +62,7 @@ class CollisionEnv(gym.Env):
                 self.bridge = CvBridge()
 
                 #State related
-                high = np.ones(1024) * 255
+                high = np.ones(16384) * 255
                 self.observation_space = spaces.Box(np.zeros(1024), high)   
                 
                 self._seed()
@@ -240,10 +240,8 @@ class CollisionEnv(gym.Env):
         def countCollisions(self, collisionMsg):
                 collisionCount = 0
                 for contact in collisionMsg.states:
-                        print("{}, {}".format(contact.collision1_name, contact.collision2_name))
                         if not contact.collision2_name == "ground_plane::link::collision":
                                 collisionCount += 1
-                print("\n\n")
                 return collisionCount
 
         def getImageData(self):

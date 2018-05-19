@@ -373,8 +373,8 @@ limitations under the License.
       <camera name="head">
         <horizontal_fov>1.3962634</horizontal_fov>
         <image>
-          <width>32</width>
-          <height>32</height>
+          <width>128</width>
+          <height>128</height>
           <format>R8G8B8</format>
         </image>
         <clip>
