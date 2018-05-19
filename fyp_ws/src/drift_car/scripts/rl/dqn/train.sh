@@ -1,2 +1,2 @@
 #!/bin/sh
-python main.py -sm --summary_path 'summary/ExpCar8-BodyVels' --model_path 'models/ExpCar8-BodyVels' --env 'DriftCarGazeboPartialBodyFrame-v0'
+python main.py -re -sm --summary_path 'summary/Avoidance-FirstRun' --model_path 'models/Avoidance-FirstRun' --env 'CollisionGazebo-v0'

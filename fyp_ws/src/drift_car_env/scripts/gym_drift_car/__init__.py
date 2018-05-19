@@ -4,6 +4,17 @@ from gym.envs.registration import register
 logger = logging.getLogger(__name__)
 
 register(
+    id='CollisionGazebo-v0',
+    entry_point='gym_drift_car.envs:CollisionEnv',
+)
+
+register(
+    id='CollisionContinuousGazebo-v0',
+    entry_point='gym_drift_car.envs:CollisionEnv',
+    kwargs={'continuous' : True}
+)
+
+register(
     id='DriftCarGazebo-v0',
     entry_point='gym_drift_car.envs:GazeboEnv',
 )

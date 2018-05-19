@@ -28,7 +28,7 @@ def getKey():
 
 if __name__=="__main__":
     	settings = termios.tcgetattr(sys.stdin)
-	env = gym.make('DriftCarGazeboContinuous4WD-v0') 
+	env = gym.make('CollisionContinuousGazebo-v0') 
 	env.reset()
 	env.render()
 
@@ -55,9 +55,11 @@ if __name__=="__main__":
 				continue
 			elif (key == '\x03'):
 				break
-			print(throttle, servo)
-			state, reward, done, _ = env.step((throttle, servo))
-			print(state)
+			# print(throttle, servo)
+			state, reward, done, extra = env.step((throttle, servo))
+			print(extra)
+			if done:
+				env.reset()
 	except Exception as e:
 		print e
 

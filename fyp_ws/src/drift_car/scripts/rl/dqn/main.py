@@ -48,8 +48,8 @@ def train(config):
 
     # Make a bunch of random actions and store the experiences
     for ii in range(pretrain_length):
-        # Uncomment the line below to watch the simulation
-        # env.render()
+        if config.render_env:
+            env.render() 
 
         # Make a random action
         action = env.action_space.sample()
@@ -94,8 +94,6 @@ def train(config):
             t = 0
             while t < max_steps:
                 total_step_count += 1
-                if config.render_env:
-                    env.render() 
                 
                 # Explore or Exploit
                 explore_p = explore_stop + (explore_start - explore_stop)*np.exp(-decay_rate*total_step_count) 
@@ -122,7 +120,6 @@ def train(config):
                     
                     print('Episode: {}'.format(ep),
                         'Total reward: {}'.format(total_reward),
-                        'Training loss: {:.4f}'.format(loss),
                         'Explore P: {:.4f}'.format(explore_p))
                     rewards_list.append(total_reward)
                     
