@@ -27,7 +27,8 @@ class CollisionEnv(gym.Env):
                 rospy.init_node('gazebo_collision_car_gym')
                 
                 self.gazeboProcess = subprocess.Popen(["roslaunch", "drift_car_gazebo", "avoidance.launch"])
-                time.sleep(10)
+                rospy.wait_for_service("/gazebo/set_physics_properties")
+                time.sleep(2)
                 self.controlProcess = subprocess.Popen(["roslaunch", "drift_car_gazebo_control", "drift_car_control.launch"])
                 time.sleep(5)
                                 

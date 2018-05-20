@@ -8,7 +8,7 @@ Autonomous Drifting using Reinforcement Learning
 3. . devel/setup.bash (add ``` source [full path to setup.bash] ``` in your .bashrc)
 4. roscd drift_car_env/scripts/
 5. sudo pip install -e .
-6. roscd drift_car/scripts/rl
+6. roscd drift_car/scripts/rl/dqn
 7. sudo pip install -r requirements.txt
 
 The first time you open Gazebo, it will download all models from the Gazebo servers, which may take some time. Run ``` rosrun gazebo_ros gazebo ``` to run Gazebo and install models.
