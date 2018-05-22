@@ -55,9 +55,8 @@ if __name__=="__main__":
 				continue
 			elif (key == '\x03'):
 				break
-			# print(throttle, servo)
+			print(throttle, servo)
 			state, reward, done, extra = env.step((throttle, servo))
-			print(extra)
 			if done:
 				env.reset()
 	except Exception as e:

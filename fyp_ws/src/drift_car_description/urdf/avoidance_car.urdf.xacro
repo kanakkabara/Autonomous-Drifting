@@ -406,71 +406,81 @@ limitations under the License.
 
   <gazebo reference="left_front_wheel">
     <sensor name='left_front_wheel_cd' type='contact'>
-        <update_rate>10000.0</update_rate>
         <plugin name="fixed_jaw_bumper" filename="libgazebo_ros_bumper.so">
           <bumperTopicName>drift_car/collision/left_front</bumperTopicName>
           <frameName>world</frameName>
+          <always_on>true</always_on>
+          <update_rate>100.0</update_rate>
         </plugin>
-        <always_on>1</always_on>
         <contact>
           <collision>left_front_wheel_collision_collision</collision>
         </contact>
+        <always_on>1</always_on>
+        <update_rate>100.0</update_rate>
       </sensor>
   </gazebo>
 
   <gazebo reference="left_rear_wheel">
     <sensor name='left_rear_wheel_cd' type='contact'>
-        <update_rate>10000.0</update_rate>
         <plugin name="fixed_jaw_bumper" filename="libgazebo_ros_bumper.so">
           <bumperTopicName>drift_car/collision/left_rear</bumperTopicName>
           <frameName>world</frameName>
+          <always_on>true</always_on>
+          <update_rate>100.0</update_rate>
         </plugin>
-        <always_on>1</always_on>
         <contact>
           <collision>left_rear_wheel_collision_collision</collision>
         </contact>
+        <always_on>1</always_on>
+        <update_rate>100.0</update_rate>
       </sensor>
   </gazebo>
 
   <gazebo reference="right_front_wheel">
     <sensor name='right_front_wheel_cd' type='contact'>
-        <update_rate>10000.0</update_rate>
         <plugin name="fixed_jaw_bumper" filename="libgazebo_ros_bumper.so">
           <bumperTopicName>drift_car/collision/right_front</bumperTopicName>
           <frameName>world</frameName>
+          <always_on>true</always_on>
+          <update_rate>100.0</update_rate>
         </plugin>
-        <always_on>1</always_on>
         <contact>
           <collision>right_front_wheel_collision_collision</collision>
         </contact>
+        <always_on>1</always_on>
+        <update_rate>100.0</update_rate>
       </sensor>
   </gazebo>
 
   <gazebo reference="right_rear_wheel">
     <sensor name='right_rear_wheel_cd' type='contact'>
-        <update_rate>10000.0</update_rate>
         <plugin name="fixed_jaw_bumper" filename="libgazebo_ros_bumper.so">
           <bumperTopicName>drift_car/collision/right_rear</bumperTopicName>
           <frameName>world</frameName>
+          <always_on>true</always_on>
+          <update_rate>100.0</update_rate>
         </plugin>
-        <always_on>1</always_on>
         <contact>
           <collision>right_rear_wheel_collision_collision</collision>
         </contact>
+        <always_on>1</always_on>
+        <update_rate>100.0</update_rate>
       </sensor>
   </gazebo>
 
   <gazebo reference="chassis">
     <sensor name='chassis_cd' type='contact'>
-        <update_rate>10000.0</update_rate>
         <plugin name="fixed_jaw_bumper" filename="libgazebo_ros_bumper.so">
           <bumperTopicName>drift_car/collision/chassis</bumperTopicName>
           <frameName>world</frameName>
+          <always_on>true</always_on>
+          <update_rate>100.0</update_rate>
         </plugin>
-        <always_on>1</always_on>
         <contact>
           <collision>chassis_collision_collision</collision>
         </contact>
+        <always_on>1</always_on>
+        <update_rate>100.0</update_rate>
       </sensor>
   </gazebo>
 </robot>

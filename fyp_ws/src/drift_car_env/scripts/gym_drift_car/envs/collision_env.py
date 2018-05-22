@@ -27,8 +27,8 @@ class CollisionEnv(gym.Env):
                 rospy.init_node('gazebo_collision_car_gym')
                 
                 self.gazeboProcess = subprocess.Popen(["roslaunch", "drift_car_gazebo", "avoidance.launch"])
-                rospy.wait_for_service("/gazebo/set_physics_properties")
-                time.sleep(2)
+                # rospy.wait_for_service("/gazebo/set_physics_properties")
+                time.sleep(10)
                 self.controlProcess = subprocess.Popen(["roslaunch", "drift_car_gazebo_control", "drift_car_control.launch"])
                 time.sleep(5)
                                 
@@ -46,6 +46,7 @@ class CollisionEnv(gym.Env):
                 
                 #Reward related
                 self.reward_range = (-np.inf, np.inf)
+                self.last_pose = {"x": 0, "y": 0}
 
                 #Action related
                 self.continuous = continuous
@@ -71,7 +72,7 @@ class CollisionEnv(gym.Env):
                   
                 # Learning Parameters
                 self.radius = 3
-                self.throttle = 1550      
+                self.throttle = 1550       
                 self.maxDeviationFromCenter = 10
                 
         def _seed(self, seed=None):
@@ -100,26 +101,36 @@ class CollisionEnv(gym.Env):
                 else:
                         self.applySteering(self.radianMappings[action])
 
-                state, collisionCount, posData = self.getState()
+                state, isColliding, posData = self.getState()
                 self.pausePhysics()
 
-                reward = 1
-                done = self.isDone(collisionCount, posData)
+                done = self.isDone(isColliding, posData)
+
+                x = posData.pose[-1].position.x
+                y = posData.pose[-1].position.y
+                distance_since_last_step = math.sqrt((self.last_pose["x"] - x) ** 2 + (self.last_pose["y"] - y) ** 2)
+                self.last_pose = {"x": x, "y": y}
+                reward = distance_since_last_step if not done else -50
               
-                return state, reward, done, {"collisionCount": collisionCount}
+                return state, reward, done, {}
 
         def getState(self):
                 image = self.getImageData()
                 posData = self.getPosData()
-                collisionCount = self.getCollisionData()
+                isColliding = self.getCollisionData()
 
-                return np.array(image), collisionCount, posData
+                return np.array(image), isColliding, posData
 
-        def isDone(self, collisionCount, posData):       
-                #Done is true if the car ventures too far from the center of the circular drift
+        def isDone(self, isColliding, posData):    
                 x = posData.pose[-1].position.x
                 y = posData.pose[-1].position.y
-                return (self.maxDeviationFromCenter <= ((x ** 2 + y ** 2) ** 0.5)) or (collisionCount > 0)
+                distance_from_origin = ((x ** 2 + y ** 2) ** 0.5)
+
+                velx = posData.twist[-1].linear.x
+                vely = posData.twist[-1].linear.y
+                combined = math.sqrt(velx ** 2 + vely ** 2)
+
+                return (isColliding or combined < 0.06) and distance_from_origin > 0.08
                 
         def _reset(self):
                 #print("Reset called")  
@@ -137,8 +148,11 @@ class CollisionEnv(gym.Env):
                 #print("Reset done")
                 
                 self.unpausePhysics()
-                state = self.getState()
+                time.sleep(0.5)
+                state, _, _ = self.getState()
                 self.pausePhysics()
+                
+                self.last_pose = {"x": 0, "y": 0}
 
                 return state
         
@@ -237,14 +251,23 @@ class CollisionEnv(gym.Env):
                                 print(e)
                                 pass
                 
-                return self.countCollisions(left_front) + self.countCollisions(right_front) + self.countCollisions(left_rear) + self.countCollisions(right_rear) + self.countCollisions(chassis)
+                collisionCount = 0
+                for contact in chassis.states:
+                        if not contact.collision2_name == "ground_plane::link::collision":
+                                collisionCount += 1
 
-        def countCollisions(self, collisionMsg):
+                return self.isColliding(left_front) or self.isColliding(right_front) or self.isColliding(left_rear) or self.isColliding(right_rear) or collisionCount > 0 
+                #  or self.isColliding(chassis)
+
+        def isColliding(self, collisionMsg):
+                groundCollision = 0
                 collisionCount = 0
                 for contact in collisionMsg.states:
                         if not contact.collision2_name == "ground_plane::link::collision":
                                 collisionCount += 1
-                return collisionCount
+                        else:
+                                groundCollision += 1
+                return groundCollision == 0 or collisionCount > 0 
 
         def getImageData(self):
             #print("Fetching Pos Data")
