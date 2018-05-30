@@ -43,12 +43,12 @@ if __name__=="__main__":
 			elif key == 'd' or key == 'a':                
                                 if key == 'd':
                                         servo = servo - STEER_STEP             
-                                        if servo < -0.785:
-                                                servo = -0.785
+                                        if servo < -0.436:
+                                                servo = -0.436
                                 if key == 'a':  
                                         servo = servo + STEER_STEP
-                                        if servo > 0.785:
-                                                servo = 0.785
+                                        if servo > 0.436:
+                                                servo = 0.436
 			elif (key == 'r'):
 				env.reset()
 				servo = 0

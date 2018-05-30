@@ -79,288 +79,6 @@
       <elevation>0</elevation>
       <heading_deg>0</heading_deg>
     </spherical_coordinates>
-    <model name='jersey_barrier'>
-      <static>1</static>
-      <link name='link'>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>model://jersey_barrier/meshes/jersey_barrier.dae</uri>
-            </mesh>
-          </geometry>
-        </visual>
-        <collision name='upright'>
-          <pose frame=''>0 0 0.5715 0 -0 0</pose>
-          <geometry>
-            <box>
-              <size>4.06542 0.3063 1.143</size>
-            </box>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <collision name='base'>
-          <pose frame=''>0 0 0.032258 0 -0 0</pose>
-          <geometry>
-            <box>
-              <size>4.06542 0.8107 0.064516</size>
-            </box>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <collision name='base2'>
-          <pose frame=''>0 0 0.1 0 -0 0</pose>
-          <geometry>
-            <box>
-              <size>4.06542 0.65 0.1</size>
-            </box>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <collision name='base3'>
-          <pose frame=''>0 0 0.2 0 -0 0</pose>
-          <geometry>
-            <box>
-              <size>4.06542 0.5 0.1</size>
-            </box>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <collision name='left-angle'>
-          <pose frame=''>0 -0.224 0.2401 0.9 -0 0</pose>
-          <geometry>
-            <box>
-              <size>4.06542 0.5 0.064516</size>
-            </box>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <collision name='right-angle'>
-          <pose frame=''>0 0.224 0.2401 -0.9 0 0</pose>
-          <geometry>
-            <box>
-              <size>4.06542 0.5 0.064516</size>
-            </box>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <self_collide>0</self_collide>
-        <kinematic>0</kinematic>
-      </link>
-      <pose frame=''>3.07918 1.34864 0 0 -0 0</pose>
-    </model>
-    <model name='jersey_barrier_0'>
-      <static>1</static>
-      <link name='link'>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>model://jersey_barrier/meshes/jersey_barrier.dae</uri>
-            </mesh>
-          </geometry>
-        </visual>
-        <collision name='upright'>
-          <pose frame=''>0 0 0.5715 0 -0 0</pose>
-          <geometry>
-            <box>
-              <size>4.06542 0.3063 1.143</size>
-            </box>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <collision name='base'>
-          <pose frame=''>0 0 0.032258 0 -0 0</pose>
-          <geometry>
-            <box>
-              <size>4.06542 0.8107 0.064516</size>
-            </box>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <collision name='base2'>
-          <pose frame=''>0 0 0.1 0 -0 0</pose>
-          <geometry>
-            <box>
-              <size>4.06542 0.65 0.1</size>
-            </box>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <collision name='base3'>
-          <pose frame=''>0 0 0.2 0 -0 0</pose>
-          <geometry>
-            <box>
-              <size>4.06542 0.5 0.1</size>
-            </box>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <collision name='left-angle'>
-          <pose frame=''>0 -0.224 0.2401 0.9 -0 0</pose>
-          <geometry>
-            <box>
-              <size>4.06542 0.5 0.064516</size>
-            </box>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <collision name='right-angle'>
-          <pose frame=''>0 0.224 0.2401 -0.9 0 0</pose>
-          <geometry>
-            <box>
-              <size>4.06542 0.5 0.064516</size>
-            </box>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <self_collide>0</self_collide>
-        <kinematic>0</kinematic>
-      </link>
-      <pose frame=''>0.209184 4.07952 0 0 -0 0</pose>
-    </model>
     <model name='jersey_barrier_1'>
       <static>1</static>
       <link name='link'>
@@ -643,102 +361,6 @@
       </link>
       <pose frame=''>-5.29085 -0.029475 0 0 -0 0</pose>
     </model>
-    <model name='grey_wall'>
-      <static>1</static>
-      <link name='link'>
-        <pose frame=''>0 0 1.4 0 -0 0</pose>
-        <collision name='collision'>
-          <geometry>
-            <box>
-              <size>7.5 0.2 2.8</size>
-            </box>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <visual name='visual'>
-          <cast_shadows>0</cast_shadows>
-          <geometry>
-            <box>
-              <size>7.5 0.2 2.8</size>
-            </box>
-          </geometry>
-          <material>
-            <script>
-              <uri>model://grey_wall/materials/scripts</uri>
-              <uri>model://grey_wall/materials/textures</uri>
-              <name>vrc/grey_wall</name>
-            </script>
-          </material>
-        </visual>
-        <self_collide>0</self_collide>
-        <kinematic>0</kinematic>
-      </link>
-      <pose frame=''>3.98722 6.75415 0 0 -0 0</pose>
-    </model>
-    <model name='Dumpster'>
-      <link name='link'>
-        <collision name='collision'>
-          <geometry>
-            <mesh>
-              <uri>model://dumpster/meshes/dumpster.dae</uri>
-            </mesh>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>model://dumpster/meshes/dumpster.dae</uri>
-            </mesh>
-          </geometry>
-          <material>
-            <script>
-              <uri>model://dumpster/materials/scripts</uri>
-              <uri>model://dumpster/materials/textures</uri>
-              <name>Dumpster/Diffuse</name>
-            </script>
-          </material>
-        </visual>
-        <self_collide>0</self_collide>
-        <inertial>
-          <inertia>
-            <ixx>1</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>1</iyy>
-            <iyz>0</iyz>
-            <izz>1</izz>
-          </inertia>
-          <mass>1</mass>
-        </inertial>
-        <kinematic>0</kinematic>
-      </link>
-      <pose frame=''>4.28297 3.79392 0 0 -0 0</pose>
-    </model>
     <model name='table_marble'>
       <static>1</static>
       <pose frame=''>2.86119 -2.89612 0.648 0 -0 0</pose>
@@ -785,58 +407,378 @@
       </link>
     </model>
     <state world_name='default'>
-      <sim_time>813 73000000</sim_time>
-      <real_time>13 115664274</real_time>
-      <wall_time>1526974732 822308985</wall_time>
-      <iterations>12800</iterations>
-      <model name='Dumpster'>
-        <pose frame=''>7.65718 3.14423 0.000917 0 -2e-06 0</pose>
+      <sim_time>1599 935000000</sim_time>
+      <real_time>747 639892910</real_time>
+      <wall_time>1527252506 622630705</wall_time>
+      <iterations>472939</iterations>
+      <model name='Construction Barrel_clone_10'>
+        <pose frame=''>-7.93503 1.58771 -1e-06 4e-06 -2e-06 -0.000165</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>7.65718 3.14423 0.000917 0 -2e-06 0</pose>
+          <pose frame=''>-7.93503 1.58771 -1e-06 4e-06 -2e-06 -0.000165</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>-0.006033 0 5e-06 0 -0.280686 4e-06</acceleration>
-          <wrench>-0.006033 0 5e-06 0 -0 0</wrench>
+          <acceleration>2.0508 -6.76593 2.63648 -1.93397 -1.15546 -0.000819</acceleration>
+          <wrench>1025.4 -3382.97 1318.24 0 -0 0</wrench>
         </link>
       </model>
-      <model name='Dumpster_clone'>
-        <pose frame=''>-7.0624 7.58664 0.000917 0 -2e-06 0</pose>
+      <model name='Construction Barrel_clone_10_clone'>
+        <pose frame=''>-8.86397 4.45974 -2e-06 0 7e-06 -0.000159</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-7.0624 7.58664 0.000917 0 -2e-06 0</pose>
+          <pose frame=''>-8.86397 4.45974 -2e-06 0 7e-06 -0.000159</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>-0.006033 0 5e-06 0 -0.280686 4e-06</acceleration>
-          <wrench>-0.006033 0 5e-06 0 -0 0</wrench>
+          <acceleration>3.04445 -0.013753 -1.96636 0.034117 1.32798 -0.000199</acceleration>
+          <wrench>1522.23 -6.87674 -983.182 0 -0 0</wrench>
         </link>
       </model>
-      <model name='Dumpster_clone_0'>
-        <pose frame=''>-8.29277 0.584117 0.000917 0 -2e-06 0</pose>
+      <model name='Construction Barrel_clone_10_clone_0'>
+        <pose frame=''>-5.77669 8.46421 -2e-06 0 7e-06 -0.000157</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-8.29277 0.584117 0.000917 0 -2e-06 0</pose>
+          <pose frame=''>-5.77669 8.46421 -2e-06 0 7e-06 -0.000157</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>-0.006033 0 5e-06 0 -0.280686 4e-06</acceleration>
-          <wrench>-0.006033 0 5e-06 0 -0 0</wrench>
+          <acceleration>3.04445 -0.01375 -1.96636 0.034107 1.32798 -0.000199</acceleration>
+          <wrench>1522.23 -6.87488 -983.182 0 -0 0</wrench>
         </link>
       </model>
-      <model name='Dumpster_clone_1'>
-        <pose frame=''>-1.32795 3.69892 0.000917 0 -2e-06 0</pose>
+      <model name='Construction Barrel_clone_11'>
+        <pose frame=''>-6.93221 -1.49991 -2e-06 -4e-06 7e-06 -0.000208</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-1.32795 3.69892 0.000917 0 -2e-06 0</pose>
+          <pose frame=''>-6.93221 -1.49991 -2e-06 -4e-06 7e-06 -0.000208</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>-0.006033 0 5e-06 0 -0.280686 4e-06</acceleration>
-          <wrench>-0.006033 0 5e-06 0 -0 0</wrench>
+          <acceleration>2.65702 1.51189 -1.93513 2.50385 0.356668 -0.001181</acceleration>
+          <wrench>1328.51 755.946 -967.565 0 -0 0</wrench>
         </link>
       </model>
-      <model name='grey_wall'>
-        <pose frame=''>3.39843 7.20345 0 0 -0 0</pose>
+      <model name='Construction Barrel_clone_12'>
+        <pose frame=''>-4.56116 -6.16183 -2e-06 -4e-06 7e-06 -0.000208</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>3.39843 7.20345 1.4 0 -0 0</pose>
+          <pose frame=''>-4.56116 -6.16183 -2e-06 -4e-06 7e-06 -0.000208</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0 0 0 0 -0 0</wrench>
+          <acceleration>2.65702 1.51189 -1.93513 2.50385 0.356668 -0.001181</acceleration>
+          <wrench>1328.51 755.946 -967.565 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_13'>
+        <pose frame=''>7.64591 -8.37624 -2e-06 -4e-06 7e-06 -0.000206</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>7.64591 -8.37624 -2e-06 -4e-06 7e-06 -0.000206</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>2.65701 1.51189 -1.93514 2.50384 0.356652 -0.001183</acceleration>
+          <wrench>1328.51 755.946 -967.57 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_14'>
+        <pose frame=''>0.702086 -9.13298 -2e-06 -4e-06 7e-06 -0.000188</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>0.702086 -9.13298 -2e-06 -4e-06 7e-06 -0.000188</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>2.65698 1.5119 -1.93522 2.50382 0.356528 -0.001201</acceleration>
+          <wrench>1328.49 755.951 -967.608 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_0'>
+        <pose frame=''>0.355655 1.88287 0 0 -0 0.040735</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>0.355655 1.88287 0 0 -0 0.040735</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>-3.85393 -0.603277 -0.486348 -1.63514 0.210003 3.14003</acceleration>
+          <wrench>-1926.97 -301.639 -243.174 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_0_clone'>
+        <pose frame=''>0.864759 3.9318 0 0 -0 0.040726</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>0.864759 3.9318 0 0 -0 0.040726</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>-3.85394 -0.603244 -0.48635 -1.63522 0.210017 3.14003</acceleration>
+          <wrench>-1926.97 -301.622 -243.175 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_1'>
+        <pose frame=''>-0.567835 1.33738 0 0 -0 0.012877</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>-0.567835 1.33738 0 0 -0 0.012877</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>-3.06232 -5.47904 3.88172 1.13121 -1.37232 -0.000217</acceleration>
+          <wrench>-1531.16 -2739.52 1940.86 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_10'>
+        <pose frame=''>4.19915 1.96571 0 1e-06 -0 0.157397</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>4.19915 1.96571 0 1e-06 -0 0.157397</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>-8.82204 1.29844 3.2951 -0.240256 0.273625 2.94778</acceleration>
+          <wrench>-4411.02 649.22 1647.55 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_1_clone'>
+        <pose frame=''>-1.57571 1.43836 -2e-06 1e-06 8e-06 -0.008379</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>-1.57571 1.43836 -2e-06 1e-06 8e-06 -0.008379</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>3.1482 5.34888 -1.81025 2.31575 1.5423 3.1412</acceleration>
+          <wrench>1574.1 2674.44 -905.126 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_1_clone_0'>
+        <pose frame=''>-4.56668 2.06397 -5e-06 1e-06 -1.2e-05 0.01288</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>-4.56668 2.06397 -5e-06 1e-06 -1.2e-05 0.01288</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>-2.71558 -1.61517 -5.71617 -2.19888 -0.587432 -0.003035</acceleration>
+          <wrench>-1357.79 -807.584 -2858.09 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_1_clone_1'>
+        <pose frame=''>-5.59242 1.19339 0 0 -0 0.012873</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>-5.59242 1.19339 0 0 -0 0.012873</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>1.49566 0.514674 -0.868502 1.85496 -0.597888 3.14134</acceleration>
+          <wrench>747.832 257.337 -434.251 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_1_clone_2'>
+        <pose frame=''>-3.37878 -3.04541 0 0 -0 0.012875</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>-3.37878 -3.04541 0 0 -0 0.012875</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>-3.06233 -5.47904 3.88172 1.13119 -1.37234 -0.000217</acceleration>
+          <wrench>-1531.16 -2739.52 1940.86 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_1_clone_3'>
+        <pose frame=''>-6.93929 -4.747 -1e-06 -1e-06 4e-06 0.01288</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>-6.93929 -4.747 -1e-06 -1e-06 4e-06 0.01288</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>2.19347 5.80185 -0.317417 -1.9468 -0.799587 -0.005391</acceleration>
+          <wrench>1096.73 2900.92 -158.709 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_1_clone_4'>
+        <pose frame=''>-2.86528 -8.31032 0 0 -0 0.012875</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>-2.86528 -8.31032 0 0 -0 0.012875</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>1.49566 0.514678 -0.868501 1.85495 -0.597886 3.14134</acceleration>
+          <wrench>747.831 257.339 -434.251 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_5'>
+        <pose frame=''>5.41424 5.3848 -1e-06 3e-06 -3e-06 0.155692</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>5.41424 5.3848 -1e-06 3e-06 -3e-06 0.155692</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>-1.10386 -1.48818 -0.58994 0.578917 -0.381933 -3.14159</acceleration>
+          <wrench>-551.932 -744.089 -294.97 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_5_clone'>
+        <pose frame=''>4.38033 5.40843 0 0 -0 0.157293</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>4.38033 5.40843 0 0 -0 0.157293</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>-5.23079 -1.78068 1.74082 -1.83144 -0.511594 -0.000725</acceleration>
+          <wrench>-2615.39 -890.342 870.409 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_5_clone_0'>
+        <pose frame=''>3.34797 5.61576 -2e-06 6e-06 -3e-06 0.157297</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>3.34797 5.61576 -2e-06 6e-06 -3e-06 0.157297</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>1.62339 -5.40405 1.6854 -2.19946 -0.920342 -3.13863</acceleration>
+          <wrench>811.697 -2702.02 842.699 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_5_clone_1'>
+        <pose frame=''>2.56913 6.3325 0 0 -0 0.157298</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>2.56913 6.3325 0 0 -0 0.157298</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>2.57759 6.36566 4.51239 2.93512 0.16033 -0.000129</acceleration>
+          <wrench>1288.79 3182.83 2256.19 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_6'>
+        <pose frame=''>6.09523 4.63003 0.011071 0.000764 -0.021713 0.188224</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>6.09523 4.63003 0.011071 0.000764 -0.021713 0.188224</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0.19077 0.036626 -9.5543 -0.077157 0.415569 -0.004782</acceleration>
+          <wrench>95.385 18.3132 -4777.15 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_9_clone'>
+        <pose frame=''>7.17333 1.23154 0 0 -0 0.157339</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>7.17333 1.23154 0 0 -0 0.157339</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>-5.23067 -1.78095 1.74084 -1.83078 -0.511294 -0.000725</acceleration>
+          <wrench>-2615.33 -890.475 870.42 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_1_clone_clone_clone_2'>
+        <pose frame=''>-9.1677 -3.61012 -1e-06 4e-06 -2e-06 -0.000178</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>-9.1677 -3.61012 -1e-06 4e-06 -2e-06 -0.000178</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>2.05071 -6.76596 2.63648 -1.9339 -1.15567 -0.000819</acceleration>
+          <wrench>1025.36 -3382.98 1318.24 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_2_clone_0'>
+        <pose frame=''>4.00827 -3.44552 0 0 0 -0.005516</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>4.00827 -3.44552 0 0 0 -0.005516</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>2.60139 4.64989 2.6619 0.94211 0.220652 0.000591</acceleration>
+          <wrench>1300.7 2324.94 1330.95 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_2_clone_0_clone'>
+        <pose frame=''>4.99791 0.222917 0 0 0 -0.470757</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>4.99791 0.222917 0 0 0 -0.470757</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>-5.7255 -0.312201 -0.125752 -2.27816 -1.39238 -3.11547</acceleration>
+          <wrench>-2862.75 -156.101 -62.8761 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_2_clone_0_clone_0'>
+        <pose frame=''>2.69886 -2.22175 -2e-06 -4e-06 7e-06 -0.000214</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>2.69886 -2.22175 -2e-06 -4e-06 7e-06 -0.000214</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>2.65703 1.51189 -1.9351 2.50385 0.356708 -0.001175</acceleration>
+          <wrench>1328.51 755.944 -967.552 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_2_clone_0_clone_clone'>
+        <pose frame=''>2.80669 0.052751 -1e-06 4e-06 -2e-06 -0.000195</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>2.80669 0.052751 -1e-06 4e-06 -2e-06 -0.000195</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>2.05061 -6.766 2.63649 -1.93381 -1.15595 -0.000819</acceleration>
+          <wrench>1025.3 -3383 1318.24 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_2_clone_1'>
+        <pose frame=''>-7.89861 7.29645 -1e-06 -1e-06 -0 -0.000154</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>-7.89861 7.29645 -1e-06 -1e-06 -0 -0.000154</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>-1.83882 2.66283 -3.09219 2.73558 1.5494 3.05742</acceleration>
+          <wrench>-919.41 1331.42 -1546.1 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_4'>
+        <pose frame=''>-2.08595 -0.991178 1e-06 4e-06 2e-06 -0.010324</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>-2.08595 -0.991178 1e-06 4e-06 2e-06 -0.010324</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>-0.066293 6.72713 1.67047 2.02457 -0.249069 0.03989</acceleration>
+          <wrench>-33.1467 3363.57 835.234 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_4_clone'>
+        <pose frame=''>4.82969 8.32267 1e-06 4e-06 2e-06 -0.010324</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>4.82969 8.32267 1e-06 4e-06 2e-06 -0.010324</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>-0.066296 6.72713 1.67047 2.02457 -0.249079 0.03989</acceleration>
+          <wrench>-33.1482 3363.57 835.234 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_4_clone_0'>
+        <pose frame=''>0.378995 8.5034 1e-06 4e-06 6e-06 -0.010317</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>0.378995 8.5034 1e-06 4e-06 6e-06 -0.010317</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>1.91243 6.85365 -0.644889 1.71227 -1.50125 -7.1e-05</acceleration>
+          <wrench>956.216 3426.83 -322.445 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_4_clone_1'>
+        <pose frame=''>7.59054 8.53037 0 0 0 -0.010324</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>7.59054 8.53037 0 0 0 -0.010324</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>-4.86819 2.85189 3.63536 -0.846532 0.395952 3.2e-05</acceleration>
+          <wrench>-2434.09 1425.95 1817.68 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_4_clone_2'>
+        <pose frame=''>2.70379 9.04979 1e-06 4e-06 2e-06 -0.010324</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>2.70379 9.04979 1e-06 4e-06 2e-06 -0.010324</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>-0.066297 6.72713 1.67047 2.02457 -0.24908 0.03989</acceleration>
+          <wrench>-33.1484 3363.57 835.234 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_5'>
+        <pose frame=''>0.200627 -3.3671 -1e-06 4e-06 -2e-06 -0.000165</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>0.200627 -3.3671 -1e-06 4e-06 -2e-06 -0.000165</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>2.0508 -6.76593 2.63648 -1.93397 -1.15546 -0.000819</acceleration>
+          <wrench>1025.4 -3382.97 1318.24 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_7'>
+        <pose frame=''>7.09708 4.72102 -1.3e-05 0 -1.2e-05 -0.061428</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>7.09708 4.72102 -1.3e-05 0 -1.2e-05 -0.061428</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>-1.44121 -0.105239 -13.159 -0.53271 1.45045 1.18156</acceleration>
+          <wrench>-720.604 -52.6197 -6579.51 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Construction Barrel_clone_8'>
+        <pose frame=''>-3.44026 8.64049 -1e-06 4e-06 -2e-06 -0.000195</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>-3.44026 8.64049 -1e-06 4e-06 -2e-06 -0.000195</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>2.0506 -6.766 2.63649 -1.93381 -1.15595 -0.000819</acceleration>
+          <wrench>1025.3 -3383 1318.24 0 -0 0</wrench>
         </link>
       </model>
       <model name='grey_wall_clone'>
@@ -969,31 +911,21 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
-      <model name='jersey_barrier'>
-        <pose frame=''>7.85339 -4.32934 -0.003696 0.014701 0.013628 -0.747489</pose>
-        <scale>1 1 1</scale>
-        <link name='link'>
-          <pose frame=''>7.85339 -4.32934 -0.003696 0.014701 0.013628 -0.747489</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0 0 0 0 -0 0</wrench>
-        </link>
-      </model>
-      <model name='jersey_barrier_0'>
-        <pose frame=''>3.91774 -0.200303 0 0 -0 0.932352</pose>
-        <scale>1 1 1</scale>
-        <link name='link'>
-          <pose frame=''>3.91774 -0.200303 0 0 -0 0.932352</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0 0 0 0 -0 0</wrench>
-        </link>
-      </model>
       <model name='jersey_barrier_1'>
         <pose frame=''>-5.25672 4.86584 0 0 0 -2.14669</pose>
         <scale>1 1 1</scale>
         <link name='link'>
           <pose frame=''>-5.25672 4.86584 0 0 0 -2.14669</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='jersey_barrier_1_clone'>
+        <pose frame=''>-1.47612 5.25635 0 0 0 -2.14669</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>-1.47612 5.25635 0 0 0 -2.14669</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -1024,6 +956,26 @@
         <scale>1 1 1</scale>
         <link name='link'>
           <pose frame=''>-6.89526 -7.25446 -0.003696 0.014701 0.013628 -0.747489</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='jersey_barrier_clone_clone_0'>
+        <pose frame=''>6.75852 -1.59034 -0.003696 0.014701 0.013628 -0.747489</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>6.75852 -1.59034 -0.003696 0.014701 0.013628 -0.747489</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='jersey_barrier_clone_clone_0_clone'>
+        <pose frame=''>5.86872 -5.1629 -0.003696 0.014701 0.013628 -0.747489</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>5.86872 -5.1629 -0.003696 0.014701 0.013628 -0.747489</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -1853,168 +1805,2137 @@
       </link>
       <pose frame=''>-6.89526 -7.25446 -0.003696 0.014701 0.013628 -0.747489</pose>
     </model>
-    <model name='Dumpster_clone'>
-      <link name='link'>
-        <collision name='collision'>
-          <geometry>
-            <mesh>
-              <uri>model://dumpster/meshes/dumpster.dae</uri>
-            </mesh>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>model://dumpster/meshes/dumpster.dae</uri>
-            </mesh>
-          </geometry>
-          <material>
-            <script>
-              <uri>model://dumpster/materials/scripts</uri>
-              <uri>model://dumpster/materials/textures</uri>
-              <name>Dumpster/Diffuse</name>
-            </script>
-          </material>
-        </visual>
-        <self_collide>0</self_collide>
-        <inertial>
-          <inertia>
-            <ixx>1</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>1</iyy>
-            <iyz>0</iyz>
-            <izz>1</izz>
-          </inertia>
-          <mass>1</mass>
-        </inertial>
-        <kinematic>0</kinematic>
-      </link>
-      <pose frame=''>-7.0624 7.58664 0.000917 0 -2e-06 0</pose>
-    </model>
-    <model name='Dumpster_clone_0'>
-      <link name='link'>
-        <collision name='collision'>
-          <geometry>
-            <mesh>
-              <uri>model://dumpster/meshes/dumpster.dae</uri>
-            </mesh>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>model://dumpster/meshes/dumpster.dae</uri>
-            </mesh>
-          </geometry>
-          <material>
-            <script>
-              <uri>model://dumpster/materials/scripts</uri>
-              <uri>model://dumpster/materials/textures</uri>
-              <name>Dumpster/Diffuse</name>
-            </script>
-          </material>
-        </visual>
-        <self_collide>0</self_collide>
-        <inertial>
-          <inertia>
-            <ixx>1</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>1</iyy>
-            <iyz>0</iyz>
-            <izz>1</izz>
-          </inertia>
-          <mass>1</mass>
-        </inertial>
-        <kinematic>0</kinematic>
-      </link>
-      <pose frame=''>-8.29277 0.584117 0.000917 0 -2e-06 0</pose>
-    </model>
-    <model name='Dumpster_clone_1'>
-      <link name='link'>
-        <collision name='collision'>
-          <geometry>
-            <mesh>
-              <uri>model://dumpster/meshes/dumpster.dae</uri>
-            </mesh>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>model://dumpster/meshes/dumpster.dae</uri>
-            </mesh>
-          </geometry>
-          <material>
-            <script>
-              <uri>model://dumpster/materials/scripts</uri>
-              <uri>model://dumpster/materials/textures</uri>
-              <name>Dumpster/Diffuse</name>
-            </script>
-          </material>
-        </visual>
-        <self_collide>0</self_collide>
-        <inertial>
-          <inertia>
-            <ixx>1</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>1</iyy>
-            <iyz>0</iyz>
-            <izz>1</izz>
-          </inertia>
-          <mass>1</mass>
-        </inertial>
-        <kinematic>0</kinematic>
-      </link>
-      <pose frame=''>-1.32795 3.69892 0.000917 0 -2e-06 0</pose>
-    </model>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose frame=''>-19.1011 -1.60648 31.6313 -0 1.04283 -0.008442</pose>
+        <pose frame=''>-2.92381 2.44819 9.15798 0 1.19251 0.097366</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
     </gui>
+    <model name='Construction Barrel_clone_4'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>-2.04635 -1.02267 0 0 0 -2e-06</pose>
+    </model>
+    <model name='Construction Barrel_clone_5'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>0.200972 -3.36684 0 0 0 -2e-06</pose>
+    </model>
+    <model name='Construction Barrel_clone_7'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>7.02372 4.71697 0 0 0 -2e-06</pose>
+    </model>
+    <model name='Construction Barrel_clone_8'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>-3.43995 8.64075 0 0 0 -2e-06</pose>
+    </model>
+    <model name='Construction Barrel_clone_10'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>-7.93475 1.58796 0 0 0 -2e-06</pose>
+    </model>
+    <model name='Construction Barrel_clone_11'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>-6.9318 -1.49964 0 0 0 -2e-06</pose>
+    </model>
+    <model name='Construction Barrel_clone_12'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>-4.56076 -6.16157 0 0 0 -2e-06</pose>
+    </model>
+    <model name='Construction Barrel_clone_13'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>7.6463 -8.37598 0 0 0 -2e-06</pose>
+    </model>
+    <model name='Construction Barrel_clone_14'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>0.702472 -9.13273 0 0 0 -2e-06</pose>
+    </model>
+    <model name='Construction Barrel_clone_2_clone_0'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>4.05692 -3.49924 -0 0 -0 -3.6e-05</pose>
+    </model>
+    <model name='Construction Barrel_clone_2_clone_1'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>-7.89844 7.29664 -0 0 -0 -3.6e-05</pose>
+    </model>
+    <model name='Construction Barrel_clone_2_clone_0_clone'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>5 0 -2e-06 0 7e-06 -4.3e-05</pose>
+    </model>
+    <model name='Construction Barrel_clone_1_clone_clone_clone_2'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>-9.16748 -3.60995 -1e-06 2e-06 -1e-06 -4.5e-05</pose>
+    </model>
+    <model name='Construction Barrel_clone_2_clone_0_clone_clone'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>2.80687 0.052891 -0 1e-06 -1e-06 -6.2e-05</pose>
+    </model>
+    <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_0'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>0.357597 1.87327 0 1e-06 1e-06 -6.5e-05</pose>
+    </model>
+    <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_1'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>-0.578344 1.33545 0 1e-06 1e-06 -6.5e-05</pose>
+    </model>
+    <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_5'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>5.43344 5.36215 0.016954 -0.030974 0.01286 0.157951</pose>
+    </model>
+    <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_6'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>6.12546 4.61202 0.016933 -0.030941 0.012836 0.157928</pose>
+    </model>
+    <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_10'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>4.19962 1.96585 0.016611 -0.030267 0.012739 0.157417</pose>
+    </model>
+    <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_0_clone'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>0.864791 3.93182 -2e-06 7e-06 -4e-06 0.040752</pose>
+    </model>
+    <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_5_clone'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>4.38066 5.40833 5e-06 1.2e-05 -6e-06 0.15745</pose>
+    </model>
+    <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_5_clone_0'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>3.34828 5.61566 5e-06 1.2e-05 -6e-06 0.15745</pose>
+    </model>
+    <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_5_clone_1'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>2.56944 6.3324 5e-06 1.2e-05 -6e-06 0.15745</pose>
+    </model>
+    <model name='jersey_barrier_clone_clone_0'>
+      <static>1</static>
+      <link name='link'>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://jersey_barrier/meshes/jersey_barrier.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='upright'>
+          <pose frame=''>0 0 0.5715 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>4.06542 0.3063 1.143</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='base'>
+          <pose frame=''>0 0 0.032258 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>4.06542 0.8107 0.064516</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='base2'>
+          <pose frame=''>0 0 0.1 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>4.06542 0.65 0.1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='base3'>
+          <pose frame=''>0 0 0.2 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>4.06542 0.5 0.1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='left-angle'>
+          <pose frame=''>0 -0.224 0.2401 0.9 -0 0</pose>
+          <geometry>
+            <box>
+              <size>4.06542 0.5 0.064516</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='right-angle'>
+          <pose frame=''>0 0.224 0.2401 -0.9 0 0</pose>
+          <geometry>
+            <box>
+              <size>4.06542 0.5 0.064516</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>6.75852 -1.59034 -0.003696 0.014701 0.013628 -0.747489</pose>
+    </model>
+    <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_9_clone'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>7.17359 1.23146 -0 0 -0 0.157462</pose>
+    </model>
+    <model name='Construction Barrel_clone_2_clone_0_clone_0'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>2.69894 -2.2217 0 0 0 -0.000154</pose>
+    </model>
+    <model name='jersey_barrier_1_clone'>
+      <static>1</static>
+      <link name='link'>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://jersey_barrier/meshes/jersey_barrier.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='upright'>
+          <pose frame=''>0 0 0.5715 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>4.06542 0.3063 1.143</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='base'>
+          <pose frame=''>0 0 0.032258 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>4.06542 0.8107 0.064516</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='base2'>
+          <pose frame=''>0 0 0.1 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>4.06542 0.65 0.1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='base3'>
+          <pose frame=''>0 0 0.2 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>4.06542 0.5 0.1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='left-angle'>
+          <pose frame=''>0 -0.224 0.2401 0.9 -0 0</pose>
+          <geometry>
+            <box>
+              <size>4.06542 0.5 0.064516</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='right-angle'>
+          <pose frame=''>0 0.224 0.2401 -0.9 0 0</pose>
+          <geometry>
+            <box>
+              <size>4.06542 0.5 0.064516</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>-1.47612 5.25635 0 0 0 -2.14669</pose>
+    </model>
+    <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_1_clone'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>-1.57034 1.43853 -2e-06 8e-06 -4e-06 -0.000142</pose>
+    </model>
+    <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_1_clone_0'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>-4.5665 2.06405 -2e-06 8e-06 -4e-06 0.012792</pose>
+    </model>
+    <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_1_clone_1'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>-5.59225 1.19347 -1e-06 6e-06 -3e-06 0.012793</pose>
+    </model>
+    <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_1_clone_2'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>-3.37862 -3.04534 -1e-06 2e-06 -2e-06 0.012801</pose>
+    </model>
+    <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_1_clone_3'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>-6.93914 -4.74693 1e-06 3e-06 6e-06 0.012804</pose>
+    </model>
+    <model name='Construction Barrel_clone_1_clone_clone_0_clone_0_clone_1_clone_4'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>-2.86514 -8.31026 -2e-06 7e-06 -4e-06 0.012808</pose>
+    </model>
+    <model name='Construction Barrel_clone_4_clone'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>4.82969 8.32269 -1e-06 2e-06 -1e-06 -0.010302</pose>
+    </model>
+    <model name='Construction Barrel_clone_4_clone_1'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>7.59054 8.53039 -1e-06 2e-06 -1e-06 -0.010302</pose>
+    </model>
+    <model name='Construction Barrel_clone_4_clone_0'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>0.378998 8.50341 -1e-06 2e-06 -1e-06 -0.010302</pose>
+    </model>
+    <model name='Construction Barrel_clone_4_clone_2'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>2.70379 9.0498 0 0 -0 -0.010309</pose>
+    </model>
+    <model name='jersey_barrier_clone_clone_0_clone'>
+      <static>1</static>
+      <link name='link'>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://jersey_barrier/meshes/jersey_barrier.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='upright'>
+          <pose frame=''>0 0 0.5715 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>4.06542 0.3063 1.143</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='base'>
+          <pose frame=''>0 0 0.032258 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>4.06542 0.8107 0.064516</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='base2'>
+          <pose frame=''>0 0 0.1 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>4.06542 0.65 0.1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='base3'>
+          <pose frame=''>0 0 0.2 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>4.06542 0.5 0.1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='left-angle'>
+          <pose frame=''>0 -0.224 0.2401 0.9 -0 0</pose>
+          <geometry>
+            <box>
+              <size>4.06542 0.5 0.064516</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='right-angle'>
+          <pose frame=''>0 0.224 0.2401 -0.9 0 0</pose>
+          <geometry>
+            <box>
+              <size>4.06542 0.5 0.064516</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>5.86872 -5.1629 -0.003696 0.014701 0.013628 -0.747489</pose>
+    </model>
+    <model name='Construction Barrel_clone_10_clone'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>-8.86397 4.45975 -1e-06 1e-06 -9e-06 -0.000155</pose>
+    </model>
+    <model name='Construction Barrel_clone_10_clone_0'>
+      <link name='link'>
+        <inertial>
+          <pose frame=''>0 0 0.4 0 -0 0</pose>
+          <mass>500</mass>
+          <inertia>
+            <ixx>51.2096</ixx>
+            <iyy>51.2096</iyy>
+            <izz>25</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://construction_barrel/meshes/construction_barrel.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>-5.77669 8.46421 -1e-06 1e-06 -9e-06 -0.000155</pose>
+    </model>
   </world>
 </sdf>

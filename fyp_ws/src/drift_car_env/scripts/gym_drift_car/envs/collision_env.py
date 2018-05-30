@@ -19,6 +19,7 @@ import math
 import signal
 import subprocess
 import time
+import random
 from os import path
 
 class CollisionEnv(gym.Env):
@@ -72,7 +73,7 @@ class CollisionEnv(gym.Env):
                   
                 # Learning Parameters
                 self.radius = 3
-                self.throttle = 1550       
+                self.throttle = 1465       
                 self.maxDeviationFromCenter = 10
                 
         def _seed(self, seed=None):
@@ -139,16 +140,20 @@ class CollisionEnv(gym.Env):
                     reset_pose = rospy.ServiceProxy('/gazebo/set_model_state', SetModelState)
                     nullPosition = ModelState()
                     nullPosition.model_name = "drift_car"
+                #   nullPosition.pose.position.x = random.uniform(-5.0, 5.0)
+                #   nullPosition.pose.position.y = random.uniform(-5.0, 5.0)
                     nullPosition.pose.position.x = 0
                     nullPosition.pose.position.y = 0
-                    nullPosition.pose.position.z = 0.03
+                    nullPosition.pose.position.z = 0.05
                     reset_pose(nullPosition)
                 except (rospy.ServiceException) as e:
                     print ("/gazebo/set_model_state service call failed")
                 #print("Reset done")
                 
                 self.unpausePhysics()
-                time.sleep(0.5)
+                self.applyThrottle(self.throttle)
+                self.applySteering(0)
+                time.sleep(0.8)
                 state, _, _ = self.getState()
                 self.pausePhysics()
                 
@@ -252,9 +257,12 @@ class CollisionEnv(gym.Env):
                                 pass
                 
                 collisionCount = 0
-                for contact in chassis.states:
-                        if not contact.collision2_name == "ground_plane::link::collision":
-                                collisionCount += 1
+                try:
+                        for contact in chassis.states:
+                                if not contact.collision2_name == "ground_plane::link::collision":
+                                        collisionCount += 1
+                except Exception as e:
+                        pass
 
                 return self.isColliding(left_front) or self.isColliding(right_front) or self.isColliding(left_rear) or self.isColliding(right_rear) or collisionCount > 0 
                 #  or self.isColliding(chassis)
@@ -262,12 +270,15 @@ class CollisionEnv(gym.Env):
         def isColliding(self, collisionMsg):
                 groundCollision = 0
                 collisionCount = 0
-                for contact in collisionMsg.states:
-                        if not contact.collision2_name == "ground_plane::link::collision":
-                                collisionCount += 1
-                        else:
-                                groundCollision += 1
-                return groundCollision == 0 or collisionCount > 0 
+                try:
+                        for contact in collisionMsg.states:
+                                if not contact.collision2_name == "ground_plane::link::collision":
+                                        collisionCount += 1
+                                else:
+                                        groundCollision += 1
+                        return groundCollision == 0 or collisionCount > 0 
+                except Exception as e:
+                        return False
 
         def getImageData(self):
             #print("Fetching Pos Data")
