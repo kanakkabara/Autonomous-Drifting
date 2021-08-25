@@ -1,5 +1,5 @@
 gym==0.9.4
 matplotlib==2.1.0
 numpy==1.13.3
-tensorflow-gpu==1.15.2
+tensorflow-gpu==2.5.1
 tensorflow-tensorboard==0.4.0rc3
